@@ -22,3 +22,12 @@
   color: var(--bs-body-color);
   opacity: 0.5;
 }
+
+/* Style the calendar icon for date inputs */
+[data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
+
+[data-theme="dark"] input[type="date"]::-webkit-inner-spin-button {
+    filter: invert(1);
+}

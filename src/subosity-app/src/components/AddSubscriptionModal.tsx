@@ -68,7 +68,7 @@ const AddSubscriptionModal: React.FC<Props> = ({ show, onHide, onSubmit }) => {
                     onCancel={onHide} 
                 />
             </Offcanvas.Body>
-            <div className="p-3 border-top">
+            <div className="p-3 border-top" style={{ backgroundColor: 'var(--bs-navbar-bg)', color: 'var(--bs-body-color)' }}>
                 <div className="d-flex justify-content-end">
                     <Button variant="secondary" className="me-2" onClick={onHide}>
                         <FontAwesomeIcon icon={faChevronLeft} className="me-2" />
