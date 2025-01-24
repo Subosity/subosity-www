@@ -1,11 +1,16 @@
-interface Subscription {
+export interface Subscription {
     id: string;
-    name: string;
-    icon: string; // base64
-    startDate: string;
-    renewalFrequency: 'monthly' | 'yearly' | 'quarterly';
+    providerId: string;
+    providerName: string;
+    providerIcon: string;
+    startDate: string | null;
+    renewalFrequency: string;
     autoRenewal: boolean;
-    paymentIcon: string;
+    amount: number;
+    paymentProviderId: string;
+    paymentProviderName: string;
+    paymentProviderIcon: string;
     paymentDetails: string;
     notes?: string;
+    isFreeTrial: boolean;
 }

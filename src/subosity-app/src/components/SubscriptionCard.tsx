@@ -26,8 +26,8 @@ const SubscriptionCard: React.FC<Props> = ({ subscription, onEdit, onDelete }) =
                              backgroundColor: 'var(--bs-white)'
                          }}>
                         <img 
-                            src={subscription.icon} 
-                            alt={subscription.name}
+                            src={subscription.providerIcon} // Changed from subscription.icon
+                            alt={subscription.providerName} // Changed from subscription.name
                             style={{ 
                                 width: '40px', 
                                 height: '40px', 
@@ -68,9 +68,9 @@ const SubscriptionCard: React.FC<Props> = ({ subscription, onEdit, onDelete }) =
                     <div className="rounded bg-light d-flex align-items-center justify-content-center p-1 me-2" 
                          style={{ backgroundColor: 'var(--bs-white)' }}>
                         <img 
-                            src={subscription.paymentIcon} 
+                            src={subscription.paymentProviderIcon} // Changed from subscription.paymentIcon
                             style={{ height: '22px', width: 'auto' }} 
-                            alt="payment" 
+                            alt={`${subscription.paymentProviderName} icon`} // Added provider name
                         />
                     </div>
                     {subscription.paymentDetails}
