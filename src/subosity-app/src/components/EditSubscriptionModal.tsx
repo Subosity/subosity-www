@@ -26,6 +26,7 @@ const EditSubscriptionModal: React.FC<Props> = ({ show, onHide, subscription, on
                 .from('subscription')
                 .update({
                     subscription_provider_id: data.providerId,
+                    nickname: data.nickname,  // Add this line
                     start_date: data.startDate,
                     autorenew: data.autoRenewal,
                     renew_frequency: data.renewalFrequency,

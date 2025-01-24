@@ -37,8 +37,23 @@ const SubscriptionCard: React.FC<Props> = ({ subscription, onEdit, onDelete }) =
                     </div>
                     <div className="ms-3">
                         <h5 className="mb-1" style={{ color: 'var(--bs-body-color)' }}>
-                            {subscription.name}
+                            {subscription.providerName}
                         </h5>
+                        {subscription.nickname ? (
+                            <div className="small mb-1" style={{ 
+                                color: 'var(--bs-body-color)',
+                                opacity: 0.75 
+                            }}>
+                                <i>({subscription.nickname})</i>
+                            </div>
+                        ) : (
+                            <div className="small mb-1" style={{ 
+                                color: 'var(--bs-body-color)',
+                                opacity: 0.75 
+                            }}>
+                                {subscription.providerDescription}
+                            </div>
+                        )}
                         <div style={{ color: 'var(--bs-body-color)', fontSize: '.85em' }}>
                             Renews: <strong>{subscription.renewalFrequency} @ ${subscription.amount.toFixed(2)}</strong>
                         </div>
@@ -69,7 +84,7 @@ const SubscriptionCard: React.FC<Props> = ({ subscription, onEdit, onDelete }) =
                          style={{ backgroundColor: 'var(--bs-white)' }}>
                         <img 
                             src={subscription.paymentProviderIcon} // Changed from subscription.paymentIcon
-                            style={{ height: '14px', width: 'auto' }} 
+                            style={{ height: 'auto', width: '22px' }} 
                             alt={`${subscription.paymentProviderName} icon`} // Added provider name
                         />
                     </div>

@@ -43,6 +43,8 @@ const MySubscriptions = () => {
                     subscription_provider:subscription_provider_id(
                         id,
                         name,
+                        description,
+                        category,
                         icon
                     ),
                     payment_provider:payment_provider_id(
@@ -58,7 +60,10 @@ const MySubscriptions = () => {
                 id: sub.id,
                 providerId: sub.subscription_provider_id,
                 providerName: sub.subscription_provider.name,
+                providerDescription: sub.subscription_provider.description,
+                providerCategory: sub.subscription_provider.category,
                 providerIcon: sub.subscription_provider.icon,
+                nickname: sub.nickname,  // Add this line
                 startDate: sub.start_date,
                 renewalFrequency: sub.renew_frequency,
                 autoRenewal: sub.autorenew,

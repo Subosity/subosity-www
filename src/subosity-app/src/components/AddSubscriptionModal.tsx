@@ -27,6 +27,7 @@ const AddSubscriptionModal: React.FC<Props> = ({ show, onHide, onSubmit }) => {
                 .insert([{
                     owner: user.id,
                     subscription_provider_id: data.providerId,
+                    nickname: data.nickname,  // Add this line
                     start_date: data.startDate,
                     autorenew: data.autoRenewal,
                     renew_frequency: data.renewalFrequency,

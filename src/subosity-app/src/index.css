@@ -18,9 +18,56 @@
   --bs-border-color: #495057;
 }
 
+/* Form controls theming */
+input, 
+select, 
+textarea,
+.form-control,
+.input-group-text {
+    background-color: var(--bs-body-bg) !important;
+    color: var(--bs-body-color) !important;
+    border-color: var(--bs-border-color) !important;
+}
+
+/* React-Select theming */
+.select__control {
+    background-color: var(--bs-body-bg) !important;
+    color: var(--bs-body-color) !important;
+    border-color: var(--bs-border-color) !important;
+}
+
+.select__menu {
+    background-color: var(--bs-body-bg) !important;
+    border-color: var(--bs-border-color) !important;
+}
+
+.select__option {
+    background-color: var(--bs-body-bg) !important;
+    color: var(--bs-body-color) !important;
+}
+
+.select__option:hover {
+    background-color: var(--bs-primary) !important;
+    color: white !important;
+}
+
+.select__single-value {
+    color: var(--bs-body-color) !important;
+}
+
+.select__input {
+    color: var(--bs-body-color) !important;
+}
+
 .custom-placeholder::placeholder {
   color: var(--bs-body-color);
   opacity: 0.5;
+}
+
+/* Placeholder styling */
+::placeholder {
+    color: var(--bs-body-color) !important;
+    opacity: 0.5 !important;
 }
 
 /* Style the calendar icon for date inputs */
@@ -30,4 +77,13 @@
 
 [data-theme="dark"] input[type="date"]::-webkit-inner-spin-button {
     filter: invert(1);
+}
+
+/* Calendar and spinner icons for inputs */
+[data-theme="dark"] {
+    input[type="date"]::-webkit-calendar-picker-indicator,
+    input[type="time"]::-webkit-calendar-picker-indicator,
+    input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+    }
 }

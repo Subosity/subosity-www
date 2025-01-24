@@ -23,44 +23,89 @@ const frequencyOptions = [
     { value: 'yearly', label: 'Yearly' }
 ];
 
+// Update ValidationErrors interface
 interface ValidationErrors {
     providerId?: string;
-    startDate?: string;
     amount?: string;
     paymentProviderId?: string;
+    // Remove startDate
 }
 
+const commonInputStyles = {
+    backgroundColor: 'var(--bs-body-bg)',
+    color: 'var(--bs-body-color)',
+    borderColor: 'var(--bs-border-color)'
+};
+
+const commonPlaceholderStyles = {
+    opacity: 0.5,
+    color: 'var(--bs-body-color)'
+};
+
+const selectStyles = {
+    control: (base: any) => ({
+        ...base,
+        ...commonInputStyles
+    }),
+    input: (base: any) => ({
+        ...base,
+        color: 'var(--bs-body-color)'
+    }),
+    placeholder: (base: any) => ({
+        ...base,
+        ...commonPlaceholderStyles
+    }),
+    option: (base: any) => ({
+        ...base,
+        backgroundColor: 'var(--bs-body-bg)',
+        color: 'var(--bs-body-color)',
+        ':hover': {
+            backgroundColor: 'var(--bs-primary)',
+            color: 'white'
+        }
+    }),
+    menu: (base: any) => ({
+        ...base,
+        backgroundColor: 'var(--bs-body-bg)',
+        borderColor: 'var(--bs-border-color)'
+    }),
+    singleValue: (base: any) => ({
+        ...base,
+        color: 'var(--bs-body-color)'
+    })
+};
+
 const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription, onSubmit, onCancel }, ref) => {
+    // Add console.log to debug
+    console.log('Subscription prop:', subscription);
+
     const [providers, setProviders] = useState<any[]>([]);
     const [paymentProviders, setPaymentProviders] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [formData, setFormData] = useState<Partial<Subscription>>({
-        providerId: '',
-        startDate: '',
-        renewalFrequency: 'monthly',
-        autoRenewal: false,
-        amount: 0,
-        paymentProviderId: '',
-        paymentDetails: '',
-        notes: '',
-        isFreeTrial: false,
-        ...subscription
+        providerId: subscription?.providerId || '',
+        nickname: subscription?.nickname || '',  // Verify this line exists
+        startDate: subscription?.startDate || '',
+        autoRenewal: subscription?.autoRenewal || false,
+        renewalFrequency: subscription?.renewalFrequency || 'monthly',
+        amount: subscription?.amount || 0,
+        paymentProviderId: subscription?.paymentProviderId || '',
+        paymentDetails: subscription?.paymentDetails || '',
+        notes: subscription?.notes || '',
+        isFreeTrial: subscription?.isFreeTrial || false
     });
 
     const [isValid, setIsValid] = useState(false);
     const [errors, setErrors] = useState<ValidationErrors>({});
     const [validated, setValidated] = useState(false);
 
+    // Update validateForm function
     const validateForm = (data: Partial<Subscription>): ValidationErrors => {
         const newErrors: ValidationErrors = {};
         
         if (!data.providerId) {
             newErrors.providerId = 'Please select a provider';
-        }
-        
-        if (!data.startDate) {
-            newErrors.startDate = 'Please select a start date';
         }
         
         if (!data.amount || data.amount <= 0) {
@@ -119,6 +164,7 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
         console.log('Current payment providers state:', paymentProviders);
     }, [paymentProviders]);
 
+    // Update handleSubmit function
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setValidated(true);
@@ -126,7 +172,12 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
         setErrors(newErrors);
         
         if (Object.keys(newErrors).length === 0) {
-            onSubmit(formData);
+            // Transform empty date string to null before submitting
+            const submissionData = {
+                ...formData,
+                startDate: formData.startDate || null
+            };
+            onSubmit(submissionData);
         }
     };
 
@@ -134,11 +185,16 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
         setTouched(prev => ({ ...prev, [field]: true }));
     };
 
+    // Update useImperativeHandle
     useImperativeHandle(ref, () => ({
         submitForm: () => {
             setValidated(true);
             if (isValid) {
-                onSubmit(formData);
+                const submissionData = {
+                    ...formData,
+                    startDate: formData.startDate || null
+                };
+                onSubmit(submissionData);
             }
         },
         isValid
@@ -209,72 +265,22 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
                             (option.data.category && option.data.category.toLowerCase().includes(searchInput))
                         );
                     }}
-                    styles={{
-                        control: (base) => ({
-                            ...base,
-                            backgroundColor: 'var(--bs-body-bg)',
-                            borderColor: validated && errors.providerId ? 'var(--bs-danger)' : 'var(--bs-border-color)',
-                            '&:hover': {
-                                borderColor: validated && errors.providerId ? 'var(--bs-danger)' : 'var(--bs-border-color)'
-                            }
-                        }),
-                        input: (base) => ({
-                            ...base,
-                            color: 'var(--bs-body-color)'
-                        }),
-                        placeholder: (base) => ({
-                            ...base,
-                            color: 'var(--bs-body-color)',
-                            opacity: 0.5
-                        }),
-                        option: (base, { isFocused }) => ({
-                            ...base,
-                            backgroundColor: isFocused ? 'var(--bs-primary)' : 'var(--bs-body-bg)',
-                            color: isFocused ? 'white' : 'var(--bs-body-color)',
-                            ':active': {
-                                backgroundColor: 'var(--bs-primary)'
-                            }
-                        }),
-                        menu: (base) => ({
-                            ...base,
-                            backgroundColor: 'var(--bs-body-bg)',
-                            borderColor: 'var(--bs-border-color)'
-                        }),
-                        singleValue: (base) => ({
-                            ...base,
-                            color: 'var(--bs-body-color)'
-                        })
-                    }}
+                    styles={selectStyles}
                 />
                 {validated && errors.providerId && (
                     <div className="text-danger small mt-1">{errors.providerId}</div>
                 )}
             </Form.Group>
 
+            {/* Update Start Date field */}
             <Form.Group className="mb-3">
-                <Form.Label>
-                    Start Date <span className="text-danger">*</span>
-                </Form.Label>
+                <Form.Label>Start Date</Form.Label>
                 <Form.Control
                     type="date"
                     value={formData.startDate || ''}
-                    onChange={(e) => {
-                        setFormData({ ...formData, startDate: e.target.value });
-                        handleFieldTouch('startDate');
-                    }}
-                    onBlur={() => handleFieldTouch('startDate')}
-                    required
-                    isInvalid={validated && !formData.startDate}
+                    onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
                     placeholder="Select start date"
-                    style={{
-                        backgroundColor: 'var(--bs-body-bg)',
-                        color: 'var(--bs-body-color)',
-                        borderColor: validated && errors.startDate ? 'var(--bs-danger)' : 'var(--bs-border-color)'
-                    }}
                 />
-                {validated && errors.startDate && (
-                    <div className="text-danger small mt-1">{errors.startDate}</div>
-                )}
             </Form.Group>
 
             <Form.Group className="mb-3">
@@ -282,11 +288,9 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
                     Amount per Period <span className="text-danger">*</span>
                 </Form.Label>
                 <InputGroup hasValidation>
-                    <InputGroup.Text style={{
-                        backgroundColor: 'var(--bs-body-bg)',
-                        color: 'var(--bs-body-color)',
-                        borderColor: 'var(--bs-border-color)'
-                    }}>$</InputGroup.Text>
+                    <InputGroup.Text style={commonInputStyles}>
+                        $
+                    </InputGroup.Text>
                     <Form.Control
                         type="number"
                         step="0.01"
@@ -295,9 +299,8 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
                         required
                         isInvalid={validated && (!formData.amount || formData.amount <= 0)}
                         style={{
-                            backgroundColor: 'var(--bs-body-bg)',
-                            color: 'var(--bs-body-color)',
-                            borderColor: 'var(--bs-border-color)'
+                            ...commonInputStyles,
+                            '::placeholder': commonPlaceholderStyles
                         }}
                     />
                     <Form.Control.Feedback type="invalid">
@@ -317,32 +320,7 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
                         });
                     }}
                     options={frequencyOptions}
-                    styles={{
-                        control: (base) => ({
-                            ...base,
-                            borderColor: 'var(--bs-border-color)',
-                            backgroundColor: 'var(--bs-body-bg)',
-                            color: 'var(--bs-body-color)'
-                        }),
-                        option: (base) => ({
-                            ...base,
-                            backgroundColor: 'var(--bs-body-bg)',
-                            color: 'var(--bs-body-color)',
-                            ':hover': {
-                                backgroundColor: 'var(--bs-primary)',
-                                color: 'white'
-                            }
-                        }),
-                        singleValue: (base) => ({
-                            ...base,
-                            color: 'var(--bs-body-color)'
-                        }),
-                        menu: (base) => ({
-                            ...base,
-                            backgroundColor: 'var(--bs-body-bg)',
-                            borderColor: 'var(--bs-border-color)'
-                        })
-                    }}
+                    styles={selectStyles}
                 />
             </Form.Group>
 
@@ -390,11 +368,10 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
                     formatOptionLabel={provider => (
                         <div className="d-flex align-items-center justify-content-between w-100">
                             <div className="d-flex align-items-center">
-                                <div className="rounded bg-light d-flex align-items-center justify-content-center p-1"
+                                <div className="rounded d-flex align-items-center justify-content-center p-1"
                                      style={{ 
                                          width: '32px', 
                                          height: '32px',
-                                         backgroundColor: 'var(--bs-gray-200) !important',
                                          flexShrink: 0
                                      }}>
                                     <img
@@ -410,9 +387,8 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
                                 <span className="ms-2">{provider.name}</span>
                             </div>
                             <span style={{ 
-                                color: 'var(--bs-body-color)',
-                                opacity: 0.6,
-                                fontSize: '0.875em'
+                                fontSize: '0.875em',
+                                opacity: 0.6
                             }}>
                                 {provider.category}
                             </span>
@@ -425,42 +401,7 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
                             (option.data.category && option.data.category.toLowerCase().includes(searchInput))
                         );
                     }}
-                    styles={{
-                        control: (base) => ({
-                            ...base,
-                            backgroundColor: 'var(--bs-body-bg)',
-                            borderColor: validated && errors.paymentProviderId ? 'var(--bs-danger)' : 'var(--bs-border-color)',
-                            '&:hover': {
-                                borderColor: validated && errors.paymentProviderId ? 'var(--bs-danger)' : 'var(--bs-border-color)'
-                            }
-                        }),
-                        input: (base) => ({
-                            ...base,
-                            color: 'var(--bs-body-color)'
-                        }),
-                        placeholder: (base) => ({
-                            ...base,
-                            color: 'var(--bs-body-color)',
-                            opacity: 0.5
-                        }),
-                        option: (base, { isFocused }) => ({
-                            ...base,
-                            backgroundColor: isFocused ? 'var(--bs-primary)' : 'var(--bs-body-bg)',
-                            color: isFocused ? 'white' : 'var(--bs-body-color)',
-                            ':active': {
-                                backgroundColor: 'var(--bs-primary)'
-                            }
-                        }),
-                        menu: (base) => ({
-                            ...base,
-                            backgroundColor: 'var(--bs-body-bg)',
-                            borderColor: 'var(--bs-border-color)'
-                        }),
-                        singleValue: (base) => ({
-                            ...base,
-                            color: 'var(--bs-body-color)'
-                        })
-                    }}
+                    styles={selectStyles}
                 />
                 {validated && errors.paymentProviderId && (
                     <div className="text-danger small mt-1">{errors.paymentProviderId}</div>
@@ -473,11 +414,15 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
                     type="text"
                     value={formData.paymentDetails || ''}
                     onChange={(e) => setFormData({ ...formData, paymentDetails: e.target.value })}
-                    placeholder="Enter payment details (e.g., last 4 digits of card)"
+                    placeholder="Optional: Enter payment details (e.g., last 4 digits of card)"
                     style={{
                         backgroundColor: 'var(--bs-body-bg)',
                         color: 'var(--bs-body-color)',
-                        borderColor: 'var(--bs-border-color)'
+                        borderColor: 'var(--bs-border-color)',
+                        '::placeholder': {
+                            color: 'var(--bs-body-color)',
+                            opacity: 0.5
+                        }
                     }}
                 />
             </Form.Group>
@@ -489,11 +434,34 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
                     rows={3}
                     value={formData.notes || ''}
                     onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                    placeholder="Add any notes about this subscription..."
+                    placeholder="Optional: Add any notes about this subscription..."
                     style={{
                         backgroundColor: 'var(--bs-body-bg)',
                         color: 'var(--bs-body-color)',
-                        borderColor: 'var(--bs-border-color)'
+                        borderColor: 'var(--bs-border-color)',
+                        '::placeholder': {
+                            color: 'var(--bs-body-color)',
+                            opacity: 0.5
+                        }
+                    }}
+                />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+                <Form.Label>Nickname</Form.Label>
+                <Form.Control
+                    type="text"
+                    value={formData.nickname || ''}
+                    onChange={(e) => setFormData({ ...formData, nickname: e.target.value })}
+                    placeholder="Optional: Distinguish between subscriptions (e.g., 'Personal', 'Family')"
+                    style={{
+                        backgroundColor: 'var(--bs-body-bg)',
+                        color: 'var(--bs-body-color)',
+                        borderColor: 'var(--bs-border-color)',
+                        '::placeholder': {
+                            color: 'var(--bs-body-color)',
+                            opacity: 0.5
+                        }
                     }}
                 />
             </Form.Group>

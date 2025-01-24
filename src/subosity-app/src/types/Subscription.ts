@@ -2,6 +2,8 @@ export interface Subscription {
     id: string;
     providerId: string;
     providerName: string;
+    providerDescription: string;
+    providerCategory: string;
     providerIcon: string;
     startDate: string | null;
     renewalFrequency: string;
@@ -13,4 +15,5 @@ export interface Subscription {
     paymentDetails: string;
     notes?: string;
     isFreeTrial: boolean;
+    nickname?: string;
 }
