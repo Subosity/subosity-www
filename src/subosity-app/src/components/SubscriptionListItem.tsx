@@ -46,15 +46,15 @@ const SubscriptionListItem: React.FC<Props> = ({ subscription, onEdit, onDelete 
                     {subscription.autoRenewal ? 'Auto-Renewal' : 'Manual Renewal'}
                 </Badge>
                 <span className="ms-2" style={{ color: 'var(--bs-body-color)' }}>
-                    ({subscription.renewalFrequency})
+                Renews: <strong>{subscription.renewalFrequency} @ ${subscription.amount.toFixed(2)}</strong>
                 </span>
             </div>
-            <div className="d-flex align-items-center" style={{ color: 'var(--bs-body-color)' }}>
+            <div className="d-flex align-items-center" style={{ color: 'var(--bs-body-color)', fontSize: '.85em' }}>
                 <div className="rounded bg-light d-flex align-items-center justify-content-center p-1 me-2" 
                      style={{ backgroundColor: 'var(--bs-white)' }}>
                     <img
                         src={subscription.paymentProviderIcon}
-                        style={{ height: '22px', width: 'auto' }}
+                        style={{ height: '16px', width: 'auto' }}
                         alt={`${subscription.paymentProviderName} icon`}
                     />
                 </div>

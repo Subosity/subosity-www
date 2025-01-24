@@ -1,7 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { Form, Button } from 'react-bootstrap';
 import { Subscription } from '../types';
 import { supabase } from '../supabaseClient';
+import Select from 'react-select';
+
+export interface SubscriptionFormRef {
+    submitForm: () => void;
+}
 
 interface Props {
     subscription?: Subscription;
@@ -9,7 +14,7 @@ interface Props {
     onCancel: () => void;
 }
 
-const SubscriptionForm: React.FC<Props> = ({ subscription, onSubmit, onCancel }) => {
+const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription, onSubmit, onCancel }, ref) => {
     const [providers, setProviders] = useState<any[]>([]);
     const [paymentProviders, setPaymentProviders] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -33,25 +38,23 @@ const SubscriptionForm: React.FC<Props> = ({ subscription, onSubmit, onCancel })
                 setIsLoading(true);
                 setError(null);
 
-                // Get user's auth session
-                const { data: { user } } = await supabase.auth.getUser();
+                // Fetch both providers in parallel
+                const [subscriptionResponse, paymentResponse] = await Promise.all([
+                    supabase.from('subscription_provider').select('*'),
+                    supabase.from('payment_provider').select('*')
+                ]);
 
-                // Get providers - both public and user owned
-                const { data: subscriptionProviders, error: subError } = await supabase
-                    .from('subscription_provider')
-                    .select('*');
+                if (subscriptionResponse.error) throw subscriptionResponse.error;
+                if (paymentResponse.error) throw paymentResponse.error;
 
-                if (subError) throw subError;
+                console.log('Providers from DB:', {
+                    subscription: subscriptionResponse.data,
+                    payment: paymentResponse.data
+                });
 
-                // Get payment providers - both public and user owned
-                const { data: paymentMethods, error: payError } = await supabase
-                    .from('payment_provider')
-                    .select('*');
+                setProviders(subscriptionResponse.data || []);
+                setPaymentProviders(paymentResponse.data || []);
 
-                if (payError) throw payError;
-
-                setProviders(subscriptionProviders || []);
-                setPaymentProviders(paymentMethods || []);
             } catch (err) {
                 console.error('Error fetching providers:', err);
                 setError('Failed to load providers');
@@ -62,6 +65,11 @@ const SubscriptionForm: React.FC<Props> = ({ subscription, onSubmit, onCancel })
 
         fetchProviders();
     }, []);
+
+    // Debug log when providers change
+    useEffect(() => {
+        console.log('Current payment providers state:', paymentProviders);
+    }, [paymentProviders]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -75,6 +83,16 @@ const SubscriptionForm: React.FC<Props> = ({ subscription, onSubmit, onCancel })
         onSubmit(submissionData);
     };
 
+    useImperativeHandle(ref, () => ({
+        submitForm: () => {
+            const submissionData = {
+                ...formData,
+                startDate: formData.startDate || null
+            };
+            onSubmit(submissionData);
+        }
+    }));
+
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
 
@@ -82,18 +100,69 @@ const SubscriptionForm: React.FC<Props> = ({ subscription, onSubmit, onCancel })
         <Form onSubmit={handleSubmit}>
             <Form.Group className="mb-3">
                 <Form.Label>Provider</Form.Label>
-                <Form.Select
-                    value={formData.providerId}
-                    onChange={(e) => setFormData({ ...formData, providerId: e.target.value })}
-                    required
-                >
-                    <option value="">Select a provider...</option>
-                    {providers.map(provider => (
-                        <option key={provider.id} value={provider.id}>
-                            {provider.name}
-                        </option>
-                    ))}
-                </Form.Select>
+                <Select
+                    value={providers.find(p => p.id === formData.providerId)}
+                    onChange={(option) => {
+                        setFormData({
+                            ...formData,
+                            providerId: option?.id || ''
+                        });
+                    }}
+                    options={providers}
+                    getOptionLabel={(option) => option.name}
+                    getOptionValue={(option) => option.id}
+                    isSearchable={true}
+                    isClearable={false}
+                    placeholder="Select subscription provider..."
+                    formatOptionLabel={provider => (
+                        <div className="d-flex align-items-center">
+                            <div className="rounded bg-light d-flex align-items-center justify-content-center p-1"
+                                 style={{ 
+                                     width: '32px', 
+                                     height: '32px',
+                                     backgroundColor: 'var(--bs-gray-200) !important',
+                                     flexShrink: 0
+                                 }}>
+                                <img
+                                    src={provider.icon}
+                                    alt={`${provider.name} icon`}
+                                    style={{
+                                        width: '24px',
+                                        height: '24px',
+                                        objectFit: 'contain'
+                                    }}
+                                />
+                            </div>
+                            <span className="ms-2">{provider.name}</span>
+                        </div>
+                    )}
+                    styles={{
+                        control: (base) => ({
+                            ...base,
+                            borderColor: 'var(--bs-border-color)',
+                            backgroundColor: 'var(--bs-body-bg)',
+                            color: 'var(--bs-body-color)'
+                        }),
+                        option: (base) => ({
+                            ...base,
+                            backgroundColor: 'var(--bs-body-bg)',
+                            color: 'var(--bs-body-color)',
+                            ':hover': {
+                                backgroundColor: 'var(--bs-primary)',
+                                color: 'white'
+                            }
+                        }),
+                        singleValue: (base) => ({
+                            ...base,
+                            color: 'var(--bs-body-color)'
+                        }),
+                        menu: (base) => ({
+                            ...base,
+                            backgroundColor: 'var(--bs-body-bg)',
+                            borderColor: 'var(--bs-border-color)'
+                        })
+                    }}
+                />
             </Form.Group>
 
             <Form.Group className="mb-3">
@@ -149,18 +218,70 @@ const SubscriptionForm: React.FC<Props> = ({ subscription, onSubmit, onCancel })
 
             <Form.Group className="mb-3">
                 <Form.Label>Payment Method</Form.Label>
-                <Form.Select
-                    value={formData.paymentProviderId}
-                    onChange={(e) => setFormData({ ...formData, paymentProviderId: e.target.value })}
-                    required
-                >
-                    <option value="">Select payment method...</option>
-                    {paymentProviders.map(provider => (
-                        <option key={provider.id} value={provider.id}>
-                            {provider.name}
-                        </option>
-                    ))}
-                </Form.Select>
+                <Select
+                    value={paymentProviders.find(p => p.id === formData.paymentProviderId)}
+                    onChange={(option) => {
+                        console.log('Selected option:', option); // Debug log
+                        setFormData({
+                            ...formData,
+                            paymentProviderId: option?.id || ''
+                        });
+                    }}
+                    options={paymentProviders}
+                    getOptionLabel={(option) => option.name}
+                    getOptionValue={(option) => option.id}
+                    isSearchable={true}
+                    isClearable={false}
+                    placeholder="Select payment method..."
+                    formatOptionLabel={provider => (
+                        <div className="d-flex align-items-center">
+                            <div className="rounded bg-light d-flex align-items-center justify-content-center p-1"
+                                 style={{ 
+                                     width: '32px', 
+                                     height: '32px',
+                                     backgroundColor: 'var(--bs-gray-200) !important',
+                                     flexShrink: 0
+                                 }}>
+                                <img
+                                    src={provider.icon}
+                                    alt={`${provider.name} icon`}
+                                    style={{
+                                        width: '24px',
+                                        height: '24px',
+                                        objectFit: 'contain'
+                                    }}
+                                />
+                            </div>
+                            <span className="ms-2">{provider.name}</span>
+                        </div>
+                    )}
+                    styles={{
+                        control: (base) => ({
+                            ...base,
+                            borderColor: 'var(--bs-border-color)',
+                            backgroundColor: 'var(--bs-body-bg)',
+                            color: 'var(--bs-body-color)'
+                        }),
+                        option: (base) => ({
+                            ...base,
+                            backgroundColor: 'var(--bs-body-bg)',
+                            color: 'var(--bs-body-color)',
+                            ':hover': {
+                                backgroundColor: 'var(--bs-primary)',
+                                color: 'white'
+                            }
+                        }),
+                        singleValue: (base) => ({
+                            ...base,
+                            color: 'var(--bs-body-color)'
+                        }),
+                        menu: (base) => ({
+                            ...base,
+                            backgroundColor: 'var(--bs-body-bg)',
+                            borderColor: 'var(--bs-border-color)'
+                        })
+                    }}
+                />
             </Form.Group>
 
             <Form.Group className="mb-3">
@@ -181,17 +302,8 @@ const SubscriptionForm: React.FC<Props> = ({ subscription, onSubmit, onCancel })
                     onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                 />
             </Form.Group>
-
-            <div className="d-flex justify-content-end">
-                <Button variant="secondary" className="me-2" onClick={onCancel}>
-                    Cancel
-                </Button>
-                <Button variant="primary" type="submit">
-                    {subscription ? 'Update' : 'Add'} Subscription
-                </Button>
-            </div>
         </Form>
     );
-};
+});
 
 export default SubscriptionForm;

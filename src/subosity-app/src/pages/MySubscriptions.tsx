@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Card, Badge, Offcanvas, Form, InputGroup } from 'react-bootstrap';
+import { Button, Card, Badge, Offcanvas, Form, InputGroup, Alert } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrash, faPlus, faThLarge, faList, faSearch, faSort } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faTrash, faPlus, faThLarge, faList, faSearch, faSort, faHandHoldingDollar, faSquarePlus } from '@fortawesome/free-solid-svg-icons';
 import { supabase } from '../supabaseClient';
 import { useToast } from '../ToastContext';
 import SubscriptionCard from '../components/SubscriptionCard';
@@ -123,102 +123,141 @@ const MySubscriptions = () => {
                     onClick={() => setShowAdd(true)}
                     className="d-flex align-items-center"
                 >
-                    <FontAwesomeIcon icon={faPlus} className="me-2" />
+                    <FontAwesomeIcon icon={faSquarePlus} className="me-2" />
                     Add Subscription
                 </Button>
             </div>
 
-            <div className="row mb-4">
-                <div className="col-md-8">
-                    <InputGroup>
-                        <InputGroup.Text style={{ 
-                            backgroundColor: 'var(--bs-background-color)', 
-                            color: 'var(--bs-body-color)' }}>
-                            <FontAwesomeIcon icon={faSearch} />
-                        </InputGroup.Text>
-                        <Form.Control
-                            className="custom-placeholder"
-                            style={{
-                                backgroundColor: 'var(--bs-background-color)',
-                                color: 'var(--bs-body-color)'
-                            }}
-                            placeholder="Search subscriptions..."
-                            value={searchText}
-                            onChange={(e) => setSearchText(e.target.value)}
-                        />
-                    </InputGroup>
-                </div>
-                <div className="col-md-2">
-                    <Form.Select
-                        value={sortOrder}
-                        onChange={(e) => setSortOrder(e.target.value as typeof sortOrder)}
-                    >
-                        <option value="name">Sort by Name</option>
-                        <option value="date">Sort by Date</option>
-                        <option value="frequency">Sort by Frequency</option>
-                    </Form.Select>
-                </div>
-                <div className="col-md-2">
-                    <div className="btn-group w-100">
-                        <Button
-                            variant={viewMode === 'card' ? 'primary' : 'outline-primary'}
-                            onClick={() => setViewMode('card')}
-                        >
-                            <FontAwesomeIcon icon={faThLarge} />
-                        </Button>
-                        <Button
-                            variant={viewMode === 'list' ? 'primary' : 'outline-primary'}
-                            onClick={() => setViewMode('list')}
-                        >
-                            <FontAwesomeIcon icon={faList} />
-                        </Button>
+            {loading ? (
+                <div className="text-center mt-5">
+                    <div className="spinner-border" role="status">
+                        <span className="visually-hidden">Loading...</span>
                     </div>
                 </div>
-            </div>
-
-            {viewMode === 'card' ? (
-                <div className="row g-4">
-                    {filteredAndSortedSubscriptions.map(subscription => (
-                        <div key={subscription.id} className="col-12 col-md-6 col-lg-4">
-                            <SubscriptionCard
-                                subscription={subscription}
-                                onEdit={(sub) => {
-                                    setSelectedSubscription(sub);
-                                    setShowEdit(true);
-                                }}
-                                onDelete={(sub) => {
-                                    setSelectedSubscription(sub);
-                                    setShowDelete(true);
-                                }}
-                            />
-                        </div>
-                    ))}
-                </div>
-            ) : (
-                <div className="border rounded">
-                    {filteredAndSortedSubscriptions.map(subscription => (
-                        <SubscriptionListItem
-                            key={subscription.id}
-                            subscription={subscription}
-                            onEdit={(sub) => {
-                                setSelectedSubscription(sub);
-                                setShowEdit(true);
-                            }}
-                            onDelete={(sub) => {
-                                setSelectedSubscription(sub);
-                                setShowDelete(true);
-                            }}
+            ) : filteredAndSortedSubscriptions.length === 0 ? (
+                <Alert 
+                    className="text-center p-5 border"
+                    style={{
+                        backgroundColor: 'var(--bs-navbar-bg)',
+                        borderColor: 'var(--bs-border-color)',
+                    }}
+                >
+                    <div className="mb-3">
+                        <FontAwesomeIcon 
+                            icon={faHandHoldingDollar} 
+                            style={{ color: 'var(--bs-secondary)' }}
+                            className="fa-3x" 
                         />
-                    ))}
-                </div>
+                    </div>
+                    <h4 style={{ color: 'var(--bs-body-color)' }}>
+                        No Subscriptions Yet
+                    </h4>
+                    <p style={{ color: 'var(--bs-secondary)' }} className="mb-4">
+                        You haven't added any subscriptions yet. Start tracking your subscriptions to manage your recurring payments better.
+                    </p>
+                    <Button
+                        variant="primary"
+                        onClick={() => setShowAdd(true)}
+                    >
+                        <FontAwesomeIcon icon={faSquarePlus} className="me-2" />
+                        Add Your First Subscription
+                    </Button>
+                </Alert>
+            ) : (
+                <>
+                    <div className="row mb-4">
+                        <div className="col-md-8">
+                            <InputGroup>
+                                <InputGroup.Text style={{ 
+                                    backgroundColor: 'var(--bs-background-color)', 
+                                    color: 'var(--bs-body-color)' }}>
+                                    <FontAwesomeIcon icon={faSearch} />
+                                </InputGroup.Text>
+                                <Form.Control
+                                    className="custom-placeholder"
+                                    style={{
+                                        backgroundColor: 'var(--bs-background-color)',
+                                        color: 'var(--bs-body-color)'
+                                    }}
+                                    placeholder="Search subscriptions..."
+                                    value={searchText}
+                                    onChange={(e) => setSearchText(e.target.value)}
+                                />
+                            </InputGroup>
+                        </div>
+                        <div className="col-md-2">
+                            <Form.Select
+                                value={sortOrder}
+                                onChange={(e) => setSortOrder(e.target.value as typeof sortOrder)}
+                            >
+                                <option value="name">Sort by Name</option>
+                                <option value="date">Sort by Date</option>
+                                <option value="frequency">Sort by Frequency</option>
+                            </Form.Select>
+                        </div>
+                        <div className="col-md-2">
+                            <div className="btn-group w-100">
+                                <Button
+                                    variant={viewMode === 'card' ? 'primary' : 'outline-primary'}
+                                    onClick={() => setViewMode('card')}
+                                >
+                                    <FontAwesomeIcon icon={faThLarge} />
+                                </Button>
+                                <Button
+                                    variant={viewMode === 'list' ? 'primary' : 'outline-primary'}
+                                    onClick={() => setViewMode('list')}
+                                >
+                                    <FontAwesomeIcon icon={faList} />
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+
+                    {viewMode === 'card' ? (
+                        <div className="row g-4">
+                            {filteredAndSortedSubscriptions.map(subscription => (
+                                <div key={subscription.id} className="col-12 col-md-6 col-lg-4">
+                                    <SubscriptionCard
+                                        subscription={subscription}
+                                        onEdit={(sub) => {
+                                            setSelectedSubscription(sub);
+                                            setShowEdit(true);
+                                        }}
+                                        onDelete={(sub) => {
+                                            setSelectedSubscription(sub);
+                                            setShowDelete(true);
+                                        }}
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="border rounded">
+                            {filteredAndSortedSubscriptions.map(subscription => (
+                                <SubscriptionListItem
+                                    key={subscription.id}
+                                    subscription={subscription}
+                                    onEdit={(sub) => {
+                                        setSelectedSubscription(sub);
+                                        setShowEdit(true);
+                                    }}
+                                    onDelete={(sub) => {
+                                        setSelectedSubscription(sub);
+                                        setShowDelete(true);
+                                    }}
+                                />
+                            ))}
+                        </div>
+                    )}
+                </>
             )}
 
             <DeleteSubscriptionModal
                 show={showDelete}
                 onHide={() => setShowDelete(false)}
                 subscription={selectedSubscription}
-                onDelete={(subscription) => {
-                    // Handle delete
+                onDelete={async () => {
+                    await fetchSubscriptions(); // Refresh the list
                     setShowDelete(false);
                 }}
             />
@@ -227,8 +266,8 @@ const MySubscriptions = () => {
                 show={showEdit}
                 onHide={() => setShowEdit(false)}
                 subscription={selectedSubscription}
-                onSubmit={(data) => {
-                    // Handle edit
+                onSubmit={async (data) => {
+                    await fetchSubscriptions(); // Refresh the list after update
                     setShowEdit(false);
                 }}
             />
@@ -236,8 +275,8 @@ const MySubscriptions = () => {
             <AddSubscriptionModal
                 show={showAdd}
                 onHide={() => setShowAdd(false)}
-                onSubmit={(data) => {
-                    // Handle add
+                onSubmit={async (data) => {
+                    await fetchSubscriptions(); // Refresh the list after add
                     setShowAdd(false);
                 }}
             />

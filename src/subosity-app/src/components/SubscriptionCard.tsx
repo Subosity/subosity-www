@@ -39,8 +39,8 @@ const SubscriptionCard: React.FC<Props> = ({ subscription, onEdit, onDelete }) =
                         <h5 className="mb-1" style={{ color: 'var(--bs-body-color)' }}>
                             {subscription.name}
                         </h5>
-                        <div style={{ color: 'var(--bs-body-color)' }}>
-                            Renews {subscription.renewalFrequency}
+                        <div style={{ color: 'var(--bs-body-color)', fontSize: '.85em' }}>
+                            Renews: <strong>{subscription.renewalFrequency} @ ${subscription.amount.toFixed(2)}</strong>
                         </div>
                     </div>
                 </div>
@@ -64,12 +64,12 @@ const SubscriptionCard: React.FC<Props> = ({ subscription, onEdit, onDelete }) =
                     />
                     {subscription.autoRenewal ? 'Auto-Renewal (' + subscription.renewalFrequency + ')' : 'Manual Renewal'}
                 </Badge>
-                <div className="mt-2 d-flex align-items-center" style={{ color: 'var(--bs-body-color)' }}>
+                <div className="mt-2 d-flex align-items-center" style={{ color: 'var(--bs-body-color)', fontSize: '.85em' }}>
                     <div className="rounded bg-light d-flex align-items-center justify-content-center p-1 me-2" 
                          style={{ backgroundColor: 'var(--bs-white)' }}>
                         <img 
                             src={subscription.paymentProviderIcon} // Changed from subscription.paymentIcon
-                            style={{ height: '22px', width: 'auto' }} 
+                            style={{ height: '14px', width: 'auto' }} 
                             alt={`${subscription.paymentProviderName} icon`} // Added provider name
                         />
                     </div>

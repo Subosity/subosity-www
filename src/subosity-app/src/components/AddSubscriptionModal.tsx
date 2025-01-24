@@ -1,9 +1,11 @@
-import React from 'react';
-import { Offcanvas } from 'react-bootstrap';
+import React, { useRef } from 'react';
+import { Offcanvas, Button } from 'react-bootstrap';
 import { Subscription } from '../types';
-import SubscriptionForm from './SubscriptionForm';
+import SubscriptionForm, { SubscriptionFormRef } from './SubscriptionForm';
 import { supabase } from '../supabaseClient';
 import { useToast } from '../ToastContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronLeft, faSave, faSquarePlus } from '@fortawesome/free-solid-svg-icons';
 
 interface Props {
     show: boolean;
@@ -13,6 +15,7 @@ interface Props {
 
 const AddSubscriptionModal: React.FC<Props> = ({ show, onHide, onSubmit }) => {
     const { addToast } = useToast();
+    const formRef = useRef<SubscriptionFormRef>(null);
 
     const handleSubmit = async (data: Partial<Subscription>) => {
         try {
@@ -47,12 +50,36 @@ const AddSubscriptionModal: React.FC<Props> = ({ show, onHide, onSubmit }) => {
 
     return (
         <Offcanvas show={show} onHide={onHide} placement="end">
-            <Offcanvas.Header closeButton>
-                <Offcanvas.Title>Add New Subscription</Offcanvas.Title>
+            <Offcanvas.Header closeButton style={{ backgroundColor: 'var(--bs-navbar-bg)', color: 'var(--bs-body-color)' }}>
+                <div>
+                    <Offcanvas.Title>
+                        <FontAwesomeIcon icon={faSquarePlus} className="me-2" />
+                        Add Subscription
+                    </Offcanvas.Title>
+                    <div style={{ fontSize: '0.85em', opacity: 0.6 }}>
+                        Add a new subscription to start tracking.
+                    </div>
+                </div>
             </Offcanvas.Header>
             <Offcanvas.Body>
-                <SubscriptionForm onSubmit={handleSubmit} onCancel={onHide} />
+                <SubscriptionForm 
+                    ref={formRef} 
+                    onSubmit={handleSubmit} 
+                    onCancel={onHide} 
+                />
             </Offcanvas.Body>
+            <div className="p-3 border-top">
+                <div className="d-flex justify-content-end">
+                    <Button variant="secondary" className="me-2" onClick={onHide}>
+                        <FontAwesomeIcon icon={faChevronLeft} className="me-2" />
+                        Back
+                    </Button>
+                    <Button variant="primary" onClick={() => formRef.current?.submitForm()}>
+                        <FontAwesomeIcon icon={faSave} className="me-2" />
+                        Save Changes
+                    </Button>
+                </div>
+            </div>
         </Offcanvas>
     );
 };

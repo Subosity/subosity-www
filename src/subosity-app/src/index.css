@@ -1,9 +1,9 @@
 :root {
   --bs-body-bg: #fff;
   --bs-body-color: #212529;
-  --bs-navbar-bg: #f8f9fa;
+  --bs-navbar-bg: #dddddd;
   --bs-navbar-color: #212529;
-  --bs-footer-bg: #f8f9fa;
+  --bs-footer-bg: #dddddd;
   --bs-footer-color: #212529;
   --bs-border-color: #dee2e6;
 }
