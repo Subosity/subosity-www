@@ -1,10 +1,15 @@
 -- Idempotent script: drop existing tables and policies, then recreate them.
 
 -- Drop in reverse dependency order
+drop table if exists profiles cascade;
+drop table if exists subscription_alerts;
 drop table if exists subscription cascade;
 drop table if exists preferences cascade;
 drop table if exists subscription_provider cascade;
 drop table if exists payment_provider cascade;
+
+drop trigger if exists "after_user_insert" on auth.users;
+
 
 -- Create provider table
 create table if not exists subscription_provider (
@@ -34,7 +39,10 @@ create table if not exists payment_provider (
 create table if not exists preferences (
   id uuid primary key default gen_random_uuid(),
   owner uuid references auth.users not null,
+  title text not null,
   preference_key text not null,
+  data_type text not null,
+  available_values text[],
   preference_value text
 );
 
@@ -52,12 +60,25 @@ create table if not exists subscription (
   is_free_trial boolean default false,
   payment_provider_id uuid references payment_provider(id)
 );
+-- Create subscription_alerts table
+create table if not exists subscription_alerts (
+  id uuid primary key default gen_random_uuid(),
+  subscription_id uuid references subscription(id),
+  owner uuid references auth.users not null,
+  title text not null,
+  description text,
+  icon text,
+  created_at timestamp default current_timestamp,
+  sent_at timestamp,
+  read_at timestamp
+);
 
 -- Enable RLS
 alter table subscription_provider enable row level security;
 alter table subscription enable row level security;
 alter table preferences enable row level security;
 alter table payment_provider enable row level security;
+alter table subscription_alerts enable row level security;
 
 --------------------------------------------------------------------------------
 -- SUBSCRIPTION_PROVIDER TABLE POLICIES
@@ -145,15 +166,87 @@ create policy subscription_delete_owned
   for delete
   using ( owner = auth.uid() );
 
+---------------------------------
+-- public.profiles
+---------------------------------
+
+CREATE TABLE public.profiles (
+    id uuid primary key default gen_random_uuid(),
+    user_id uuid references auth.users(id) on delete cascade,
+    role text NOT NULL DEFAULT 'user',
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now()
+);
+
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+
+CREATE INDEX idx_profiles_user_id ON public.profiles(user_id);
+
+CREATE POLICY select_all_profiles ON public.profiles
+FOR SELECT
+USING (role = 'admin');
+
+CREATE POLICY select_own_profile ON public.profiles
+FOR SELECT
+USING (user_id = (select auth.uid()));
+
+ALTER TABLE public.profiles FORCE ROW LEVEL SECURITY;
+
+
+CREATE OR REPLACE FUNCTION public.create_profile()
+RETURNS trigger
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    INSERT INTO public.profiles (user_id, role)
+    VALUES (NEW.id, 'user');
+    RETURN NEW;
+END;
+$$;
+
+CREATE TRIGGER after_user_insert
+AFTER INSERT ON auth.users
+FOR EACH ROW
+EXECUTE FUNCTION public.create_profile();
+
+--------------------------------------------------------------------------------
+-- SUBSCRIPTION_ALERTS TABLE POLICIES
+--------------------------------------------------------------------------------
+
+-- Only owner or admin/ops can SELECT
+create policy subscription_alerts_select_owned
+  on subscription_alerts
+  for select
+  using ( owner = auth.uid() );
+
+-- Only owner or admin/ops can INSERT
+create policy subscription_alerts_insert_with_owner_or_admin_ops
+  on subscription_alerts
+  for insert
+  with check ( owner = auth.uid() OR EXISTS (SELECT 1 FROM public.profiles WHERE user_id = auth.uid() AND role IN ('admin', 'ops')) );
+
+-- Only owner can UPDATE
+create policy subscription_alerts_update_owned
+  on subscription_alerts
+  for update
+  using ( owner = auth.uid() )
+  with check ( owner = auth.uid() );
+
+-- Only owner or admin/ops can DELETE
+create policy subscription_alerts_delete_owned_or_admin_ops
+  on subscription_alerts
+  for delete
+  using ( owner = auth.uid() OR EXISTS (SELECT 1 FROM public.profiles WHERE user_id = auth.uid() AND role IN ('admin', 'ops')) );
+
 --------------------------------------------------------------------------------
 -- PREFERENCES TABLE POLICIES
 --------------------------------------------------------------------------------
 
 -- Only owner can SELECT
-create policy preferences_select_owned
+create policy preferences_select_owned_or_admin_ops
   on preferences
   for select
-  using ( owner = auth.uid() );
+  using ( owner = auth.uid() OR EXISTS (SELECT 1 FROM public.profiles WHERE user_id = auth.uid() AND role IN ('admin', 'ops')) );
 
 -- Only owner can INSERT
 create policy preferences_insert_with_owner
@@ -174,7 +267,9 @@ create policy preferences_delete_owned
   for delete
   using ( owner = auth.uid() );
 
+--------------------------------
 -- SAMPLE/STARTER DATA
+--------------------------------
 
 WITH user_id AS (
     SELECT id
@@ -182,8 +277,30 @@ WITH user_id AS (
     ORDER BY created_at ASC
     LIMIT 1
 )
+INSERT INTO public.preferences (owner, title, preference_key, preference_value, data_type, available_values)
+VALUES
+  ((SELECT id FROM user_id), 'Default Alert Days Before Weekly Subscription Renewal', 'default_notification_days_before_weekly', '3', 'number', null),
+  ((SELECT id FROM user_id), 'Default Alert Days Before Monthly Subscription Renewal', 'default_notification_days_before_monthly', '7', 'number', null),
+  ((SELECT id FROM user_id), 'Default Alert Days Before Quarterly Subscription Renewal', 'default_notification_days_before_quarterly', '14', 'number', null),
+  ((SELECT id FROM user_id), 'Default Alert Days Before Yearly Subscription Renewal', 'default_notification_days_before_yearly', '28', 'number', null),
+  ((SELECT id FROM user_id), 'Default Alert Days Before Free Trial Ends', 'default_notification_days_before_free_trial_ends', '3', 'number', null),
+  ((SELECT id FROM user_id), 'Theme', 'theme', 'auto', 'choice', ARRAY['Auto','Light', 'Dark']);
 
+-- After re-creating database, make sure at-least the first user is an admin.
+WITH user_id AS (
+    SELECT id
+    FROM auth.users
+    ORDER BY created_at ASC
+    LIMIT 1
+)
+INSERT INTO public.profiles (user_id, role) VALUES((SELECT id FROM user_id), 'admin');
 
+WITH user_id AS (
+    SELECT id
+    FROM auth.users
+    ORDER BY created_at ASC
+    LIMIT 1
+)
 INSERT INTO public.subscription_provider (name, icon, is_default, is_public, owner, description, website, category, unsubscribe_url)
 VALUES
   ('Netflix', 'https://cdn.brandfetch.io/ideQwN5lBE/w/496/h/901/theme/dark/symbol.png?c=1dxbfHSJFAPEGdCLU4o5B', true, true, (SELECT id FROM user_id), 'Streaming service for movies and TV shows', 'https://www.netflix.com', 'Entertainment', 'https://www.netflix.com/cancelplan'),

@@ -87,3 +87,33 @@ textarea,
         filter: invert(1);
     }
 }
+
+/* Table theming */
+.table {
+    color: var(--bs-body-color) !important;
+}
+
+.table thead th {
+    color: var(--bs-body-color) !important;
+    border-color: var(--bs-border-color) !important;
+}
+
+.table tbody td {
+    color: var(--bs-body-color) !important;
+    border-color: var(--bs-border-color) !important;
+}
+
+.table-hover tbody tr:hover {
+    background-color: var(--bs-navbar-bg) !important;
+    color: var(--bs-navbar-color) !important;
+}
+
+/* Card theming */
+.card {
+    background-color: var(--bs-body-bg) !important;
+    border-color: var(--bs-border-color) !important;
+}
+
+.card-body {
+    color: var(--bs-body-color) !important;
+}

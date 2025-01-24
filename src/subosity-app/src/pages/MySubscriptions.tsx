@@ -116,7 +116,8 @@ const MySubscriptions = () => {
             <div className="d-flex justify-content-between align-items-start mb-4">
                 <div>
                     <h3 className="mb-1" style={{ color: 'var(--bs-body-color)' }}>
-                        Your Subscriptions
+                        <FontAwesomeIcon icon={faHandHoldingDollar} className="me-2" />
+                        My Subscriptions
                     </h3>
                     {/* Replace text-muted with explicit color */}
                     <p className="mb-0" style={{ color: 'var(--bs-body-color)', opacity: 0.75 }}>
