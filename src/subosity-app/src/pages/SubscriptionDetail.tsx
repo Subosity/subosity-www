@@ -26,6 +26,7 @@ import EditSubscriptionModal from '../components/EditSubscriptionModal';
 import DeleteSubscriptionModal from '../components/DeleteSubscriptionModal';
 import SubscriptionAlertList from '../components/SubscriptionAlertList';
 import { useAlerts } from '../AlertsContext';
+import NoAlertsHero from '../components/NoAlertsHero';
 
 const getSeverityIcon = (severity: string) => {
     switch (severity) {
@@ -79,8 +80,21 @@ const SubscriptionDetail: React.FC = () => {
 
     useEffect(() => {
         if (id) {
-            fetchSubscription();
-            handleFilterChange('unread');
+            const loadData = async () => {
+                setLoading(true);
+                try {
+                    // Load subscription details first
+                    await fetchSubscription();
+                    // Then load alerts with initial filter
+                    const result = await fetchAlerts({ subscriptionId: id, filterType: 'unread' });
+                    setAlerts(result.alerts);
+                    setCounts(result.counts);
+                    setFilterType('unread');
+                } finally {
+                    setLoading(false);
+                }
+            };
+            loadData();
         }
     }, [id]);
 
@@ -327,9 +341,7 @@ const SubscriptionDetail: React.FC = () => {
                                 showProvider={true}
                             />
                         ) : (
-                            <div className="text-center text-muted py-4">
-                                No {filterType} alerts found
-                            </div>
+                            <NoAlertsHero filterType={filterType} />
                         )}
                     </Card.Body>
                 </Card>

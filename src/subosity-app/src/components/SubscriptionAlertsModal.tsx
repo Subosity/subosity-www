@@ -17,6 +17,7 @@ import { supabase } from '../supabaseClient';
 import { useToast } from '../ToastContext';
 import SubscriptionAlertList from './SubscriptionAlertList';
 import { useAlerts } from '../AlertsContext';
+import NoAlertsHero from './NoAlertsHero';
 
 interface SubscriptionAlert {
     id: string;
@@ -175,9 +176,7 @@ const SubscriptionAlertsModal: React.FC<Props> = ({ show, onHide }) => {
                         showProvider={true}
                     />
                 ) : (
-                    <div className="text-center text-muted py-4">
-                        No {filterType} alerts found
-                    </div>
+                    <NoAlertsHero filterType={filterType} />
                 )}
             </Offcanvas.Body>
         </Offcanvas>
