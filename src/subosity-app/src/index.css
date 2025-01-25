@@ -1,4 +1,5 @@
 :root {
+  /* Light theme colors */
   --bs-body-bg: #fff;
   --bs-body-color: #212529;
   --bs-navbar-bg: #dddddd;
@@ -6,9 +7,28 @@
   --bs-footer-bg: #dddddd;
   --bs-footer-color: #212529;
   --bs-border-color: #dee2e6;
+  --bs-text-muted: #6c757d;
+  
+  /* Bootstrap colors - Light theme */
+  --bs-primary: #0d6efd;
+  --bs-secondary: #6c757d;
+  --bs-success: #198754;
+  --bs-info: #0dcaf0;
+  --bs-warning: #ffc107;
+  --bs-danger: #dc3545;
+  
+  /* Component specific - Light theme */
+  --bs-dropdown-bg: #fff;
+  --bs-dropdown-link-color: #212529;
+  --bs-dropdown-link-hover-bg: #e9ecef;
+  --bs-dropdown-link-hover-color: #1e2125;
+  --bs-card-cap-bg: #f8f9fa;
+  --bs-hero-bg: #f8f9fa;
+  --bs-hero-color: #212529;
 }
 
 [data-theme="dark"] {
+  /* Dark theme colors */
   --bs-body-bg: #212529;
   --bs-body-color: #f8f9fa;
   --bs-navbar-bg: #343a40;
@@ -16,6 +36,24 @@
   --bs-footer-bg: #343a40;
   --bs-footer-color: #f8f9fa;
   --bs-border-color: #495057;
+  --bs-text-muted: #adb5bd;
+
+  /* Bootstrap colors - Dark theme (muted versions) */
+  --bs-primary: #0d47a1;
+  --bs-secondary: #495057;
+  --bs-success: #2e7d32;
+  --bs-info: #0288d1;
+  --bs-warning: #f57f17;
+  --bs-danger: #c62828;
+
+  /* Component specific - Dark theme */
+  --bs-dropdown-bg: #343a40;
+  --bs-dropdown-link-color: #f8f9fa;
+  --bs-dropdown-link-hover-bg: #495057;
+  --bs-dropdown-link-hover-color: #fff;
+  --bs-card-cap-bg: #343a40;
+  --bs-hero-bg: #343a40;
+  --bs-hero-color: #f8f9fa;
 }
 
 /* Form controls theming */
@@ -116,4 +154,74 @@ textarea,
 
 .card-body {
     color: var(--bs-body-color) !important;
+}
+
+/* Navigation theming */
+.navbar-nav .nav-link:hover,
+.dropdown-item:hover {
+  background-color: var(--bs-dropdown-link-hover-bg) !important;
+  color: var(--bs-dropdown-link-hover-color) !important;
+}
+
+.dropdown-menu {
+  background-color: var(--bs-dropdown-bg) !important;
+  border-color: var(--bs-border-color) !important;
+}
+
+.dropdown-item {
+  color: var(--bs-dropdown-link-color) !important;
+}
+
+/* Text utilities */
+.text-muted {
+  color: var(--bs-text-muted) !important;
+}
+
+/* Hero sections */
+.hero-section {
+  background-color: var(--bs-hero-bg) !important;
+  color: var(--bs-hero-color) !important;
+}
+
+/* Button variants with muted colors in dark mode */
+[data-theme="dark"] {
+  .btn-primary {
+    background-color: var(--bs-primary) !important;
+    border-color: var(--bs-primary) !important;
+  }
+  .btn-success {
+    background-color: var(--bs-success) !important;
+    border-color: var(--bs-success) !important;
+  }
+  .btn-danger {
+    background-color: var(--bs-danger) !important;
+    border-color: var(--bs-danger) !important;
+  }
+  .btn-warning {
+    background-color: var(--bs-warning) !important;
+    border-color: var(--bs-warning) !important;
+  }
+  .btn-info {
+    background-color: var(--bs-info) !important;
+    border-color: var(--bs-info) !important;
+  }
+}
+
+/* Badge variants */
+[data-theme="dark"] {
+  .badge.bg-primary {
+    background-color: var(--bs-primary) !important;
+  }
+  .badge.bg-success {
+    background-color: var(--bs-success) !important;
+  }
+  .badge.bg-danger {
+    background-color: var(--bs-danger) !important;
+  }
+  .badge.bg-warning {
+    background-color: var(--bs-warning) !important;
+  }
+  .badge.bg-info {
+    background-color: var(--bs-info) !important;
+  }
 }

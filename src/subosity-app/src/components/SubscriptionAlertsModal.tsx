@@ -8,11 +8,15 @@ import {
     faTimesCircle,
     faCircleInfo,
     faTriangleExclamation,
-    faCircleExclamation
+    faCircleExclamation,
+    faEnvelopesBulk,
+    faEnvelope,
+    faEnvelopeOpen
 } from '@fortawesome/free-solid-svg-icons';
 import { supabase } from '../supabaseClient';
 import { useToast } from '../ToastContext';
 import SubscriptionAlertList from './SubscriptionAlertList';
+import { useAlerts } from '../AlertsContext';
 
 interface SubscriptionAlert {
     id: string;
@@ -61,89 +65,51 @@ const getSeverityColor = (severity: string) => {
 };
 
 const SubscriptionAlertsModal: React.FC<Props> = ({ show, onHide }) => {
+    const { handleDismiss, handleSnooze, fetchAlerts } = useAlerts();
     const [alerts, setAlerts] = useState<SubscriptionAlert[]>([]);
     const [loading, setLoading] = useState(true);
-    const { addToast } = useToast();
+    const [filterType, setFilterType] = useState<'all' | 'unread' | 'read'>('unread');
+    const [counts, setCounts] = useState({ all: 0, unread: 0, read: 0 });
 
-    const fetchAlerts = async () => {
+    const loadAlerts = async (filter: 'all' | 'unread' | 'read') => {
+        setLoading(true);
         try {
-            setLoading(true);
-            const { data, error } = await supabase
-                .from('subscription_alerts')
-                .select(`
-                    *,
-                    subscription:subscription_id (
-                        subscription_provider (
-                            name,
-                            icon
-                        )
-                    )
-                `)
-                .order('created_at', { ascending: false });
-
-            if (error) throw error;
-            setAlerts(data || []);
+            const result = await fetchAlerts({ filterType: filter });
+            setAlerts(result.alerts);
+            setCounts(result.counts);
+            setFilterType(filter);
         } catch (error) {
             console.error('Error fetching alerts:', error);
-            addToast('Failed to load alerts', 'error');
         } finally {
             setLoading(false);
         }
     };
 
+    // Initial load when modal shows
     useEffect(() => {
         if (show) {
-            fetchAlerts();
+            loadAlerts('unread');
         }
     }, [show]);
 
-    const handleDismiss = async (alertId: string) => {
-        try {
-            const { error } = await supabase
-                .from('subscription_alerts')
-                .update({ read_at: new Date().toISOString() })
-                .eq('id', alertId);
+    const handleFilterChange = async (newFilter: 'all' | 'unread' | 'read') => {
+        if (newFilter === filterType) return;
+        await loadAlerts(newFilter);
+    };
 
-            if (error) throw error;
-            await fetchAlerts();
-            addToast('Alert dismissed', 'success');
-        } catch (error) {
-            console.error('Error dismissing alert:', error);
-            addToast('Failed to dismiss alert', 'error');
+    const onAlertDismiss = async (alertId: string) => {
+        const success = await handleDismiss(alertId);
+        if (success) {
+            // Refresh current view
+            await loadAlerts(filterType);
         }
     };
 
-    const handleSnooze = async (alertId: string) => {
-        try {
-            const alert = alerts.find(a => a.id === alertId);
-            if (!alert) return;
-
-            // Create new snoozed alert
-            const { error: insertError } = await supabase
-                .from('subscription_alerts')
-                .insert([{
-                    subscription_id: alert.subscription_id,
-                    title: alert.title,
-                    description: alert.description,
-                    severity: alert.severity,
-                    sent_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 24 hours from now
-                }]);
-
-            if (insertError) throw insertError;
-
-            // Mark current alert as read
-            const { error: updateError } = await supabase
-                .from('subscription_alerts')
-                .update({ read_at: new Date().toISOString() })
-                .eq('id', alertId);
-
-            if (updateError) throw updateError;
-
-            await fetchAlerts();
-            addToast('Alert snoozed for 24 hours', 'success');
-        } catch (error) {
-            console.error('Error snoozing alert:', error);
-            addToast('Failed to snooze alert', 'error');
+    const onAlertSnooze = async (alertId: string) => {
+        const success = await handleSnooze(alertId);
+        if (success) {
+            // Refresh current view
+            await loadAlerts(filterType);
         }
     };
 
@@ -161,12 +127,58 @@ const SubscriptionAlertsModal: React.FC<Props> = ({ show, onHide }) => {
                 </div>
             </Offcanvas.Header>
             <Offcanvas.Body>
-                <SubscriptionAlertList 
-                    alerts={alerts}
-                    onDismiss={handleDismiss}
-                    onSnooze={handleSnooze}
-                    showProvider={true}
-                />
+                <div className="mb-3">
+                    <div className="btn-group btn-group-sm w-100">
+                        <Button
+                            type="button"
+                            variant={filterType === 'all' ? 'primary' : 'outline-primary'}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                handleFilterChange('all');
+                            }}
+                        >
+                            <FontAwesomeIcon icon={faEnvelopesBulk} className="me-2"/>All ({counts.all})
+                        </Button>
+                        <Button
+                            type="button"
+                            variant={filterType === 'unread' ? 'primary' : 'outline-primary'}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                handleFilterChange('unread');
+                            }}
+                        >
+                            <FontAwesomeIcon icon={faEnvelope} className="me-2"/>Unread ({counts.unread})
+                        </Button>
+                        <Button
+                            type="button"
+                            variant={filterType === 'read' ? 'primary' : 'outline-primary'}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                handleFilterChange('read');
+                            }}
+                        >
+                            <FontAwesomeIcon icon={faEnvelopeOpen} className="me-2"/>Read ({counts.read})
+                        </Button>
+                    </div>
+                </div>
+                {loading ? (
+                    <div className="text-center">
+                        <div className="spinner-border" role="status">
+                            <span className="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                ) : alerts.length > 0 ? (
+                    <SubscriptionAlertList 
+                        alerts={alerts}
+                        onDismiss={onAlertDismiss}
+                        onSnooze={onAlertSnooze}
+                        showProvider={true}
+                    />
+                ) : (
+                    <div className="text-center text-muted py-4">
+                        No {filterType} alerts found
+                    </div>
+                )}
             </Offcanvas.Body>
         </Offcanvas>
     );

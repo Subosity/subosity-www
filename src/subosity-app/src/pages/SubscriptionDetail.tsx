@@ -14,7 +14,10 @@ import {
     faCheck,
     faCircleInfo,
     faTriangleExclamation,
-    faCircleExclamation
+    faCircleExclamation,
+    faEnvelopesBulk,
+    faEnvelope,
+    faEnvelopeOpen
 } from '@fortawesome/free-solid-svg-icons';
 import { supabase } from '../supabaseClient';
 import { useToast } from '../ToastContext';
@@ -22,6 +25,7 @@ import { Subscription, SubscriptionAlert } from '../types';
 import EditSubscriptionModal from '../components/EditSubscriptionModal';
 import DeleteSubscriptionModal from '../components/DeleteSubscriptionModal';
 import SubscriptionAlertList from '../components/SubscriptionAlertList';
+import { useAlerts } from '../AlertsContext';
 
 const getSeverityIcon = (severity: string) => {
     switch (severity) {
@@ -47,21 +51,36 @@ const getSeverityColor = (severity: string) => {
     }
 };
 
+interface Props {
+    onUpdate?: () => void;
+}
+
 const SubscriptionDetail: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const { addToast } = useToast();
+    const { handleDismiss, handleSnooze, fetchAlerts } = useAlerts();
     const [subscription, setSubscription] = useState<Subscription | null>(null);
     const [loading, setLoading] = useState(true);
     const [showEdit, setShowEdit] = useState(false);
     const [showDelete, setShowDelete] = useState(false);
+    const [filterType, setFilterType] = useState<'all' | 'unread' | 'read'>('unread');
     const [alerts, setAlerts] = useState<SubscriptionAlert[]>([]);
-    const [alertsLoading, setAlertsLoading] = useState(true);
+    const [counts, setCounts] = useState({ all: 0, unread: 0, read: 0 });
+
+    const handleFilterChange = async (newFilter: 'all' | 'unread' | 'read') => {
+        if (!id || newFilter === filterType) return;
+        
+        setFilterType(newFilter);
+        const result = await fetchAlerts({ subscriptionId: id, filterType: newFilter });
+        setAlerts(result.alerts);
+        setCounts(result.counts);
+    };
 
     useEffect(() => {
         if (id) {
             fetchSubscription();
-            fetchAlerts();
+            handleFilterChange('unread');
         }
     }, [id]);
 
@@ -122,79 +141,29 @@ const SubscriptionDetail: React.FC = () => {
         }
     };
 
-    const fetchAlerts = async () => {
-        try {
-            setAlertsLoading(true);
-            const { data, error } = await supabase
-                .from('subscription_alerts')
-                .select(`
-                    *,
-                    subscription:subscription_id (
-                        subscription_provider (
-                            name,
-                            icon
-                        )
-                    )
-                `)
-                .eq('subscription_id', id)
-                .is('read_at', null)
-                .order('created_at', { ascending: false });
-
-            if (error) throw error;
-            setAlerts(data || []);
-        } catch (error) {
-            console.error('Error fetching alerts:', error);
-            addToast('Failed to load alerts', 'error');
-        } finally {
-            setAlertsLoading(false);
+    const onAlertDismiss = async (alertId: string) => {
+        const success = await handleDismiss(alertId);
+        if (success) {
+            setAlerts(currentAlerts => 
+                currentAlerts.map(alert => 
+                    alert.id === alertId 
+                        ? { ...alert, read_at: new Date().toISOString() }
+                        : alert
+                )
+            );
         }
     };
 
-    const handleDismiss = async (alertId: string) => {
-        try {
-            const { error } = await supabase
-                .from('subscription_alerts')
-                .update({ read_at: new Date().toISOString() })
-                .eq('id', alertId);
-
-            if (error) throw error;
-            await fetchAlerts();
-            addToast('Alert dismissed', 'success');
-        } catch (error) {
-            console.error('Error dismissing alert:', error);
-            addToast('Failed to dismiss alert', 'error');
-        }
-    };
-
-    const handleSnooze = async (alertId: string) => {
-        try {
-            const alert = alerts.find(a => a.id === alertId);
-            if (!alert) return;
-
-            const { error: insertError } = await supabase
-                .from('subscription_alerts')
-                .insert([{
-                    subscription_id: alert.subscription_id,
-                    title: alert.title,
-                    description: alert.description,
-                    severity: alert.severity,
-                    sent_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
-                }]);
-
-            if (insertError) throw insertError;
-
-            const { error: updateError } = await supabase
-                .from('subscription_alerts')
-                .update({ read_at: new Date().toISOString() })
-                .eq('id', alertId);
-
-            if (updateError) throw updateError;
-
-            await fetchAlerts();
-            addToast('Alert snoozed for 24 hours', 'success');
-        } catch (error) {
-            console.error('Error snoozing alert:', error);
-            addToast('Failed to snooze alert', 'error');
+    const onAlertSnooze = async (alertId: string) => {
+        const success = await handleSnooze(alertId);
+        if (success) {
+            setAlerts(currentAlerts => 
+                currentAlerts.map(alert => 
+                    alert.id === alertId 
+                        ? { ...alert, read_at: new Date().toISOString() }
+                        : alert
+                )
+            );
         }
     };
 
@@ -305,23 +274,63 @@ const SubscriptionDetail: React.FC = () => {
                 </Card>
             )}
 
-            {alerts.length > 0 && (
+            {alerts && (
                 <Card className="mt-4" style={{ 
                     backgroundColor: 'var(--bs-body-bg)', 
                     color: 'var(--bs-body-color)',
                     borderColor: 'var(--bs-border-color)'
                 }}>
                     <Card.Body>
-                        <h5 className="mb-3">
-                            <FontAwesomeIcon icon={faBell} className="me-2" />
-                            Active Alerts
-                        </h5>
-                        <SubscriptionAlertList 
-                            alerts={alerts}
-                            onDismiss={handleDismiss}
-                            onSnooze={handleSnooze}
-                            showProvider={true}  // Add this line
-                        />
+                        <div className="d-flex justify-content-between align-items-center mb-3">
+                            <h5 className="mb-0">
+                                <FontAwesomeIcon icon={faBell} className="me-2" />
+                                Subscription Alerts
+                            </h5>
+                            <div className="btn-group btn-group-sm">
+                                <Button
+                                    type="button"
+                                    variant={filterType === 'all' ? 'primary' : 'outline-primary'}
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        handleFilterChange('all');
+                                    }}
+                                >
+                                   <FontAwesomeIcon icon={faEnvelopesBulk} className="me-2"/>All ({counts.all})
+                                </Button>
+                                <Button
+                                    type="button"
+                                    variant={filterType === 'unread' ? 'primary' : 'outline-primary'}
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        handleFilterChange('unread');
+                                    }}
+                                >
+                                    <FontAwesomeIcon icon={faEnvelope} className="me-2"/>Unread ({counts.unread})
+                                </Button>
+                                <Button
+                                    type="button"
+                                    variant={filterType === 'read' ? 'primary' : 'outline-primary'}
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        handleFilterChange('read');
+                                    }}
+                                >
+                                    <FontAwesomeIcon icon={faEnvelopeOpen} className="me-2"/>Read ({counts.read})
+                                </Button>
+                            </div>
+                        </div>
+                        {alerts.length > 0 ? (
+                            <SubscriptionAlertList 
+                                alerts={alerts}
+                                onDismiss={onAlertDismiss}
+                                onSnooze={onAlertSnooze}
+                                showProvider={true}
+                            />
+                        ) : (
+                            <div className="text-center text-muted py-4">
+                                No {filterType} alerts found
+                            </div>
+                        )}
                     </Card.Body>
                 </Card>
             )}

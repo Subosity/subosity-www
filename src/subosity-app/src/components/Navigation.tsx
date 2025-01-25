@@ -20,53 +20,21 @@ import UserAvatar from './UserAvatar'
 import SubscriptionAlertsModal from './SubscriptionAlertsModal'
 import { supabase } from '../supabaseClient'
 import { Theme } from 'react-select'
+import { useAlerts } from '../AlertsContext';
 
-const Navigation = () => {
+const Navigation: React.FC = () => {
     const [gravatarError, setGravatarError] = useState(false);
     const { theme, setTheme } = useTheme();
     const { user, logout } = useAuth();
-    
-    // Move this into useEffect to stay reactive to theme changes
-    const [isDarkMode, setIsDarkMode] = useState(false);
-    const [unreadAlerts, setUnreadAlerts] = useState(0);
+    const { unreadCount } = useAlerts(); // Get unread count from context
     const [showAlerts, setShowAlerts] = useState(false);
+    const [isDarkMode, setIsDarkMode] = useState(false);
 
     useEffect(() => {
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         const isDark = theme === 'Dark' || (theme === 'Auto' && prefersDark);
         setIsDarkMode(isDark);
-    }, [theme]); // Re-run when theme changes
-
-    useEffect(() => {
-        const fetchUnreadAlertsCount = async () => {
-            const { count, error } = await supabase
-                .from('subscription_alerts')
-                .select('*', { count: 'exact' })
-                .is('read_at', null);
-
-            if (!error && count !== null) {
-                setUnreadAlerts(count);
-            }
-        };
-
-        fetchUnreadAlertsCount();
-        
-        // Subscribe to realtime changes
-        const subscription = supabase
-            .channel('subscription_alerts')
-            .on('postgres_changes', {
-                event: '*',
-                schema: 'public',
-                table: 'subscription_alerts'
-            }, () => {
-                fetchUnreadAlertsCount();
-            })
-            .subscribe();
-
-        return () => {
-            subscription.unsubscribe();
-        };
-    }, []);
+    }, [theme]);
 
     const getInitials = (email: string) => {
         if (!email) return '??'
@@ -141,13 +109,13 @@ const Navigation = () => {
                         <li className="nav-item">
                             <Link className="nav-link" to="/">
                                 <FontAwesomeIcon icon={faHome} className="me-2" />
-                            Home</Link>
+                                Home</Link>
                         </li>
                         {user && (
                             <li className="nav-item">
                                 <Link className="nav-link" to="/mysubscriptions">
-                                <FontAwesomeIcon icon={faHandHoldingDollar} className="me-2" />
-                                Subscriptions</Link>
+                                    <FontAwesomeIcon icon={faHandHoldingDollar} className="me-2" />
+                                    Subscriptions</Link>
                             </li>
                         )}
                     </ul>
@@ -160,11 +128,11 @@ const Navigation = () => {
                                 className="nav-link p-0"
                                 onClick={() => setShowAlerts(true)}
                             >
-                                <FontAwesomeIcon icon={faBell} />
-                                {unreadAlerts > 0 && (
-                                    <span 
+                                <FontAwesomeIcon icon={faBell} className={(unreadCount > 0 ? 'text-warning' : 'text-secondary')} />
+                                {unreadCount > 0 && (
+                                    <span
                                         className="position-absolute badge rounded-pill bg-danger d-flex align-items-center justify-content-center"
-                                        style={{ 
+                                        style={{
                                             fontSize: '0.75em',
                                             padding: '0.75em 0.6em 1.0em 0.5em',
                                             minWidth: '1.5em',
@@ -174,7 +142,7 @@ const Navigation = () => {
                                             right: '0'
                                         }}
                                     >
-                                        {unreadAlerts}
+                                        {unreadCount}
                                         <span className="visually-hidden">unread alerts</span>
                                     </span>
                                 )}
@@ -229,7 +197,7 @@ const Navigation = () => {
                     )}
                 </div>
             </div>
-            <SubscriptionAlertsModal 
+            <SubscriptionAlertsModal
                 show={showAlerts}
                 onHide={() => setShowAlerts(false)}
             />

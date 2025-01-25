@@ -41,18 +41,31 @@ const getSeverityColor = (severity: string) => {
     }
 };
 
+const getSeverityBackground = (severity: string) => {
+    switch (severity) {
+        case 'danger':
+            return 'rgba(var(--bs-danger-rgb), 0.1)';
+        case 'warning':
+            return 'rgba(var(--bs-warning-rgb), 0.1)';
+        case 'info':
+        default:
+            return 'rgba(var(--bs-info-rgb), 0.1)';
+    }
+};
+
 const SubscriptionAlertList: React.FC<Props> = ({ alerts, onDismiss, onSnooze, showProvider = false }) => {
     return (
         <ListGroup>
             {alerts.map(alert => (
                 <ListGroup.Item
                     key={alert.id}
-                    className={!alert.read_at ? 'border-start border-4' : ''}
+                    className="mb-1"
                     style={{
-                        backgroundColor: 'var(--bs-body-bg)',
+                        backgroundColor: !alert.read_at ? getSeverityBackground(alert.severity) : 'var(--bs-body-bg)',
                         color: 'var(--bs-body-color)',
-                        borderColor: !alert.read_at ? getSeverityColor(alert.severity) : 'var(--bs-border-color)',
-                        borderLeftColor: getSeverityColor(alert.severity)
+                        borderColor: 'var(--bs-border-color)',
+                        border: '1px solid var(--bs-border-color)',
+                        borderRadius: '0.375rem'
                     }}
                 >
                     <div className="d-flex justify-content-between align-items-start">
