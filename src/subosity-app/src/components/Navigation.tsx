@@ -10,12 +10,16 @@ import {
     faGear,
     faPalette,
     faHandHoldingDollar,
-    faHome
+    faHome,
+    faBell
 } from '@fortawesome/free-solid-svg-icons'
 import { useTheme } from '../ThemeContext'
 import { useAuth } from '../AuthContext'
-import { Dropdown } from 'react-bootstrap'
+import { Button, Dropdown } from 'react-bootstrap'
 import UserAvatar from './UserAvatar'
+import SubscriptionAlertsModal from './SubscriptionAlertsModal'
+import { supabase } from '../supabaseClient'
+import { Theme } from 'react-select'
 
 const Navigation = () => {
     const [gravatarError, setGravatarError] = useState(false);
@@ -24,12 +28,45 @@ const Navigation = () => {
     
     // Move this into useEffect to stay reactive to theme changes
     const [isDarkMode, setIsDarkMode] = useState(false);
+    const [unreadAlerts, setUnreadAlerts] = useState(0);
+    const [showAlerts, setShowAlerts] = useState(false);
 
     useEffect(() => {
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         const isDark = theme === 'Dark' || (theme === 'Auto' && prefersDark);
         setIsDarkMode(isDark);
     }, [theme]); // Re-run when theme changes
+
+    useEffect(() => {
+        const fetchUnreadAlertsCount = async () => {
+            const { count, error } = await supabase
+                .from('subscription_alerts')
+                .select('*', { count: 'exact' })
+                .is('read_at', null);
+
+            if (!error && count !== null) {
+                setUnreadAlerts(count);
+            }
+        };
+
+        fetchUnreadAlertsCount();
+        
+        // Subscribe to realtime changes
+        const subscription = supabase
+            .channel('subscription_alerts')
+            .on('postgres_changes', {
+                event: '*',
+                schema: 'public',
+                table: 'subscription_alerts'
+            }, () => {
+                fetchUnreadAlertsCount();
+            })
+            .subscribe();
+
+        return () => {
+            subscription.unsubscribe();
+        };
+    }, []);
 
     const getInitials = (email: string) => {
         if (!email) return '??'
@@ -116,6 +153,34 @@ const Navigation = () => {
                     </ul>
                 </div>
                 <div className="ms-auto d-flex align-items-center">
+                    {user && (
+                        <div className="position-relative me-3">
+                            <Button
+                                variant="link"
+                                className="nav-link p-0"
+                                onClick={() => setShowAlerts(true)}
+                            >
+                                <FontAwesomeIcon icon={faBell} />
+                                {unreadAlerts > 0 && (
+                                    <span 
+                                        className="position-absolute badge rounded-pill bg-danger d-flex align-items-center justify-content-center"
+                                        style={{ 
+                                            fontSize: '0.75em',
+                                            padding: '0.75em 0.6em 1.0em 0.5em',
+                                            minWidth: '1.5em',
+                                            height: '1.5em',
+                                            transform: 'scale(0.8) translate(50%, -50%)',
+                                            top: '0',
+                                            right: '0'
+                                        }}
+                                    >
+                                        {unreadAlerts}
+                                        <span className="visually-hidden">unread alerts</span>
+                                    </span>
+                                )}
+                            </Button>
+                        </div>
+                    )}
                     {user ? (
                         <Dropdown align="end">
                             <Dropdown.Toggle variant="link" className="nav-link p-0 d-flex align-items-center" id="user-dropdown">
@@ -164,6 +229,10 @@ const Navigation = () => {
                     )}
                 </div>
             </div>
+            <SubscriptionAlertsModal 
+                show={showAlerts}
+                onHide={() => setShowAlerts(false)}
+            />
         </nav>
     )
 }

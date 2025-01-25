@@ -67,7 +67,7 @@ create table if not exists subscription_alerts (
   owner uuid references auth.users not null,
   title text not null,
   description text,
-  icon text,
+  severity text,
   created_at timestamp default current_timestamp,
   sent_at timestamp,
   read_at timestamp
@@ -391,3 +391,12 @@ VALUES
   ('Payeer Wallet', 'Payeer Wallet digital wallet', 'data:image/svg+xml;base64,...', true, true, (SELECT id FROM user_id)),
   ('AdvCash Wallet', 'AdvCash Wallet digital wallet', 'data:image/svg+xml;base64,...', true, true, (SELECT id FROM user_id)),
   ('Yandex Money Wallet', 'Yandex Money Wallet digital wallet', 'data:image/svg+xml;base64,...', true, true, (SELECT id FROM user_id));
+
+-- Add a subscription alert
+  -- INSERT INTO public.subscription_alerts(subscription_id, owner, title, description, severity, sent_at)
+  -- VALUES((SELECT id FROM public.subscription WHERE subscription_provider_id IN (SELECT id FROM subscription_provider WHERE name = 'Netflix') LIMIT 1), 
+  --   (SELECT id FROM auth.users WHERE email = 'jdoe@example.com'), 
+  --   'Netflix Subscription Alert', 
+  --   'Your Nextflix subscription is due soon. Please make sure you have enough funds in your account.', 
+  --   'info', '2021-10-01 00:00:00')
+  

@@ -16,6 +16,7 @@ import ForgotPassword from './pages/auth/ForgotPassword'
 import ChangePassword from './pages/auth/ChangePassword'
 import Profile from './pages/auth/Profile'
 import Preferences from './pages/auth/Preferences'
+import SubscriptionDetail from './pages/SubscriptionDetail'
 
 const App: React.FC = () => {
     return (
@@ -32,6 +33,7 @@ const App: React.FC = () => {
                                     <Route path="/privacy" element={<Privacy />} />
                                     <Route path="/terms" element={<Terms />} />
                                     <Route path="/mysubscriptions" element={<MySubscriptions />} />
+                                    <Route path="/subscription/:id" element={<SubscriptionDetail />} />
 
                                     {/* Auth Routes */}
                                     <Route path="/login" element={<Login />} />
