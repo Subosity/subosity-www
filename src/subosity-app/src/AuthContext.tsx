@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
 import { User } from '@supabase/supabase-js';
 import { supabase } from './supabaseClient';
+import { useToast } from './ToastContext';
 
 interface AuthContextType {
   user: User | null;
@@ -23,6 +24,7 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const toast = useToast();
 
   useEffect(() => {
     const getSession = async () => {
@@ -44,6 +46,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = async () => {
     await supabase.auth.signOut();
     setUser(null);
+  };
+
+  const handleError = (message: string) => {
+    if (toast) {
+      toast.addToast(message, 'error');
+    } else {
+      console.error(message);
+    }
   };
 
   return (

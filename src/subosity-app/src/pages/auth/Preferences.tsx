@@ -5,6 +5,7 @@ import { faGear, faEdit, faSort, faSortUp, faSortDown } from '@fortawesome/free-
 import { supabase } from '../../supabaseClient';
 import { useToast } from '../../ToastContext';
 import EditPreferenceModal from '../../components/EditPreferenceModal';
+import { useTheme } from '../../ThemeContext'; // Add this
 
 interface Preference {
     id: string;
@@ -26,10 +27,11 @@ const Preferences: React.FC = () => {
     const [sortField, setSortField] = useState<SortField>('title');
     const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
     const { addToast } = useToast();
+    const { theme } = useTheme(); // Add this
 
     useEffect(() => {
         fetchPreferences();
-    }, []);
+    }, [theme]); // Add theme as dependency
 
     const fetchPreferences = async () => {
         try {

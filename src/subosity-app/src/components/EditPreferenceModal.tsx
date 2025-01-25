@@ -4,6 +4,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faSave, faGear } from '@fortawesome/free-solid-svg-icons';
 import { supabase } from '../supabaseClient';
 import { useToast } from '../ToastContext';
+import { useTheme } from '../ThemeContext';
+import { Theme } from '../types';
+
+// Add theme value mapping
+const THEME_VALUES = {
+    'Auto': 'Auto',
+    'Light': 'Light',
+    'Dark': 'Dark'
+} as const;
 
 interface Props {
     show: boolean;
@@ -20,12 +29,20 @@ interface Props {
 }
 
 const EditPreferenceModal: React.FC<Props> = ({ show, onHide, preference, onSubmit }) => {
+    const { setTheme } = useTheme();
+    const { addToast } = useToast();
+
     // Initialize value based on data type
     const [value, setValue] = useState(() => {
         if (!preference?.preference_value) return '';
-        // Convert to number if data_type is number
         if (preference.data_type === 'number') {
             return Number(preference.preference_value);
+        }
+        // Convert theme values to proper case
+        if (preference.preference_key === 'theme') {
+            return Object.keys(THEME_VALUES).find(
+                key => THEME_VALUES[key as keyof typeof THEME_VALUES] === preference.preference_value
+            ) || 'Auto';
         }
         return preference.preference_value;
     });
@@ -41,21 +58,26 @@ const EditPreferenceModal: React.FC<Props> = ({ show, onHide, preference, onSubm
         }
     }, [preference]);
 
-    const { addToast } = useToast();
-
     const handleSubmit = async () => {
         try {
             if (!preference?.id) return;
 
+            // Convert display value back to storage value for theme
+            const storageValue = preference.preference_key === 'theme' 
+                ? THEME_VALUES[value as keyof typeof THEME_VALUES]
+                : value.toString();
+
             const { error } = await supabase
                 .from('preferences')
-                .update({ 
-                    // Convert back to string for storage
-                    preference_value: value.toString() 
-                })
+                .update({ preference_value: storageValue })
                 .eq('id', preference.id);
 
             if (error) throw error;
+
+            // If this is a theme preference, update the theme context
+            if (preference.preference_key === 'theme') {
+                setTheme(storageValue as Theme);
+            }
 
             addToast('Preference updated successfully', 'success');
             onSubmit();

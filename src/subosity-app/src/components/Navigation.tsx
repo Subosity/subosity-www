@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import md5 from 'md5'
 import { Link } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -18,12 +18,18 @@ import { Dropdown } from 'react-bootstrap'
 import UserAvatar from './UserAvatar'
 
 const Navigation = () => {
-    const [gravatarError, setGravatarError] = useState(false)
-    const { theme, setTheme } = useTheme()
-    const { user, logout } = useAuth()
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const [gravatarError, setGravatarError] = useState(false);
+    const { theme, setTheme } = useTheme();
+    const { user, logout } = useAuth();
+    
+    // Move this into useEffect to stay reactive to theme changes
+    const [isDarkMode, setIsDarkMode] = useState(false);
 
-    const isDarkMode = theme === 'dark' || (theme === 'auto' && prefersDark)
+    useEffect(() => {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const isDark = theme === 'Dark' || (theme === 'Auto' && prefersDark);
+        setIsDarkMode(isDark);
+    }, [theme]); // Re-run when theme changes
 
     const getInitials = (email: string) => {
         if (!email) return '??'
@@ -69,18 +75,18 @@ const Navigation = () => {
 
     const getThemeIcon = () => {
         switch (theme) {
-            case 'light': return faSun
-            case 'dark': return faMoon
+            case 'Light': return faSun
+            case 'Dark': return faMoon
             default: return faCircleHalfStroke
         }
     }
 
     const cycleTheme = () => {
-        const themes: ('light' | 'dark' | 'auto')[] = ['light', 'dark', 'auto']
-        const currentIndex = themes.indexOf(theme)
-        const nextIndex = (currentIndex + 1) % themes.length
-        setTheme(themes[nextIndex])
-    }
+        const themes: Theme[] = ['Auto', 'Light', 'Dark'];
+        const currentIndex = themes.indexOf(theme);
+        const nextIndex = (currentIndex + 1) % themes.length;
+        setTheme(themes[nextIndex]);
+    };
 
     return (
         <nav className={`navbar navbar-expand-lg ${isDarkMode ? 'navbar-dark' : 'navbar-light'}`}
