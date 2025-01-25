@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash, faRotate, faHand, faBell } from '@fortawesome/free-solid-svg-icons';
 import { Subscription } from '../types';
 import { useAlerts } from '../AlertsContext';
+import { useNavigate } from 'react-router-dom';
 
 interface Props {
     subscription: Subscription;
@@ -12,8 +13,17 @@ interface Props {
 }
 
 const SubscriptionListItem: React.FC<Props> = ({ subscription, onEdit, onDelete }) => {
+    const navigate = useNavigate();
     const [alertCount, setAlertCount] = useState(0);
     const { getUnreadCountForSubscription } = useAlerts();
+
+    const handleItemClick = (e: React.MouseEvent) => {
+        // Prevent navigation if clicking on action buttons
+        const target = e.target as HTMLElement;
+        if (target.closest('button')) return;
+        
+        navigate(`/subscription/${subscription.id}`);
+    };
 
     useEffect(() => {
         const fetchAlertCount = async () => {
@@ -24,12 +34,16 @@ const SubscriptionListItem: React.FC<Props> = ({ subscription, onEdit, onDelete 
     }, [subscription.id]);
 
     return (
-        <div className="d-flex align-items-center p-3 border-bottom"
+        <div 
+            className="d-flex align-items-center p-3 border-bottom"
             style={{
                 backgroundColor: 'var(--bs-body-bg)',
                 color: 'var(--bs-body-color)',
-                borderColor: 'var(--bs-border-color) !important'
-            }}>
+                borderColor: 'var(--bs-border-color) !important',
+                cursor: 'pointer'  // Add cursor pointer
+            }}
+            onClick={handleItemClick}  // Add click handler
+        >
             <div className="rounded-circle bg-light d-flex align-items-center justify-content-center p-1 me-3"
                 style={{
                     width: '40px',

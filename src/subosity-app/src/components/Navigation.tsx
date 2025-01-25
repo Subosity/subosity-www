@@ -15,7 +15,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { useTheme } from '../ThemeContext'
 import { useAuth } from '../AuthContext'
-import { Button, Dropdown } from 'react-bootstrap'
+import { Button, Dropdown, Navbar, Nav, Container } from 'react-bootstrap'
 import UserAvatar from './UserAvatar'
 import SubscriptionAlertsModal from './SubscriptionAlertsModal'
 import { supabase } from '../supabaseClient'
@@ -94,115 +94,112 @@ const Navigation: React.FC = () => {
     };
 
     return (
-        <nav className={`navbar navbar-expand-lg ${isDarkMode ? 'navbar-dark' : 'navbar-light'}`}
-            style={{ backgroundColor: 'var(--bs-navbar-bg)', color: 'var(--bs-navbar-color)' }}>
-            <div className="container">
-                <Link className="navbar-brand d-flex align-items-center" to="/">
+        <Navbar expand="lg" className="navbar">
+            <Container>
+                <Navbar.Brand as={Link} to="/" className="navbar-brand d-flex align-items-center">
                     <img src="/favicon.svg" className="me-2" style={{ height: '22px' }} />
                     <span>Subosity</span>
-                </Link>
-                <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span className="navbar-toggler-icon"></span>
-                </button>
-                <div className="collapse navbar-collapse" id="navbarNav">
-                    <ul className="navbar-nav">
-                        <li className="nav-item">
-                            <Link className="nav-link" to="/">
-                                <FontAwesomeIcon icon={faHome} className="me-2" />
-                                Home</Link>
-                        </li>
+                </Navbar.Brand>
+                
+                <Navbar.Toggle aria-controls="navbar-nav" />
+                
+                <Navbar.Collapse id="navbar-nav">
+                    <Nav className="me-auto navbar-nav">
+                        <Nav.Link as={Link} to="/">
+                            <FontAwesomeIcon icon={faHome} className="me-2" />
+                            Home
+                        </Nav.Link>
                         {user && (
-                            <li className="nav-item">
-                                <Link className="nav-link" to="/mysubscriptions">
-                                    <FontAwesomeIcon icon={faHandHoldingDollar} className="me-2" />
-                                    Subscriptions</Link>
-                            </li>
+                            <Nav.Link as={Link} to="/mysubscriptions">
+                                <FontAwesomeIcon icon={faHandHoldingDollar} className="me-2" />
+                                Subscriptions
+                            </Nav.Link>
                         )}
-                    </ul>
-                </div>
-                <div className="ms-auto d-flex align-items-center">
-                    {user && (
-                        <div className="position-relative me-3">
-                            <Button
-                                variant="link"
-                                className="nav-link p-0"
-                                onClick={() => setShowAlerts(true)}
-                            >
-                                <FontAwesomeIcon icon={faBell} className={(unreadCount > 0 ? 'text-warning' : 'text-secondary')} />
-                                {unreadCount > 0 && (
-                                    <span
-                                        className="position-absolute badge rounded-pill bg-danger d-flex align-items-center justify-content-center"
-                                        style={{
-                                            fontSize: '0.75em',
-                                            padding: '0.75em 0.6em 1.0em 0.5em',
-                                            minWidth: '1.5em',
-                                            height: '1.5em',
-                                            transform: 'scale(0.8) translate(50%, -50%)',
-                                            top: '0',
-                                            right: '0'
-                                        }}
-                                    >
-                                        {unreadCount}
-                                        <span className="visually-hidden">unread alerts</span>
-                                    </span>
-                                )}
-                            </Button>
-                        </div>
-                    )}
-                    {user ? (
-                        <Dropdown align="end">
-                            <Dropdown.Toggle variant="link" className="nav-link p-0 d-flex align-items-center" id="user-dropdown">
-                                <UserAvatar email={user?.email} size={32} />
-                            </Dropdown.Toggle>
-                            <Dropdown.Menu
-                                style={{
-                                    backgroundColor: 'var(--bs-navbar-bg)',
-                                    marginLeft: '1rem',
-                                    minWidth: '200px'
-                                }}>
-                                <Dropdown.Item as={Link} to="/profile" className="text-inherit">
-                                    <FontAwesomeIcon icon={faUser} className="me-2" />
-                                    My Account
-                                </Dropdown.Item>
-                                <Dropdown.Item as={Link} to="/preferences" className="text-inherit">
-                                    <FontAwesomeIcon icon={faGear} className="me-2" />
-                                    Preferences
-                                </Dropdown.Item>
-                                <Dropdown.Item onClick={cycleTheme} className="text-inherit">
+                    </Nav>
+
+                    <Nav className="navbar-nav d-flex align-items-center">
+                        {user && (
+                            <div className="position-relative me-3">
+                                <Button
+                                    variant="link"
+                                    className="nav-link p-0"
+                                    onClick={() => setShowAlerts(true)}
+                                >
+                                    <FontAwesomeIcon 
+                                        icon={faBell} 
+                                        className={unreadCount > 0 ? "text-warning" : "text-secondary"} 
+                                    />
+                                    {unreadCount > 0 && (
+                                        <span
+                                            className="position-absolute badge rounded-pill bg-danger d-flex align-items-center justify-content-center"
+                                            style={{
+                                                fontSize: '0.75em',
+                                                padding: '0.75em 0.6em 1.0em 0.5em',
+                                                minWidth: '1.5em',
+                                                height: '1.5em',
+                                                transform: 'scale(0.8) translate(50%, -50%)',
+                                                top: '0',
+                                                right: '0'
+                                            }}
+                                        >
+                                            {unreadCount}
+                                            <span className="visually-hidden">unread alerts</span>
+                                        </span>
+                                    )}
+                                </Button>
+                            </div>
+                        )}
+                        {user ? (
+                            <Dropdown align="end">
+                                <Dropdown.Toggle variant="link" className="nav-link p-0 d-flex align-items-center">
+                                    <UserAvatar email={user?.email} size={32} />
+                                </Dropdown.Toggle>
+                                <Dropdown.Menu>
+                                    <Dropdown.Item as={Link} to="/profile">
+                                        <FontAwesomeIcon icon={faUser} className="me-2" />
+                                        My Account
+                                    </Dropdown.Item>
+                                    <Dropdown.Item as={Link} to="/preferences">
+                                        <FontAwesomeIcon icon={faGear} className="me-2" />
+                                        Preferences
+                                    </Dropdown.Item>
+                                    <Dropdown.Item onClick={cycleTheme}>
+                                        <FontAwesomeIcon icon={getThemeIcon()} className="me-2" />
+                                        Theme ({theme})
+                                    </Dropdown.Item>
+                                    <Dropdown.Divider />
+                                    <Dropdown.Item onClick={logout}>
+                                        <FontAwesomeIcon icon={faUser} className="me-2" />
+                                        Logout
+                                    </Dropdown.Item>
+                                </Dropdown.Menu>
+                            </Dropdown>
+                        ) : (
+                            <>
+                                <Button
+                                    variant="link"
+                                    className="nav-link"
+                                    onClick={cycleTheme}
+                                >
                                     <FontAwesomeIcon icon={getThemeIcon()} className="me-2" />
-                                    Theme ({theme})
-                                </Dropdown.Item>
-                                <Dropdown.Divider />
-                                <Dropdown.Item onClick={logout} className="text-inherit">
-                                    <FontAwesomeIcon icon={faUser} className="me-2" />
-                                    Logout
-                                </Dropdown.Item>
-                            </Dropdown.Menu>
-                        </Dropdown>
-                    ) : (
-                        <>
-                            <button
-                                className="btn btn-link nav-link"
-                                onClick={cycleTheme}
-                                aria-label="Toggle theme"
-                            >
-                                <FontAwesomeIcon icon={getThemeIcon()} className="me-2" />
-                                Theme
-                            </button>
-                            <span className="ms-2 me-2">|</span>
-                            <Link className="nav-link" to="/signup">Sign Up</Link>
-                            <span className="ms-2 me-2">|</span>
-                            <Link className="nav-link" to="/login">Login</Link>
-                        </>
-                    )}
-                </div>
-            </div>
+                                    Theme
+                                </Button>
+                                <div className="ms-2 me-2">|</div>
+                                <Nav.Link as={Link} to="/signup">Sign Up</Nav.Link>
+                                <div className="ms-2 me-2">|</div>
+                                <Nav.Link as={Link} to="/login">Login</Nav.Link>
+                            </>
+                        )}
+                    </Nav>
+                </Navbar.Collapse>
+            </Container>
+
             <SubscriptionAlertsModal
                 show={showAlerts}
                 onHide={() => setShowAlerts(false)}
             />
-        </nav>
-    )
-}
+        </Navbar>
+    );
+};
 
 export default Navigation

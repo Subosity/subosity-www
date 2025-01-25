@@ -52,8 +52,26 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
         ? (prefersDark ? 'dark' : 'light')
         : theme.toLowerCase();
     
-    root.setAttribute('data-theme', themeValue);
-    localStorage.setItem('theme', theme);
+    console.log('Setting theme to:', themeValue); // Debug log
+    root.setAttribute('data-bs-theme', themeValue);
+    
+    // Add debug logging for actual computed colors on navbar elements
+    requestAnimationFrame(() => {
+        const navbar = document.querySelector('.navbar');
+        const navLink = document.querySelector('.nav-link');
+        
+        console.log('Theme Debug:', {
+            theme: themeValue,
+            cssVars: {
+                navColor: getComputedStyle(root).getPropertyValue('--bs-navbar-color').trim(),
+                navBg: getComputedStyle(root).getPropertyValue('--bs-navbar-bg').trim()
+            },
+            computedColors: navbar && navLink ? {
+                navbarBg: getComputedStyle(navbar).backgroundColor,
+                navLinkColor: getComputedStyle(navLink).color
+            } : null
+        });
+    });
   }, [theme]);
 
   const updateTheme = async (newTheme: Theme) => {
