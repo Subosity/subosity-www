@@ -17,17 +17,18 @@ const SubscriptionCard: React.FC<Props> = ({ subscription, onEdit, onDelete }) =
         borderColor: 'var(--bs-border-color)'
     }}>
         <Card.Body>
-            <div className="d-flex justify-content-between align-items-start">
-                <div className="d-flex align-items-center">
+            <div className="d-flex justify-content-between align-items-start w-100">
+                <div className="d-flex align-items-center me-3" style={{ minWidth: 0, flex: '1 1 auto' }}>
                     <div className="rounded-circle bg-light d-flex align-items-center justify-content-center p-1" 
                          style={{ 
                              width: '48px', 
                              height: '48px',
-                             backgroundColor: 'var(--bs-white)'
+                             backgroundColor: 'var(--bs-white)',
+                             flexShrink: 0
                          }}>
                         <img 
-                            src={subscription.providerIcon} // Changed from subscription.icon
-                            alt={subscription.providerName} // Changed from subscription.name
+                            src={subscription.providerIcon}
+                            alt={subscription.providerName}
                             style={{ 
                                 width: '40px', 
                                 height: '40px', 
@@ -35,22 +36,24 @@ const SubscriptionCard: React.FC<Props> = ({ subscription, onEdit, onDelete }) =
                             }}
                         />
                     </div>
-                    <div className="ms-3">
-                        <h5 className="mb-1" style={{ color: 'var(--bs-body-color)' }}>
+                    <div className="ms-3" style={{ minWidth: 0, flex: '1 1 auto' }}>
+                        <h5 className="mb-1 text-truncate" style={{ color: 'var(--bs-body-color)' }}>
                             {subscription.providerName}
                         </h5>
                         {subscription.nickname ? (
-                            <div className="small mb-1" style={{ 
-                                color: 'var(--bs-body-color)',
-                                opacity: 0.75 
-                            }}>
+                            <div className="small mb-1 text-truncate" 
+                                 style={{ 
+                                     color: 'var(--bs-body-color)',
+                                     opacity: 0.75
+                                 }}>
                                 <i>({subscription.nickname})</i>
                             </div>
                         ) : (
-                            <div className="small mb-1" style={{ 
-                                color: 'var(--bs-body-color)',
-                                opacity: 0.75 
-                            }}>
+                            <div className="small mb-1 text-truncate" 
+                                 style={{ 
+                                     color: 'var(--bs-body-color)',
+                                     opacity: 0.75
+                                 }}>
                                 {subscription.providerDescription}
                             </div>
                         )}
@@ -59,7 +62,7 @@ const SubscriptionCard: React.FC<Props> = ({ subscription, onEdit, onDelete }) =
                         </div>
                     </div>
                 </div>
-                <div>
+                <div style={{ flexShrink: 0 }}>
                     <Button variant="link" className="p-0 me-2" 
                             style={{ color: 'var(--bs-body-color)' }}
                             onClick={() => onEdit(subscription)}>

@@ -75,10 +75,14 @@ const selectStyles = {
     })
 };
 
-const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription, onSubmit, onCancel }, ref) => {
-    // Add console.log to debug
-    console.log('Subscription prop:', subscription);
+interface TouchedFields {
+    [key: string]: boolean;
+}
 
+const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription, onSubmit, onCancel }, ref) => {
+    // Add touched state
+    const [touched, setTouched] = useState<TouchedFields>({});
+    
     const [providers, setProviders] = useState<any[]>([]);
     const [paymentProviders, setPaymentProviders] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -140,11 +144,7 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
                 if (subscriptionResponse.error) throw subscriptionResponse.error;
                 if (paymentResponse.error) throw paymentResponse.error;
 
-                console.log('Providers from DB:', {
-                    subscription: subscriptionResponse.data,
-                    payment: paymentResponse.data
-                });
-
+                
                 setProviders(subscriptionResponse.data || []);
                 setPaymentProviders(paymentResponse.data || []);
 
@@ -158,11 +158,6 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
 
         fetchProviders();
     }, []);
-
-    // Debug log when providers change
-    useEffect(() => {
-        console.log('Current payment providers state:', paymentProviders);
-    }, [paymentProviders]);
 
     // Update handleSubmit function
     const handleSubmit = (e: React.FormEvent) => {
@@ -349,11 +344,12 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
                 <Select
                     value={paymentProviders.find(p => p.id === formData.paymentProviderId)}
                     onChange={(option) => {
-                        console.log('Selected option:', option); // Debug log
-                        setFormData({
-                            ...formData,
-                            paymentProviderId: option?.id || ''
-                        });
+                        setFormData(prev => ({
+                            ...prev,
+                            paymentProviderId: option?.id || '',
+                            // Only set paymentDetails if it's empty
+                            paymentDetails: !prev.paymentDetails ? option?.name || '' : prev.paymentDetails
+                        }));
                         handleFieldTouch('paymentProviderId');
                     }}
                     onBlur={() => handleFieldTouch('paymentProviderId')}
