@@ -6,6 +6,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 
 interface AuthContextType {
   user: User | null;
+  loading: boolean;  // Add loading to interface
   logout: () => Promise<void>;
   requireAuth: () => void;
 }
@@ -26,6 +27,7 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);  // Add loading state
   const { addToast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
@@ -69,21 +71,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   useEffect(() => {
     const getSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setUser(session?.user ?? null);
-
-      // Handle returnUrl after successful login
-      if (session?.user && location.pathname === '/login') {
-        const params = new URLSearchParams(location.search);
-        const returnUrl = params.get('returnUrl');
-        
-        if (returnUrl && isValidReturnUrl(decodeURIComponent(returnUrl))) {
-          //console.log('Redirecting to:', decodeURIComponent(returnUrl));
-          navigate(decodeURIComponent(returnUrl));
-        } else {
-          //console.log('No valid returnUrl, going to home');
-          navigate('/');
-        }
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        setUser(session?.user ?? null);
+      } finally {
+        setLoading(false);  // Set loading to false when done
       }
     };
 
@@ -106,7 +98,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, logout, requireAuth }}>
+    <AuthContext.Provider value={{ user, loading, logout, requireAuth }}>
       {children}
     </AuthContext.Provider>
   );
