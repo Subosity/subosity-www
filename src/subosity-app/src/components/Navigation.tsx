@@ -57,7 +57,7 @@ const Navigation: React.FC = () => {
     };
 
     return (
-        <Navbar expand="lg" className="navbar">
+        <Navbar expand="lg" className="navbar shadow-sm">
             <Container>
                 <Navbar.Brand as={Link} to="/" className="navbar-brand d-flex align-items-center">
                     <img src="/favicon.svg" className="me-2" style={{ height: '22px' }} />

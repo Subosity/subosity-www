@@ -9,7 +9,7 @@ const Footer = () => {
   const { user, logout } = useAuth();
   
   return (
-    <footer className="footer mt-auto py-3 opacity-75"
+    <footer className="footer mt-auto py-3 opacity-75 shadow-sm"
       style={{ 
         backgroundColor: 'var(--bs-footer-bg)', 
         color: 'var(--bs-footer-color)',
