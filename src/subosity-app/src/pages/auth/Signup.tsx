@@ -49,7 +49,7 @@ const Signup: React.FC = () => {
           data: {
             email_confirmed: false
           },
-          emailRedirectTo: `${window.location.origin}/auth/callback`
+          emailRedirectTo: `${import.meta.env.VITE_BASE_URL}/mysubscriptions`
         }
       });
 

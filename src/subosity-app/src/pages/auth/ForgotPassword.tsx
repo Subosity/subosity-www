@@ -14,11 +14,15 @@ function ForgotPassword() {
   const navigate = useNavigate();
 
   const handleForgotPassword = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+    e.preventDefault();    
     setLoading(true);
+
+    console.log('Attempting to send password reset email to:' + email 
+      + " with redirect to: " + import.meta.env.VITE_BASE_URL + '/change-password');
+
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth/callback`
+        redirectTo: import.meta.env.VITE_BASE_URL + '/change-password'
       });
       if (error) {
         setError(error.message);

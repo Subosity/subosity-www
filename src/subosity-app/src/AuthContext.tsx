@@ -32,16 +32,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const isValidReturnUrl = (url: string): boolean => {
     try {
-      const returnUrl = new URL(url, window.location.origin);
+      const baseUrl = import.meta.env.VITE_BASE_URL || window.location.origin;
+      const returnUrl = new URL(url, baseUrl);
       const hostname = returnUrl.hostname.toLowerCase();
+      
+      // Parse the base URL to get its hostname
+      const baseHostname = new URL(baseUrl).hostname.toLowerCase();
       
       return hostname === 'localhost' ||
              hostname === '127.0.0.1' ||
+             hostname === baseHostname ||
              hostname.endsWith('.subosity.com') ||
-             // If it's a relative URL (no hostname), it's valid
-             returnUrl.origin === window.location.origin;
+             returnUrl.origin === baseUrl;
     } catch {
-      // If URL parsing fails, check if it's a relative path
       return url.startsWith('/') && !url.startsWith('//');
     }
   };
