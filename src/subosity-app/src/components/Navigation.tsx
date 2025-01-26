@@ -41,48 +41,6 @@ const Navigation: React.FC = () => {
         setIsDarkMode(isDark);
     }, [theme]);
 
-    const getInitials = (email: string) => {
-        if (!email) return '??'
-        const parts = email.split('@')
-        return parts[0].substring(0, 2).toUpperCase()
-    }
-
-    const getAvatarContent = () => {
-        if (!user?.email) return (
-            <div className="rounded-circle bg-secondary d-flex align-items-center justify-content-center"
-                style={{ width: '32px', height: '32px' }}>
-                <FontAwesomeIcon icon={faUser} className="text-light" />
-            </div>
-        )
-
-        const email = user.email.toLowerCase().trim()
-        const hash = md5(email)
-        const gravatarUrl = `https://secure.gravatar.com/avatar/${hash}?s=32&d=mp`
-
-        return (
-            <div className="rounded-circle bg-secondary d-flex align-items-center justify-content-center"
-                style={{ width: '32px', height: '32px' }}>
-                {!gravatarError ? (
-                    <img
-                        src={gravatarUrl}
-                        onError={() => setGravatarError(true)}
-                        alt="User avatar"
-                        className="rounded-circle"
-                        style={{ width: '32px', height: '32px', objectFit: 'cover' }}
-                    />
-                ) : (
-                    <span style={{
-                        color: 'var(--bs-navbar-color)',
-                        fontSize: '14px',
-                        fontWeight: 'bold'
-                    }}>
-                        {getInitials(email)}
-                    </span>
-                )}
-            </div>
-        )
-    }
-
     const getThemeIcon = () => {
         switch (theme) {
             case 'Light': return faSun
@@ -174,7 +132,7 @@ const Navigation: React.FC = () => {
                         )}
                         {user ? (
                             <Dropdown align="end">
-                                <Dropdown.Toggle variant="link" className="nav-link p-0 d-flex align-items-center">
+                                <Dropdown.Toggle variant="link" className="nav-link d-flex align-items-center gap-2">
                                     <UserAvatar email={user?.email} size={32} />
                                 </Dropdown.Toggle>
                                 <Dropdown.Menu>

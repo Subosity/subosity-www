@@ -75,10 +75,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const returnUrl = params.get('returnUrl');
         
         if (returnUrl && isValidReturnUrl(decodeURIComponent(returnUrl))) {
-          console.log('Redirecting to:', decodeURIComponent(returnUrl));
+          //console.log('Redirecting to:', decodeURIComponent(returnUrl));
           navigate(decodeURIComponent(returnUrl));
         } else {
-          console.log('No valid returnUrl, going to home');
+          //console.log('No valid returnUrl, going to home');
           navigate('/');
         }
       }

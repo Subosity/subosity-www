@@ -40,7 +40,7 @@ const Signup: React.FC = () => {
         throw new Error('Password must be at least 6 characters.');
       }
 
-      console.log('Attempting signup with:', { email }); // Debug log
+      //console.log('Attempting signup with:', { email }); // Debug log
 
       const { data, error: signUpError } = await supabase.auth.signUp({
         email,
@@ -53,7 +53,7 @@ const Signup: React.FC = () => {
         }
       });
 
-      console.log('Signup response:', { data, error: signUpError }); // Debug log
+      //console.log('Signup response:', { data, error: signUpError }); // Debug log
 
       if (signUpError) {
         // Log full error details

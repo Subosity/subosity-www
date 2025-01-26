@@ -195,20 +195,54 @@ ALTER TABLE public.profiles FORCE ROW LEVEL SECURITY;
 
 
 CREATE OR REPLACE FUNCTION public.create_profile()
-RETURNS trigger
+RETURNS TRIGGER
 LANGUAGE plpgsql
+SECURITY DEFINER
 AS $$
 BEGIN
-    INSERT INTO public.profiles (user_id, role)
-    VALUES (NEW.id, 'user');
+    INSERT INTO public.profiles (user_id, created_at)
+    VALUES (NEW.id, NOW());
     RETURN NEW;
 END;
 $$;
+
 
 CREATE TRIGGER after_user_insert
 AFTER INSERT ON auth.users
 FOR EACH ROW
 EXECUTE FUNCTION public.create_profile();
+
+-- Grant permissions for the trigger to create profiles
+GRANT USAGE ON SCHEMA public TO postgres, anon, authenticated, service_role;
+GRANT ALL ON public.profiles TO postgres, anon, authenticated, service_role;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO postgres, anon, authenticated, service_role;
+
+-- Update RLS policies for profiles table
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+
+-- Allow any authenticated user to view their own profile
+CREATE POLICY "Allow users to insert their own profile" 
+ON public.profiles 
+FOR INSERT 
+TO authenticated 
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY "Allow users to select their own profile" 
+ON public.profiles 
+FOR SELECT 
+TO authenticated 
+USING (user_id = auth.uid());
+
+-- Allow users to update their own profile
+CREATE POLICY "Users can update own profile" ON public.profiles
+FOR UPDATE
+USING (auth.uid() = user_id)
+WITH CHECK (auth.uid() = user_id);
+
+-- Allow users to delete their own profile
+CREATE POLICY "Users can delete own profile" ON public.profiles
+FOR DELETE
+USING (auth.uid() = user_id);
 
 --------------------------------------------------------------------------------
 -- SUBSCRIPTION_ALERTS TABLE POLICIES

@@ -52,7 +52,7 @@ const Profile: React.FC = () => {
               <UserAvatar email={user?.email} size={128} />
               <h4 className="mt-3 mb-1">{user?.email}</h4>
               <p className="text-muted small">
-                Your avatar is automatically loaded from Gravatar
+                Your avatar is automatically loaded from <a href="https://gravatar.com/" target="_blank">Gravatar</a>, if present.
               </p>
             </div>
 

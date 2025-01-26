@@ -5,7 +5,7 @@ import { AuthError } from '@supabase/supabase-js';
 import { supabase } from '../../supabaseClient';
 import { useToast } from '../../ToastContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faRotateRight, faSignIn, faSignInAlt, faUserPlus } from '@fortawesome/free-solid-svg-icons';
+import { faRotateRight, faSignIn, faSignInAlt, faUserPlus, faShieldAlt } from '@fortawesome/free-solid-svg-icons';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState<string>('');
@@ -15,6 +15,10 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { addToast } = useToast();
+
+  // Get returnUrl from query params
+  const params = new URLSearchParams(location.search);
+  const returnUrl = params.get('returnUrl');
 
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -30,10 +34,6 @@ const Login: React.FC = () => {
         addToast('Login failed', 'error');
       } else {
         addToast('Successfully logged in', 'success');
-        // Get returnUrl from query params
-        const params = new URLSearchParams(location.search);
-        const returnUrl = params.get('returnUrl');
-        
         if (returnUrl) {
           navigate(decodeURIComponent(returnUrl));
         } else {
@@ -55,7 +55,17 @@ const Login: React.FC = () => {
         <Card.Body>
           <h1 className="text-center mb-4">
             <FontAwesomeIcon icon={faSignIn} className="me-3" />
-            Login</h1>
+            Login
+          </h1>
+
+          {/* Add Alert for protected route access */}
+          {returnUrl && (
+            <Alert variant="info" className="mb-4">
+              <FontAwesomeIcon icon={faShieldAlt} className="me-2" />
+              Please log in to access the requested page.
+            </Alert>
+          )}
+
           <p className="text-center mb-4 pb-4" style={{ borderBottom: '1px solid #7d7d7d' }}>
             Please enter your email and password to log in. If you don't have an account, you can sign up.
           </p>

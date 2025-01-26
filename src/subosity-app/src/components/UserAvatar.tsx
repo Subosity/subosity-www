@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import md5 from 'md5'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser } from '@fortawesome/free-solid-svg-icons'
+import { useTheme } from '../ThemeContext'
 
 interface UserAvatarProps {
     email?: string | null;
@@ -9,7 +10,11 @@ interface UserAvatarProps {
 }
 
 const UserAvatar: React.FC<UserAvatarProps> = ({ email, size = 32 }) => {
-    const [gravatarError, setGravatarError] = useState(false)
+    const [gravatarError, setGravatarError] = useState(true)
+    const { theme } = useTheme()
+    const isDarkMode = theme === 'Dark' || (theme === 'Auto' && window.matchMedia('(prefers-color-scheme: dark)').matches)
+    const bgClass = isDarkMode ? 'bg-light' : 'bg-secondary'
+    const textClass = isDarkMode ? 'text-dark' : 'text-light'
 
     const getInitials = (email: string) => {
         if (!email) return '??'
@@ -19,18 +24,18 @@ const UserAvatar: React.FC<UserAvatarProps> = ({ email, size = 32 }) => {
 
     if (!email) {
         return (
-            <div className="rounded-circle bg-secondary d-flex align-items-center justify-content-center"
+            <div className={`rounded-circle ${bgClass} d-flex align-items-center justify-content-center`}
                 style={{ width: `${size}px`, height: `${size}px` }}>
-                <FontAwesomeIcon icon={faUser} className="text-light" style={{ fontSize: `${size / 2}px` }} />
+                <FontAwesomeIcon icon={faUser} className={textClass} style={{ fontSize: `${size / 2}px` }} />
             </div>
         )
     }
 
     const hash = md5(email.toLowerCase().trim())
-    const gravatarUrl = `https://secure.gravatar.com/avatar/${hash}?s=${size}&d=mp`
+    const gravatarUrl = `https://secure.gravatar.com/avatar/${hash}?s=${size}&d=404`
 
     return (
-        <div className="rounded-circle bg-secondary d-flex align-items-center justify-content-center"
+        <div className={`rounded-circle ${bgClass} d-flex align-items-center justify-content-center`}
             style={{ width: `${size}px`, height: `${size}px` }}>
             {!gravatarError ? (
                 <img
@@ -42,10 +47,9 @@ const UserAvatar: React.FC<UserAvatarProps> = ({ email, size = 32 }) => {
                 />
             ) : (
                 <span style={{
-                    color: 'var(--bs-body-color)',
                     fontSize: `${size / 2}px`,
                     fontWeight: 'bold'
-                }}>
+                }} className={textClass}>
                     {getInitials(email)}
                 </span>
             )}

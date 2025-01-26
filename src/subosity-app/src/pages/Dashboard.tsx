@@ -109,7 +109,7 @@ const Dashboard: React.FC = () => {
         return;
       }
 
-      console.log('Fetching subscriptions for user:', user.id); // Debug log
+      //console.log('Fetching subscriptions for user:', user.id); // Debug log
 
       const { data: subscriptions, error } = await supabase
         .from('subscription') // Check table name
@@ -126,12 +126,12 @@ const Dashboard: React.FC = () => {
       }
 
       if (!subscriptions) {
-        console.log('No subscriptions found');
+        //console.log('No subscriptions found');
         setLoading(false);
         return;
       }
 
-      console.log('Fetched subscriptions:', subscriptions); // Debug log
+      //console.log('Fetched subscriptions:', subscriptions); // Debug log
 
       // Process subscription data
       const categories = {};
