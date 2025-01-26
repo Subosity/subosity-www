@@ -46,10 +46,12 @@ const Profile: React.FC = () => {
       </div>
 
       <div className="d-flex justify-content-center">
-        <Card style={{ maxWidth: '600px', width: '100%' }} className="shadow-sm">
+        <Card style={{ maxWidth: '600px', width: '100%' }} className="shadow">
           <Card.Body>
             <div className="text-center mb-4">
-              <UserAvatar email={user?.email} size={128} />
+              <div className="d-flex justify-content-center">
+                <UserAvatar email={user?.email} size={128} />
+              </div>
               <h4 className="mt-3 mb-1">{user?.email}</h4>
               <p className="text-muted small">
                 Your avatar is automatically loaded from <a href="https://gravatar.com/" target="_blank">Gravatar</a>, if present.
@@ -70,7 +72,6 @@ const Profile: React.FC = () => {
                     onClick={() => navigate('/change-password')}
                     className="d-inline-flex align-items-center"
                   >
-                    <FontAwesomeIcon icon={faKey} className="me-2" />
                     Change Password
                     <FontAwesomeIcon icon={faArrowRight} className="ms-2" />
                   </Button>

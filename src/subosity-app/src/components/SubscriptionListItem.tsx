@@ -50,7 +50,7 @@ const SubscriptionListItem: React.FC<Props> = ({ subscription, onEdit, onDelete 
 
     return (
         <div
-            className="d-flex align-items-center p-3 border-bottom"
+            className="d-flex align-items-center p-3 border-bottom shadow"
             style={{
                 backgroundColor: 'var(--bs-body-bg)',
                 color: 'var(--bs-body-color)',

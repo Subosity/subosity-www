@@ -40,7 +40,7 @@ const PricingTier = ({
                 </Badge>
             </div>
         )}
-        <Card.Body className="p-4 text-center d-flex flex-column">
+        <Card.Body className={`p-4 text-center d-flex flex-column ${isPopular ? 'shadow-lg' : 'shadow'}`}>
             <div className="mb-4">
                 <FontAwesomeIcon icon={icon} size="3x" className="text-primary" />
             </div>

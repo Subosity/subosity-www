@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Card, Container, Form, Button, Alert } from 'react-bootstrap';
+import { Card, Container, Form, Button, Alert, InputGroup } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../../supabaseClient';
 import { useToast } from '../../ToastContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faPaperPlane, faRotateRight } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faAt, faPaperPlane, faRotateRight } from '@fortawesome/free-solid-svg-icons';
 
 function ForgotPassword() {
   const [email, setEmail] = useState('');
@@ -14,10 +14,10 @@ function ForgotPassword() {
   const navigate = useNavigate();
 
   const handleForgotPassword = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();    
+    e.preventDefault();
     setLoading(true);
 
-    console.log('Attempting to send password reset email to:' + email 
+    console.log('Attempting to send password reset email to:' + email
       + " with redirect to: " + import.meta.env.VITE_BASE_URL + '/change-password');
 
     try {
@@ -38,24 +38,29 @@ function ForgotPassword() {
 
   return (
     <Container className="d-flex justify-content-center align-items-center">
-      <Card style={{ width: '100%', maxWidth: '400px', marginTop: '4rem' }}>
+      <Card style={{ width: '100%', maxWidth: '400px', marginTop: '4rem' }} className="shadow">
         <Card.Body>
-          <h1 className="text-center mb-4">
+          <h2 className="text-center mb-4">
             <FontAwesomeIcon icon={faRotateRight} className="me-3" />
-            Forgot Password</h1>
+            Forgot Password</h2>
           <p className="text-center mb-4 pb-4" style={{ borderBottom: '1px solid #7d7d7d' }}>
             Enter your email address below and we'll send you a link to reset your password.
           </p>
           <Form onSubmit={handleForgotPassword}>
             <Form.Group className="mb-3" controlId="email">
               <Form.Label>Email address</Form.Label>
-              <Form.Control
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
+              <InputGroup>
+                <InputGroup.Text>
+                  <FontAwesomeIcon icon={faAt} />
+                </InputGroup.Text>
+                <Form.Control
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </InputGroup>
             </Form.Group>
             {error && <Alert variant="danger">{error}</Alert>}
             <Button type="submit" className="w-100 mb-3" disabled={loading}>

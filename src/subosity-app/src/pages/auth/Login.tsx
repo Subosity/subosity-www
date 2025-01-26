@@ -1,11 +1,11 @@
 import React, { useState, FormEvent } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
-import { Card, Container, Form, Button, Alert } from 'react-bootstrap';
+import { Card, Container, Form, Button, Alert, InputGroup } from 'react-bootstrap';
 import { AuthError } from '@supabase/supabase-js';
 import { supabase } from '../../supabaseClient';
 import { useToast } from '../../ToastContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faRotateRight, faSignIn, faSignInAlt, faUserPlus, faShieldAlt } from '@fortawesome/free-solid-svg-icons';
+import { faRotateRight, faSignIn, faSignInAlt, faUserPlus, faShieldAlt, faAt, faKey } from '@fortawesome/free-solid-svg-icons';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState<string>('');
@@ -51,12 +51,12 @@ const Login: React.FC = () => {
 
   return (
     <Container className="d-flex justify-content-center align-items-center">
-      <Card style={{ width: '100%', maxWidth: '400px', marginTop: '4rem' }}>
+      <Card style={{ width: '100%', maxWidth: '400px', marginTop: '4rem' }} className="shadow">
         <Card.Body>
-          <h1 className="text-center mb-4">
+          <h2 className="text-center mb-4">
             <FontAwesomeIcon icon={faSignIn} className="me-3" />
             Login
-          </h1>
+          </h2>
 
           {/* Add Alert for protected route access */}
           {returnUrl && (
@@ -72,23 +72,33 @@ const Login: React.FC = () => {
           <Form onSubmit={handleLogin}>
             <Form.Group className="mb-3" controlId="email">
               <Form.Label>Email address</Form.Label>
-              <Form.Control
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
+              <InputGroup>
+                <InputGroup.Text>
+                  <FontAwesomeIcon icon={faAt} />
+                </InputGroup.Text>
+                <Form.Control
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </InputGroup>
             </Form.Group>
             <Form.Group className="mb-3" controlId="password">
               <Form.Label>Password</Form.Label>
-              <Form.Control
-                type="password"
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
+              <InputGroup>
+                <InputGroup.Text>
+                  <FontAwesomeIcon icon={faKey} />
+                </InputGroup.Text>
+                <Form.Control
+                  type="password"
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </InputGroup>
             </Form.Group>
             {error && <Alert variant="danger">{error}</Alert>}
             <Button type="submit" className="w-100 mb-3" disabled={loading}>

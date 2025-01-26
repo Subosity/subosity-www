@@ -235,7 +235,7 @@ const Dashboard: React.FC = () => {
           {/* Summary Cards */}
           <Row className="g-4 mb-4">
             <Col xs={12} md={6} lg={3}>
-              <Card className="h-100">
+              <Card className="h-100 shadow">
                 <Card.Header className="bg-body-tertiary">
                   <div className="d-flex justify-content-between align-items-center">
                     <div className="text-body-secondary">Active Subscriptions</div>
@@ -255,7 +255,7 @@ const Dashboard: React.FC = () => {
             </Col>
 
             <Col xs={12} md={6} lg={3}>
-              <Card className="h-100">
+              <Card className="h-100 shadow">
                 <Card.Header className="bg-body-tertiary">
                   <div className="d-flex justify-content-between align-items-center">
                     <div className="text-body-secondary">Monthly Cost</div>
@@ -275,7 +275,7 @@ const Dashboard: React.FC = () => {
             </Col>
 
             <Col xs={12} md={6} lg={3}>
-              <Card className="h-100">
+              <Card className="h-100 shadow">
                 <Card.Header className="bg-body-tertiary">
                   <div className="d-flex justify-content-between align-items-center">
                     <div className="text-body-secondary">Yearly Cost</div>
@@ -295,7 +295,7 @@ const Dashboard: React.FC = () => {
             </Col>
 
             <Col xs={12} md={6} lg={3}>
-              <Card className="h-100">
+              <Card className="h-100 shadow">
                 <Card.Header className="bg-body-tertiary">
                   <div className="d-flex justify-content-between align-items-center">
                     <div className="text-body-secondary">Daily Cost</div>
@@ -318,7 +318,7 @@ const Dashboard: React.FC = () => {
           {/* Charts */}
           <Row className="g-4">
             <Col xs={12} md={6} lg={3}>
-              <Card className="h-100">
+              <Card className="h-100 shadow">
                 <Card.Header className="bg-body-tertiary py-3">
                   <h5 className="mb-0 text-body">
                     <FontAwesomeIcon icon={faChartPie} className="me-2" />
@@ -350,7 +350,7 @@ const Dashboard: React.FC = () => {
             </Col>
 
             <Col xs={12} md={6} lg={3}>
-              <Card className="h-100">
+              <Card className="h-100 shadow">
                 <Card.Header className="bg-body-tertiary py-3">
                   <h5 className="mb-0">
                     <FontAwesomeIcon icon={faCreditCard} className="me-2" />
@@ -381,7 +381,7 @@ const Dashboard: React.FC = () => {
               </Card>
             </Col>
             <Col xs={12} md={6} lg={3}>
-              <Card className="h-100">
+              <Card className="h-100 shadow">
                 <Card.Header className="bg-body-tertiary py-3">
                   <h5 className="mb-0 text-body">
                     <FontAwesomeIcon icon={faCheckSquare} className="me-2" />
@@ -418,7 +418,7 @@ const Dashboard: React.FC = () => {
               </Card>
             </Col>
             <Col xs={12} md={6} lg={3}>
-              <Card className="h-100">
+              <Card className="h-100 shadow">
                 <Card.Header className="bg-body-tertiary py-3">
                   <h5 className="mb-0 text-body">
                     <FontAwesomeIcon icon={faRotate} className="me-2" />

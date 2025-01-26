@@ -50,8 +50,8 @@ const DeleteSubscriptionModal: React.FC<Props> = ({ show, onHide, subscription, 
                 </div>
             </Offcanvas.Header>
             <Offcanvas.Body>
-                <div className="mt-4 text-danger">
-                    <h5>Danger Zone:</h5>
+                <div className="mt-4">
+                    <h5 className="pb-3">Danger Zone:</h5>
                     <Alert variant="danger">
 
                         <FontAwesomeIcon icon={faExclamationCircle} className="me-2" />

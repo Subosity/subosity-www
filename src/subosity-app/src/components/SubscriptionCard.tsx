@@ -35,7 +35,7 @@ const SubscriptionCard: React.FC<Props> = ({ subscription, onEdit, onDelete }) =
 
     return (
         <Card
-            className="h-100 shadow-sm"
+            className="h-100 shadow"
             style={{
                 backgroundColor: 'var(--bs-body-bg)',
                 color: 'var(--bs-body-color)',

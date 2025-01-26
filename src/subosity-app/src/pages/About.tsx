@@ -75,7 +75,7 @@ const About = () => {
       <Row className="g-4 mb-5">
         {team.map((member, index) => (
           <Col key={index} md={4}>
-            <Card className="h-100 border-0 shadow-sm bg-body-tertiary">
+            <Card className="h-100 border-0 shadow bg-body-tertiary">
               <Card.Img
                 variant="top"
                 src={member.image}
@@ -99,7 +99,7 @@ const About = () => {
       </Row>
 
       {/* Trust Section */}
-      <div className="text-center py-5 px-3 rounded bg-body-tertiary">
+      <div className="text-center py-5 px-3 rounded bg-body-tertiary shadow">
         <FontAwesomeIcon
           icon={faHandshake}
           size="3x"

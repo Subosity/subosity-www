@@ -1,5 +1,5 @@
 import React, { useState, FormEvent, useEffect } from 'react';
-import { Container, Form, Button, Alert, Card } from 'react-bootstrap';
+import { Container, Form, Button, Alert, Card, InputGroup } from 'react-bootstrap';
 import { supabase } from '../../supabaseClient';
 import { useToast } from '../../ToastContext';
 import { Link, useNavigate } from 'react-router-dom';
@@ -106,29 +106,39 @@ const ChangePassword: React.FC = () => {
                                     <div className="col-md-6">
                                         <Form.Group className="mb-3" controlId="password">
                                             <Form.Label>New Password</Form.Label>
-                                            <Form.Control
-                                                type="password"
-                                                autoComplete="new-password"
-                                                value={password}
-                                                onChange={handlePasswordChange}
-                                                isValid={password.length > 0 && isValid}
-                                                isInvalid={password.length > 0 && !isValid}
-                                                required
-                                                disabled={isDemo}
-                                            />
+                                            <InputGroup>
+                                                <InputGroup.Text>
+                                                    <FontAwesomeIcon icon={faKey} />
+                                                </InputGroup.Text>
+                                                <Form.Control
+                                                    type="password"
+                                                    autoComplete="new-password"
+                                                    value={password}
+                                                    onChange={handlePasswordChange}
+                                                    isValid={password.length > 0 && isValid}
+                                                    isInvalid={password.length > 0 && !isValid}
+                                                    required
+                                                    disabled={isDemo}
+                                                />
+                                            </InputGroup>
                                         </Form.Group>
                                         <Form.Group className="mb-3" controlId="confirmPassword">
                                             <Form.Label>Confirm New Password</Form.Label>
-                                            <Form.Control
-                                                type="password"
-                                                autoComplete="new-password"
-                                                value={confirmPassword}
-                                                onChange={handleConfirmPasswordChange}
-                                                isValid={confirmPassword.length > 0 && isValid}
-                                                isInvalid={confirmPassword.length > 0 && !isValid}
-                                                required
-                                                disabled={isDemo}
-                                            />
+                                            <InputGroup>
+                                                <InputGroup.Text>
+                                                    <FontAwesomeIcon icon={faKey} />
+                                                </InputGroup.Text>
+                                                <Form.Control
+                                                    type="password"
+                                                    autoComplete="new-password"
+                                                    value={confirmPassword}
+                                                    onChange={handleConfirmPasswordChange}
+                                                    isValid={confirmPassword.length > 0 && isValid}
+                                                    isInvalid={confirmPassword.length > 0 && !isValid}
+                                                    required
+                                                    disabled={isDemo}
+                                                />
+                                            </InputGroup>
                                             {confirmPassword.length > 0 && !isValid && (
                                                 <Form.Control.Feedback type="invalid">
                                                     Passwords must match and meet complexity requirements
