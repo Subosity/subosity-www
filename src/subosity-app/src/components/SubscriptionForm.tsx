@@ -3,14 +3,8 @@ import { Form, Button, InputGroup } from 'react-bootstrap';
 import { Subscription } from '../types';
 import { supabase } from '../supabaseClient';
 import Select, { components } from 'react-select';
-import { 
-    faDollarSign, 
-    faCalendar, 
-    faTag, 
-    faCreditCard, 
-    faClock, 
-    faIdCard
-} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCreditCard } from '@fortawesome/free-solid-svg-icons';
 
 // Update SubscriptionFormRef interface
 export interface SubscriptionFormRef {
@@ -418,6 +412,11 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
                 <Form.Label>
                     Payment Method <span className="text-danger">*</span>
                 </Form.Label>
+                {/* <InputGroup hasValidation>
+                    <InputGroup.Text style={commonInputStyles}>
+                        <FontAwesomeIcon icon={faCreditCard} />
+                    </InputGroup.Text> */}
+                    
                 <Select
                     value={paymentProviders.find(p => p.id === formData.paymentProviderId)}
                     onChange={(option) => {
@@ -532,20 +531,26 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
                 {validated && errors.paymentProviderId && (
                     <div className="text-danger small mt-1">{errors.paymentProviderId}</div>
                 )}
+                {/* </InputGroup> */}
             </Form.Group>
 
             <Form.Group className="mb-3">
                 <Form.Label>Payment Details</Form.Label>
-                <InputGroup>
-                    <InputGroup.Text>
-                        <FontAwesomeIcon icon={faCreditCard} />
-                    </InputGroup.Text>
-                    <Form.Control
-                        type="text"
-                        value={formData.paymentDetails}
-                        onChange={(e) => setFormData({ ...formData, paymentDetails: e.target.value })}
-                    />
-                </InputGroup>
+                <Form.Control
+                    type="text"
+                    value={formData.paymentDetails || ''}
+                    onChange={(e) => setFormData({ ...formData, paymentDetails: e.target.value })}
+                    placeholder="Optional: Enter payment details (e.g., last 4 digits of card)"
+                    style={{
+                        backgroundColor: 'var(--bs-body-bg)',
+                        color: 'var(--bs-body-color)',
+                        borderColor: 'var(--bs-border-color)',
+                        '::placeholder': {
+                            color: 'var(--bs-body-color)',
+                            opacity: 0.5
+                        }
+                    }}
+                />
             </Form.Group>
 
             <Form.Group className="mb-3">
@@ -570,102 +575,24 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
 
             <Form.Group className="mb-3">
                 <Form.Label>Nickname</Form.Label>
-                <InputGroup>
-                    <InputGroup.Text>
-                        <FontAwesomeIcon icon={faIdCard} />
-                    </InputGroup.Text>
-                    <Form.Control
-                        type="text"
-                        value={formData.nickname}
-                        onChange={(e) => setFormData({ ...formData, nickname: e.target.value })}
-                    />
-                </InputGroup>
+                <Form.Control
+                    type="text"
+                    value={formData.nickname || ''}
+                    onChange={(e) => setFormData({ ...formData, nickname: e.target.value })}
+                    placeholder="Optional: Distinguish between subscriptions (e.g., 'Personal', 'Family')"
+                    style={{
+                        backgroundColor: 'var(--bs-body-bg)',
+                        color: 'var(--bs-body-color)',
+                        borderColor: 'var(--bs-border-color)',
+                        '::placeholder': {
+                            color: 'var(--bs-body-color)',
+                            opacity: 0.5
+                        }
+                    }}
+                />
             </Form.Group>
 
-            <Form.Group className="mb-3">
-                <Form.Label>Provider Name <span className="text-danger">*</span></Form.Label>
-                <InputGroup>
-                    <InputGroup.Text>
-                        <FontAwesomeIcon icon={faTag} />
-                    </InputGroup.Text>
-                    <Form.Control
-                        type="text"
-                        value={formData.providerName}
-                        onChange={(e) => setFormData({ ...formData, providerName: e.target.value })}
-                        onBlur={() => handleFieldTouch('providerName')}
-                        required
-                    />
-                </InputGroup>
-            </Form.Group>
 
-            <Form.Group className="mb-3">
-                <Form.Label>Description</Form.Label>
-                <InputGroup>
-                    <InputGroup.Text>
-                        <FontAwesomeIcon icon={faNote} />
-                    </InputGroup.Text>
-                    <Form.Control
-                        as="textarea"
-                        rows={2}
-                        value={formData.providerDescription}
-                        onChange={(e) => setFormData({ ...formData, providerDescription: e.target.value })}
-                    />
-                </InputGroup>
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-                <Form.Label>Amount <span className="text-danger">*</span></Form.Label>
-                <InputGroup>
-                    <InputGroup.Text>
-                        <FontAwesomeIcon icon={faDollarSign} />
-                    </InputGroup.Text>
-                    <Form.Control
-                        type="number"
-                        step="0.01"
-                        value={formData.amount}
-                        onChange={(e) => setFormData({ ...formData, amount: parseFloat(e.target.value) })}
-                        onBlur={() => handleFieldTouch('amount')}
-                        required
-                    />
-                </InputGroup>
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-                <Form.Label>Start Date <span className="text-danger">*</span></Form.Label>
-                <InputGroup>
-                    <InputGroup.Text>
-                        <FontAwesomeIcon icon={faCalendar} />
-                    </InputGroup.Text>
-                    <Form.Control
-                        type="date"
-                        value={formData.startDate}
-                        onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                        onBlur={() => handleFieldTouch('startDate')}
-                        required
-                    />
-                </InputGroup>
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-                <Form.Label>Renewal Frequency <span className="text-danger">*</span></Form.Label>
-                <InputGroup>
-                    <InputGroup.Text>
-                        <FontAwesomeIcon icon={faClock} />
-                    </InputGroup.Text>
-                    <Form.Select
-                        value={formData.renewalFrequency}
-                        onChange={(e) => setFormData({ ...formData, renewalFrequency: e.target.value })}
-                        onBlur={() => handleFieldTouch('renewalFrequency')}
-                        required
-                    >
-                        {frequencyOptions.map(option => (
-                            <option key={option.value} value={option.value}>
-                                {option.label}
-                            </option>
-                        ))}
-                    </Form.Select>
-                </InputGroup>
-            </Form.Group>
 
             {/* Update parent components to receive isValid state */}
             <div style={{ display: 'none' }}>
