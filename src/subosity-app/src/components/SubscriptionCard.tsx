@@ -91,20 +91,21 @@ const SubscriptionCard: React.FC<Props> = ({ subscription, onEdit, onDelete }) =
                             <div style={{ color: 'var(--bs-body-color)', fontSize: '.85em' }}>
                                 Renews: <strong>{subscription.renewalFrequency} @ ${subscription.amount.toFixed(2)}</strong>
                             </div>
+                            <div className="mt-2">
+                                <Badge bg={subscription.autoRenewal ? 'success' : 'secondary'}>
+                                    <FontAwesomeIcon
+                                        icon={subscription.autoRenewal ? faRotate : faHand}
+                                        className="me-2"
+                                    />
+                                    {subscription.autoRenewal ? 'Auto-Renewal (' + subscription.renewalFrequency + ')' : 'Manual Renewal'}
+                                </Badge>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Middle section with renewal info */}
-                <div className="mt-3">
-                    <Badge bg={subscription.autoRenewal ? 'success' : 'secondary'}>
-                        <FontAwesomeIcon
-                            icon={subscription.autoRenewal ? faRotate : faHand}
-                            className="me-2"
-                        />
-                        {subscription.autoRenewal ? 'Auto-Renewal (' + subscription.renewalFrequency + ')' : 'Manual Renewal'}
-                    </Badge>
-                </div>
+
+
 
                 {/* Bottom section */}
                 <div className="mt-auto pt-3 d-flex justify-content-between align-items-end">
