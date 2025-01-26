@@ -17,7 +17,9 @@ import {
     faCircleExclamation,
     faEnvelopesBulk,
     faEnvelope,
-    faEnvelopeOpen
+    faEnvelopeOpen,
+    faCheckCircle,
+    faBan
 } from '@fortawesome/free-solid-svg-icons';
 import { supabase } from '../supabaseClient';
 import { useToast } from '../ToastContext';
@@ -144,7 +146,8 @@ const SubscriptionDetail: React.FC = () => {
                 paymentProviderIcon: data.payment_provider.icon,
                 paymentDetails: data.payment_details,
                 notes: data.notes,
-                isFreeTrial: data.is_free_trial
+                isFreeTrial: data.is_free_trial,
+                isActive: data.is_active
             });
         } catch (error) {
             console.error('Error fetching subscription:', error);
@@ -201,7 +204,7 @@ const SubscriptionDetail: React.FC = () => {
                     backgroundColor: 'var(--bs-body-bg)',
                     color: 'var(--bs-body-color)',
                     borderColor: 'var(--bs-border-color)'
-                }}>
+                }} className="shadow">
                     <Card.Body>
                         <div className="d-flex justify-content-between align-items-start mb-4">
                             <div className="d-flex">
@@ -238,12 +241,12 @@ const SubscriptionDetail: React.FC = () => {
                                     </Badge>
                                 </div>
                             </div>
-                            <div>
-                                <Button variant="outline-primary" className="me-2" onClick={() => setShowEdit(true)}>
+                            <div className="d-flex align-items-center gap-2">
+                                <Button variant="outline-primary" className="d-inline-flex align-items-center" onClick={() => setShowEdit(true)}>
                                     <FontAwesomeIcon icon={faEdit} className="me-2" />
                                     Edit
                                 </Button>
-                                <Button variant="outline-danger" onClick={() => setShowDelete(true)}>
+                                <Button variant="outline-danger" className="d-inline-flex align-items-center" onClick={() => setShowDelete(true)}>
                                     <FontAwesomeIcon icon={faTrash} className="me-2" />
                                     Delete
                                 </Button>
@@ -296,12 +299,21 @@ const SubscriptionDetail: React.FC = () => {
                                 </Button>
                             </dd>
                         </dl>
+                        <div className="d-flex justify-content-end">
+                            <Badge bg={subscription.isActive ? 'success' : 'secondary'} style={{ fontSize: '0.75em', minWidth: '6.5em' }}>
+                                <FontAwesomeIcon
+                                    icon={subscription.isActive ? faCheckCircle : faBan}
+                                    className="me-1"
+                                />
+                                {subscription.isActive ? 'Active' : 'Inactive'}
+                            </Badge>
+                        </div>
                     </Card.Body>
                 </Card>
             )}
 
             {alerts && (
-                <Card className="mt-4" style={{
+                <Card className="mt-4 shadow" style={{
                     backgroundColor: 'var(--bs-body-bg)',
                     color: 'var(--bs-body-color)',
                     borderColor: 'var(--bs-border-color)'

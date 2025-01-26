@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Badge, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrash, faRotate, faHand, faBell, faCheckCircle, faClock } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faTrash, faRotate, faHand, faBell, faCheckCircle, faClock, faBan } from '@fortawesome/free-solid-svg-icons';
 import { Subscription } from '../types';
 import { useNavigate } from 'react-router-dom';
 import { useAlerts } from '../AlertsContext';
@@ -124,7 +124,7 @@ const SubscriptionCard: React.FC<Props> = ({ subscription, onEdit, onDelete }) =
                     {/* Active/Inactive badge on the right */}
                     <Badge bg={subscription.isActive ? 'success' : 'secondary'}>
                         <FontAwesomeIcon
-                            icon={subscription.isActive ? faCheckCircle : faClock}
+                            icon={subscription.isActive ? faCheckCircle : faBan}
                             className="me-1"
                         />
                         {subscription.isActive ? 'Active' : 'Inactive'}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Badge, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrash, faRotate, faHand, faBell, faCheckCircle, faClock } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faTrash, faRotate, faHand, faBell, faCheckCircle, faClock, faBan } from '@fortawesome/free-solid-svg-icons';
 import { Subscription } from '../types';
 import { useAlerts } from '../AlertsContext';
 import { useNavigate } from 'react-router-dom';
@@ -177,7 +177,7 @@ const SubscriptionListItem: React.FC<Props> = ({ subscription, onEdit, onDelete 
                 </div>
                 <Badge bg={subscription.isActive ? 'success' : 'secondary'} style={{ fontSize: '0.75em', minWidth: '6.5em' }}>
                     <FontAwesomeIcon
-                        icon={subscription.isActive ? faCheckCircle : faClock}
+                        icon={subscription.isActive ? faCheckCircle : faBan}
                         className="me-1"
                     />
                     {subscription.isActive ? 'Active' : 'Inactive'}
