@@ -9,7 +9,11 @@ const Footer = () => {
   const { user, logout } = useAuth();
   
   return (
-    <footer className="footer mt-auto py-3" style={{ backgroundColor: 'var(--bs-footer-bg)', color: 'var(--bs-footer-color)' }}>
+    <footer className="footer mt-auto py-3 opacity-75"
+      style={{ 
+        backgroundColor: 'var(--bs-footer-bg)', 
+        color: 'var(--bs-footer-color)',
+        fontSize: '.75em' }}>
       <div className="container">
         <div className="text-center">
           <span>Copyright © 2025 Subosity</span>

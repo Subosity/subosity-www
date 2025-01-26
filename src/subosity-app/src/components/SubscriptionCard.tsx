@@ -44,7 +44,8 @@ const SubscriptionCard: React.FC<Props> = ({ subscription, onEdit, onDelete }) =
             }}
             onClick={handleCardClick}
         >
-            <Card.Body>
+            <Card.Body className="d-flex flex-column"> {/* Add flex-column */}
+                {/* Top section with provider info */}
                 <div className="d-flex justify-content-between align-items-start w-100">
                     <div className="d-flex align-items-center me-3" style={{ minWidth: 0, flex: '1 1 auto' }}>
                         <div className="rounded-circle bg-light d-flex align-items-center justify-content-center p-1"
@@ -92,57 +93,9 @@ const SubscriptionCard: React.FC<Props> = ({ subscription, onEdit, onDelete }) =
                             </div>
                         </div>
                     </div>
-                    <Badge bg={subscription.isActive ? 'success' : 'secondary'} className="ms-2">
-                        <FontAwesomeIcon
-                            icon={subscription.isActive ? faCheckCircle : faClock}
-                            className="me-1"
-                        />
-                        {subscription.isActive ? 'Active' : 'Inactive'}
-                    </Badge>
-                    <div className="d-flex align-items-center justify-content-end gap-2">
-                        <Button
-                            variant="link"
-                            className="p-1 d-flex align-items-center justify-content-center position-relative"
-                            style={{ width: '32px', height: '32px' }}
-                        >
-                            <FontAwesomeIcon
-                                icon={faBell}
-                                className={alertCount > 0 ? "text-warning" : "text-secondary"}
-                            />
-                            {alertCount > 0 && (
-                                <span
-                                    className="position-absolute badge rounded-pill bg-danger d-flex align-items-center justify-content-center"
-                                    style={{
-                                        fontSize: '0.75em',
-                                        padding: '0.75em 0.6em 1.0em 0.5em',
-                                        minWidth: '1.5em',
-                                        height: '1.5em',
-                                        transform: 'scale(0.8) translate(50%, -50%)',
-                                    }}
-                                >
-                                    {alertCount}
-                                    <span className="visually-hidden">unread alerts</span>
-                                </span>
-                            )}
-                        </Button>
-                        <Button
-                            variant="link"
-                            className="p-1 d-flex align-items-center justify-content-center"
-                            style={{ width: '32px', height: '32px' }}
-                            onClick={() => onEdit(subscription)}
-                        >
-                            <FontAwesomeIcon icon={faEdit} />
-                        </Button>
-                        <Button
-                            variant="link"
-                            className="p-1 d-flex align-items-center justify-content-center"
-                            style={{ width: '32px', height: '32px' }}
-                            onClick={() => onDelete(subscription)}
-                        >
-                            <FontAwesomeIcon icon={faTrash} />
-                        </Button>
-                    </div>
                 </div>
+
+                {/* Middle section with renewal info */}
                 <div className="mt-3">
                     <Badge bg={subscription.autoRenewal ? 'success' : 'secondary'}>
                         <FontAwesomeIcon
@@ -151,7 +104,12 @@ const SubscriptionCard: React.FC<Props> = ({ subscription, onEdit, onDelete }) =
                         />
                         {subscription.autoRenewal ? 'Auto-Renewal (' + subscription.renewalFrequency + ')' : 'Manual Renewal'}
                     </Badge>
-                    <div className="mt-2 d-flex align-items-center" style={{ color: 'var(--bs-body-color)', fontSize: '.85em' }}>
+                </div>
+
+                {/* Bottom section */}
+                <div className="mt-auto pt-3 d-flex justify-content-between align-items-end">
+                    {/* Payment info on the left */}
+                    <div className="d-flex align-items-center" style={{ color: 'var(--bs-body-color)', fontSize: '.85em' }}>
                         <div className="rounded bg-light d-flex align-items-center justify-content-center p-1 me-2"
                             style={{ backgroundColor: 'var(--bs-white)' }}>
                             <img
@@ -162,6 +120,60 @@ const SubscriptionCard: React.FC<Props> = ({ subscription, onEdit, onDelete }) =
                         </div>
                         {subscription.paymentDetails}
                     </div>
+
+                    {/* Active/Inactive badge on the right */}
+                    <Badge bg={subscription.isActive ? 'success' : 'secondary'}>
+                        <FontAwesomeIcon
+                            icon={subscription.isActive ? faCheckCircle : faClock}
+                            className="me-1"
+                        />
+                        {subscription.isActive ? 'Active' : 'Inactive'}
+                    </Badge>
+                </div>
+
+                {/* Action buttons at the top right */}
+                <div className="position-absolute top-0 end-0 p-2 d-flex gap-1">
+                    <Button
+                        variant="link"
+                        className="p-1 d-flex align-items-center justify-content-center position-relative"
+                        style={{ width: '32px', height: '32px' }}
+                    >
+                        <FontAwesomeIcon
+                            icon={faBell}
+                            className={alertCount > 0 ? "text-warning" : "text-secondary"}
+                        />
+                        {alertCount > 0 && (
+                            <span
+                                className="position-absolute badge rounded-pill bg-danger d-flex align-items-center justify-content-center"
+                                style={{
+                                    fontSize: '0.75em',
+                                    padding: '0.75em 0.6em 1.0em 0.5em',
+                                    minWidth: '1.5em',
+                                    height: '1.5em',
+                                    transform: 'scale(0.8) translate(50%, -50%)',
+                                }}
+                            >
+                                {alertCount}
+                                <span className="visually-hidden">unread alerts</span>
+                            </span>
+                        )}
+                    </Button>
+                    <Button
+                        variant="link"
+                        className="p-1 d-flex align-items-center justify-content-center"
+                        style={{ width: '32px', height: '32px' }}
+                        onClick={() => onEdit(subscription)}
+                    >
+                        <FontAwesomeIcon icon={faEdit} />
+                    </Button>
+                    <Button
+                        variant="link"
+                        className="p-1 d-flex align-items-center justify-content-center"
+                        style={{ width: '32px', height: '32px' }}
+                        onClick={() => onDelete(subscription)}
+                    >
+                        <FontAwesomeIcon icon={faTrash} />
+                    </Button>
                 </div>
             </Card.Body>
         </Card>

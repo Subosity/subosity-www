@@ -125,13 +125,10 @@ const MySubscriptions = () => {
                         Manage and track all your subscription services
                     </p>
                 </div>
-                <Button
-                    variant="primary"
-                    onClick={() => setShowAdd(true)}
-                    className="d-flex align-items-center"
-                >
-                    <FontAwesomeIcon icon={faSquarePlus} className="me-2" />
-                    Add Subscription
+                <Button variant="primary" onClick={() => setShowAdd(true)} className="d-flex align-items-center nowrap">
+                    <FontAwesomeIcon icon={faPlus} className="me-1" />
+                    <span className="d-none d-sm-inline">Add Subscription</span>
+                    <span className="d-inline d-sm-none">Add</span>
                 </Button>
             </div>
 

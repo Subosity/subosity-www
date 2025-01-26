@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Badge, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash, faRotate, faHand, faBell, faCheckCircle, faClock } from '@fortawesome/free-solid-svg-icons';
@@ -16,6 +16,8 @@ const SubscriptionListItem: React.FC<Props> = ({ subscription, onEdit, onDelete 
     const navigate = useNavigate();
     const [alertCount, setAlertCount] = useState(0);
     const { getUnreadCountForSubscription } = useAlerts();
+    const [containerWidth, setContainerWidth] = useState(0);
+    const detailsRef = useRef<HTMLDivElement>(null);
 
     const handleItemClick = (e: React.MouseEvent) => {
         // Prevent navigation if clicking on action buttons
@@ -33,6 +35,19 @@ const SubscriptionListItem: React.FC<Props> = ({ subscription, onEdit, onDelete 
         fetchAlertCount();
     }, [subscription.id]);
 
+    useEffect(() => {
+        if (!detailsRef.current) return;
+        
+        const resizeObserver = new ResizeObserver(entries => {
+            for (const entry of entries) {
+                setContainerWidth(entry.contentRect.width);
+            }
+        });
+
+        resizeObserver.observe(detailsRef.current);
+        return () => resizeObserver.disconnect();
+    }, []);
+
     return (
         <div
             className="d-flex align-items-center p-3 border-bottom"
@@ -40,137 +55,133 @@ const SubscriptionListItem: React.FC<Props> = ({ subscription, onEdit, onDelete 
                 backgroundColor: 'var(--bs-body-bg)',
                 color: 'var(--bs-body-color)',
                 borderColor: 'var(--bs-border-color) !important',
-                cursor: 'pointer'  // Add cursor pointer
+                cursor: 'pointer'
             }}
-            onClick={handleItemClick}  // Add click handler
+            onClick={handleItemClick}
         >
-            <div className="rounded-circle bg-light d-flex align-items-center justify-content-center p-1"
-                style={{
-                    width: '40px',
-                    height: '40px',
-                    backgroundColor: 'var(--bs-white)',
-                    flexShrink: 0,
-                    overflow: 'hidden' // Add this to clip overflow
-                }}>
-                <img
-                    src={subscription.providerIcon}
-                    alt={subscription.providerName}
+            {/* Column 1: Logo */}
+            <div style={{ width: '40px', flexShrink: 0 }} className="me-3">
+                <div className="rounded-circle bg-light d-flex align-items-center justify-content-center"
                     style={{
-                        width: '100%',    // Change to percentage
-                        height: '100%',   // Change to percentage
-                        objectFit: 'contain',
-                        padding: '4px'    // Add padding to prevent touching edges
-                    }}
-                />
+                        width: '40px',
+                        height: '40px',
+                        backgroundColor: 'var(--bs-white)',
+                        overflow: 'hidden'
+                    }}>
+                    <img
+                        src={subscription.providerIcon}
+                        alt={subscription.providerName}
+                        style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'contain',
+                            padding: '4px'
+                        }}
+                    />
+                </div>
             </div>
-            <div className="row w-100 align-items-start">
-                {/* Provider Info */}
-                <div className="col-12 col-md-5 mb-2 mb-md-0">
-                    <div className="d-flex flex-column min-width-0">
-                        {/* Provider Name and Description/Nickname */}
-                        <div className="d-flex align-items-center mb-2 w-100">
-                            <div className="d-flex align-items-center w-100 overflow-hidden">
-                                <h6 className="mb-0 me-2 text-truncate" style={{ color: 'var(--bs-body-color)' }}>
-                                    {subscription.providerName}
-                                </h6>
-                                {subscription.nickname ? (
-                                    <div className="small mb-0 text-truncate" style={{
-                                        color: 'var(--bs-body-color)',
-                                        opacity: 0.75
-                                    }}>
-                                        <i>({subscription.nickname})</i>
-                                    </div>
-                                ) : (
-                                    <div className="small mb-0 text-truncate" style={{
-                                        color: 'var(--bs-body-color)',
-                                        opacity: 0.75
-                                    }}>
-                                        {subscription.providerDescription}
-                                    </div>
-                                )}
-                                <div className="d-flex align-items-center">
-                                    <Badge bg={subscription.isActive ? 'success' : 'secondary'} className="ms-2">
-                                        <FontAwesomeIcon
-                                            icon={subscription.isActive ? faCheckCircle : faClock}
-                                            className="me-1"
-                                        />
-                                        {subscription.isActive ? 'Active' : 'Inactive'}
-                                    </Badge>
-                                </div>
-                            </div>
-                        </div>
 
-                        {/* Renewal Info */}
-                        <div className="d-flex align-items-center gap-2">
-                            <Badge bg={subscription.autoRenewal ? 'success' : 'secondary'} className="flex-shrink-0">
-                                <FontAwesomeIcon icon={subscription.autoRenewal ? faRotate : faHand} className="me-2" />
-                                {subscription.autoRenewal ? 'Auto-Renewal' : 'Manual Renewal'}
-                            </Badge>
-                            <div className="text-truncate" style={{ color: 'var(--bs-body-color)', fontSize: '.85em' }}>
-                                Renews: <strong>{subscription.renewalFrequency} @ ${subscription.amount.toFixed(2)}</strong>
-                            </div>
-                        </div>
-                    </div>
+            {/* Column 2: Subscription Details */}
+            <div className="flex-grow-1 min-width-0" ref={detailsRef}> {/* Remove me-3 */}
+                {/* Provider Name + Nickname */}
+                <div className="d-flex align-items-baseline min-width-0 pe-2"> {/* Add pe-2 for small buffer */}
+                    <span className="fw-medium text-truncate">
+                        {subscription.providerName}
+                    </span>
+                    {subscription.nickname && (
+                        <span className="ms-1 text-body-secondary text-truncate" 
+                            style={{ 
+                                fontSize: '0.75em',
+                                maxWidth: `${Math.max(containerWidth * 0.5, 60)}px`,
+                                flexShrink: 1
+                            }}>
+                            ({subscription.nickname})
+                        </span>
+                    )}
                 </div>
 
-                {/* Payment Info with truncation */}
-                <div className="col-9 col-md-4 mb-2 mb-md-0">
-                    <div className="d-flex align-items-center min-width-0">
-                        <div className="rounded bg-light d-flex align-items-center justify-content-center p-1 me-2 flex-shrink-0"
-                            style={{ backgroundColor: 'var(--bs-body-bg)' }}>
-                            <img
-                                src={subscription.paymentProviderIcon}
-                                style={{ height: 'auto', width: '22px' }}
-                                alt={`${subscription.paymentProviderName} icon`}
-                            />
-                        </div>
-                        <div className="text-truncate">
-                            {subscription.paymentDetails}
-                        </div>
+                {/* Description - Debug subscription object */}
+                {subscription.providerDescription && (
+                    <div className="text-body-secondary text-truncate mb-1 d-none d-md-block " 
+                        style={{ 
+                            fontSize: '0.85em',
+                        }}>
+                        {subscription.providerDescription}
                     </div>
-                </div>
+                )}
 
-                {/* Actions - Always Right */}
-                <div className="col-3 text-end">
-                    <div className="d-flex align-items-center justify-content-end gap-3">
-                        <div className="position-relative">
-                            <FontAwesomeIcon
-                                icon={faBell}
-                                className={alertCount > 0 ? "text-warning" : "text-secondary"}
-                            />
-                            {alertCount > 0 && (
-                                <span
-                                    className="position-absolute badge rounded-pill bg-danger d-flex align-items-center justify-content-center"
-                                    style={{
-                                        fontSize: '0.75em',
-                                        padding: '0.25em',
-                                        minWidth: '1.5em',
-                                        height: '1.5em',
-                                        transform: 'scale(0.8) translate(50%, -50%)',
-                                        top: '0',
-                                        right: '0'
-                                    }}
-                                >
-                                    {alertCount}
-                                </span>
-                            )}
-                        </div>
-                        <Button
-                            variant="link"
-                            className="p-0"
-                            onClick={() => onEdit(subscription)}
-                        >
-                            <FontAwesomeIcon icon={faEdit} />
-                        </Button>
-                        <Button
-                            variant="link"
-                            className="p-0 text-danger"
-                            onClick={() => onDelete(subscription)}
-                        >
-                            <FontAwesomeIcon icon={faTrash} />
-                        </Button>
-                    </div>
+                {/* Renewal and Amount Info */}
+                <div className="d-flex align-items-center gap-2 mt-1" style={{ fontSize: '0.85em' }}>
+                    <Badge 
+                        bg={subscription.autoRenewal ? 'success' : 'secondary'} 
+                        className="text-truncate"
+                        style={{ minWidth: '6.5em' }}
+                    >
+                        <FontAwesomeIcon 
+                            icon={subscription.autoRenewal ? faRotate : faHand} 
+                            className="me-1"
+                        />
+                        {subscription.renewalFrequency}
+                    </Badge>
+                    <span className="text-truncate">${subscription.amount.toFixed(2)}</span>
                 </div>
+            </div>
+
+            {/* Column 3: Payment Method - Right aligned */}
+            <div className="d-flex flex-column align-items-end ps-2" 
+                style={{ minWidth: '32px', flexShrink: 1 }}> {/* Add ps-2 */}
+                <div className="rounded bg-light d-flex align-items-center justify-content-center mb-1"
+                    style={{
+                        width: '32px',
+                        height: '32px',
+                        backgroundColor: 'var(--bs-white)'
+                    }}>
+                    <img
+                        src={subscription.paymentProviderIcon}
+                        alt={subscription.paymentProviderName}
+                        style={{
+                            width: '24px',
+                            height: '24px',
+                            objectFit: 'contain'
+                        }}
+                    />
+                </div>
+                <span className="d-none d-md-block text-body-secondary text-end nowrap" 
+                    style={{ fontSize: '0.75em', width: '100%' }}>
+                    {subscription.paymentDetails}
+                </span>
+            </div>
+
+            {/* Column 4: Actions and Status */}
+            <div className="d-flex flex-column align-items-end" 
+                style={{ width: '90px', flexShrink: 0 }}>
+                <div className="d-flex align-items-center gap-2 mb-1">
+                    <div className="position-relative">
+                        <FontAwesomeIcon
+                            icon={faBell}
+                            className={alertCount > 0 ? "text-warning" : "text-secondary"}
+                        />
+                        {alertCount > 0 && (
+                            <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                style={{ fontSize: '0.65em', transform: 'scale(0.8)' }}>
+                                {alertCount}
+                            </span>
+                        )}
+                    </div>
+                    <Button variant="link" className="p-0" onClick={() => onEdit(subscription)}>
+                        <FontAwesomeIcon icon={faEdit} />
+                    </Button>
+                    <Button variant="link" className="p-0 text-danger" onClick={() => onDelete(subscription)}>
+                        <FontAwesomeIcon icon={faTrash} />
+                    </Button>
+                </div>
+                <Badge bg={subscription.isActive ? 'success' : 'secondary'} style={{ fontSize: '0.75em', minWidth: '6.5em' }}>
+                    <FontAwesomeIcon
+                        icon={subscription.isActive ? faCheckCircle : faClock}
+                        className="me-1"
+                    />
+                    {subscription.isActive ? 'Active' : 'Inactive'}
+                </Badge>
             </div>
         </div>
     );
