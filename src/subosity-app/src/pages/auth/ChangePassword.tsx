@@ -4,6 +4,8 @@ import { supabase } from '../../supabaseClient';
 import { useToast } from '../../ToastContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../AuthContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft, faKey, faSave } from '@fortawesome/free-solid-svg-icons';
 
 const ChangePassword: React.FC = () => {
     const { user } = useAuth();
@@ -68,11 +70,17 @@ const ChangePassword: React.FC = () => {
     };
 
     return (
-        <>
-            <h3 className="mb-0"><i className="fas fa-lock me-2"></i>Change Password</h3>
-            <p className="mb-4 text-muted" style={{ borderBottom: '#dddddd solid 1px' }}>
-                Use this form to change your password.
-            </p>
+        <Container className="py-4">
+            <div className="mb-4">
+                <h3 className="mb-2">
+                    <FontAwesomeIcon icon={faKey} className="me-2" />
+                    Change Password
+                </h3>
+                <p className="mb-0 text-muted">
+                    Use this form to change your password.
+                </p>
+                <hr className="mt-2" />
+            </div>
 
             <Container className="mt-5 d-flex justify-content-center">
                 <div style={{ width: '100%', maxWidth: '500px' }}>
@@ -160,11 +168,12 @@ const ChangePassword: React.FC = () => {
 
                             <div className="mt-3">
                                 <Link to="/profile" className="text-decoration-none btn btn-secondary me-2">
-                                    <i className="fas fa-arrow-left me-2"></i>Back to Profile
+                                    <FontAwesomeIcon icon={faArrowLeft} className="me-2" />
+                                    Back to Profile
                                 </Link>
-                                <Button 
-                                    type="submit" 
-                                    variant="primary" 
+                                <Button
+                                    type="submit"
+                                    variant="primary"
                                     disabled={!isValid || loading || isDemo}
                                     form="change-password-form"
                                 >
@@ -175,7 +184,8 @@ const ChangePassword: React.FC = () => {
                                         </>
                                     ) : (
                                         <>
-                                            Change Password<i className="fas fa-save ms-2"></i>
+                                            <FontAwesomeIcon icon={faSave} className="me-2" />
+                                            Change Password
                                         </>
                                     )}
                                 </Button>
@@ -185,7 +195,7 @@ const ChangePassword: React.FC = () => {
 
                 </div>
             </Container>
-        </>
+        </Container>
     );
 };
 

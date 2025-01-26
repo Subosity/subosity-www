@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Badge, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrash, faRotate, faHand, faBell } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faTrash, faRotate, faHand, faBell, faCheckCircle, faClock } from '@fortawesome/free-solid-svg-icons';
 import { Subscription } from '../types';
 import { useAlerts } from '../AlertsContext';
 import { useNavigate } from 'react-router-dom';
@@ -21,7 +21,7 @@ const SubscriptionListItem: React.FC<Props> = ({ subscription, onEdit, onDelete 
         // Prevent navigation if clicking on action buttons
         const target = e.target as HTMLElement;
         if (target.closest('button')) return;
-        
+
         navigate(`/subscription/${subscription.id}`);
     };
 
@@ -34,7 +34,7 @@ const SubscriptionListItem: React.FC<Props> = ({ subscription, onEdit, onDelete 
     }, [subscription.id]);
 
     return (
-        <div 
+        <div
             className="d-flex align-items-center p-3 border-bottom"
             style={{
                 backgroundColor: 'var(--bs-body-bg)',
@@ -44,19 +44,22 @@ const SubscriptionListItem: React.FC<Props> = ({ subscription, onEdit, onDelete 
             }}
             onClick={handleItemClick}  // Add click handler
         >
-            <div className="rounded-circle bg-light d-flex align-items-center justify-content-center p-1 me-3"
+            <div className="rounded-circle bg-light d-flex align-items-center justify-content-center p-1"
                 style={{
                     width: '40px',
                     height: '40px',
-                    backgroundColor: 'var(--bs-white)'
+                    backgroundColor: 'var(--bs-white)',
+                    flexShrink: 0,
+                    overflow: 'hidden' // Add this to clip overflow
                 }}>
                 <img
                     src={subscription.providerIcon}
                     alt={subscription.providerName}
                     style={{
-                        width: '32px',
-                        height: '32px',
-                        objectFit: 'contain'
+                        width: '100%',    // Change to percentage
+                        height: '100%',   // Change to percentage
+                        objectFit: 'contain',
+                        padding: '4px'    // Add padding to prevent touching edges
                     }}
                 />
             </div>
@@ -85,6 +88,15 @@ const SubscriptionListItem: React.FC<Props> = ({ subscription, onEdit, onDelete 
                                         {subscription.providerDescription}
                                     </div>
                                 )}
+                                <div className="d-flex align-items-center">
+                                    <Badge bg={subscription.isActive ? 'success' : 'secondary'} className="ms-2">
+                                        <FontAwesomeIcon
+                                            icon={subscription.isActive ? faCheckCircle : faClock}
+                                            className="me-1"
+                                        />
+                                        {subscription.isActive ? 'Active' : 'Inactive'}
+                                    </Badge>
+                                </div>
                             </div>
                         </div>
 

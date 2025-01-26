@@ -3,6 +3,8 @@ import { Card, Container, Form, Button, Alert } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../../supabaseClient';
 import { useToast } from '../../ToastContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft, faPaperPlane, faRotateRight } from '@fortawesome/free-solid-svg-icons';
 
 function ForgotPassword() {
   const [email, setEmail] = useState('');
@@ -32,10 +34,12 @@ function ForgotPassword() {
 
   return (
     <Container className="d-flex justify-content-center align-items-center">
-      <Card style={{ width: '100%', maxWidth: '400px' }}>
+      <Card style={{ width: '100%', maxWidth: '400px', marginTop: '4rem' }}>
         <Card.Body>
-          <h1 className="text-center mb-4">Forgot Password</h1>
-          <p className="text-center mb-4">
+          <h1 className="text-center mb-4">
+            <FontAwesomeIcon icon={faRotateRight} className="me-3" />
+            Forgot Password</h1>
+          <p className="text-center mb-4 pb-4" style={{ borderBottom: '1px solid #7d7d7d' }}>
             Enter your email address below and we'll send you a link to reset your password.
           </p>
           <Form onSubmit={handleForgotPassword}>
@@ -58,14 +62,16 @@ function ForgotPassword() {
                 </>
               ) : (
                 <>
-                  <i className="fas fa-paper-plane me-2"></i>Send Reset Link
+                  <FontAwesomeIcon icon={faPaperPlane} className="me-2" />
+                  Send Reset Link
                 </>
               )}
             </Button>
           </Form>
           <div className="d-flex justify-content-center">
             <Link to="/login" className="text-decoration-none">
-              <i className="fas fa-arrow-left me-2"></i>Back to Login
+              <FontAwesomeIcon icon={faArrowLeft} className="me-2" />
+              Back to Login
             </Link>
           </div>
         </Card.Body>

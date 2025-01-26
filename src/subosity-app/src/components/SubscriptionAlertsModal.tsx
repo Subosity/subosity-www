@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Offcanvas, Button, ListGroup, Badge } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-    faBell, 
-    faCheck, 
-    faClock, 
+import {
+    faBell,
+    faCheck,
+    faClock,
     faTimesCircle,
     faCircleInfo,
     faTriangleExclamation,
@@ -138,7 +138,7 @@ const SubscriptionAlertsModal: React.FC<Props> = ({ show, onHide }) => {
                                 handleFilterChange('all');
                             }}
                         >
-                            <FontAwesomeIcon icon={faEnvelopesBulk} className="me-2"/>All ({counts.all})
+                            <FontAwesomeIcon icon={faEnvelopesBulk} className="me-2" />All ({counts.all})
                         </Button>
                         <Button
                             type="button"
@@ -148,7 +148,7 @@ const SubscriptionAlertsModal: React.FC<Props> = ({ show, onHide }) => {
                                 handleFilterChange('unread');
                             }}
                         >
-                            <FontAwesomeIcon icon={faEnvelope} className="me-2"/>Unread ({counts.unread})
+                            <FontAwesomeIcon icon={faEnvelope} className="me-2" />Unread ({counts.unread})
                         </Button>
                         <Button
                             type="button"
@@ -158,7 +158,7 @@ const SubscriptionAlertsModal: React.FC<Props> = ({ show, onHide }) => {
                                 handleFilterChange('read');
                             }}
                         >
-                            <FontAwesomeIcon icon={faEnvelopeOpen} className="me-2"/>Read ({counts.read})
+                            <FontAwesomeIcon icon={faEnvelopeOpen} className="me-2" />Read ({counts.read})
                         </Button>
                     </div>
                 </div>
@@ -169,7 +169,7 @@ const SubscriptionAlertsModal: React.FC<Props> = ({ show, onHide }) => {
                         </div>
                     </div>
                 ) : alerts.length > 0 ? (
-                    <SubscriptionAlertList 
+                    <SubscriptionAlertList
                         alerts={alerts}
                         onDismiss={onAlertDismiss}
                         onSnooze={onAlertSnooze}

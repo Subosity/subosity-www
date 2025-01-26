@@ -2,7 +2,7 @@ import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'rea
 import { Form, Button, InputGroup } from 'react-bootstrap';
 import { Subscription } from '../types';
 import { supabase } from '../supabaseClient';
-import Select from 'react-select';
+import Select, { components } from 'react-select';
 
 // Update SubscriptionFormRef interface
 export interface SubscriptionFormRef {
@@ -10,6 +10,7 @@ export interface SubscriptionFormRef {
     isValid: boolean;
 }
 
+// Update the Props interface to match database schema
 interface Props {
     subscription?: Subscription;
     onSubmit: (data: Partial<Subscription>) => void;
@@ -82,7 +83,7 @@ interface TouchedFields {
 const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription, onSubmit, onCancel }, ref) => {
     // Add touched state
     const [touched, setTouched] = useState<TouchedFields>({});
-    
+
     const [providers, setProviders] = useState<any[]>([]);
     const [paymentProviders, setPaymentProviders] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -97,7 +98,8 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
         paymentProviderId: subscription?.paymentProviderId || '',
         paymentDetails: subscription?.paymentDetails || '',
         notes: subscription?.notes || '',
-        isFreeTrial: subscription?.isFreeTrial || false
+        isFreeTrial: subscription?.isFreeTrial || false,
+        isActive: subscription?.isActive ?? true  // Add this line with default true
     });
 
     const [isValid, setIsValid] = useState(false);
@@ -107,19 +109,19 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
     // Update validateForm function
     const validateForm = (data: Partial<Subscription>): ValidationErrors => {
         const newErrors: ValidationErrors = {};
-        
+
         if (!data.providerId) {
             newErrors.providerId = 'Please select a provider';
         }
-        
+
         if (!data.amount || data.amount <= 0) {
             newErrors.amount = 'Please enter a valid amount';
         }
-        
+
         if (!data.paymentProviderId) {
             newErrors.paymentProviderId = 'Please select a payment method';
         }
-        
+
         return newErrors;
     };
 
@@ -144,7 +146,7 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
                 if (subscriptionResponse.error) throw subscriptionResponse.error;
                 if (paymentResponse.error) throw paymentResponse.error;
 
-                
+
                 setProviders(subscriptionResponse.data || []);
                 setPaymentProviders(paymentResponse.data || []);
 
@@ -165,7 +167,7 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
         setValidated(true);
         const newErrors = validateForm(formData);
         setErrors(newErrors);
-        
+
         if (Object.keys(newErrors).length === 0) {
             // Transform empty date string to null before submitting
             const submissionData = {
@@ -218,33 +220,88 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
                     isInvalid={validated && !formData.providerId}
                     options={providers}
                     getOptionLabel={(option) => option.name}
-                    getOptionValue={(option) => option.id}
+                    components={{
+                        Option: ({ data, ...props }) => (
+                            <components.Option {...props}>
+                                <div className="d-flex align-items-center">
+                                    <div className="rounded-circle bg-light d-flex align-items-center justify-content-center"
+                                        style={{
+                                            width: '24px',
+                                            height: '24px',
+                                            backgroundColor: 'var(--bs-gray-200)',
+                                            flexShrink: 0,
+                                            overflow: 'hidden'
+                                        }}>
+                                        <img
+                                            src={data.icon}
+                                            alt={`${data.name} icon`}
+                                            style={{
+                                                width: '100%',
+                                                height: '100%',
+                                                objectFit: 'contain',
+                                                padding: '4px'
+                                            }}
+                                        />
+                                    </div>
+                                    <span className="ms-2">{data.name}</span>
+                                </div>
+                            </components.Option>
+                        ),
+                        SingleValue: ({ data, ...props }) => (
+                            <components.SingleValue {...props}>
+                                <div className="d-flex align-items-center">
+                                    <div className="rounded-circle bg-light d-flex align-items-center justify-content-center"
+                                        style={{
+                                            width: '24px',
+                                            height: '24px',
+                                            backgroundColor: 'var(--bs-gray-200)',
+                                            flexShrink: 0,
+                                            overflow: 'hidden'
+                                        }}>
+                                        <img
+                                            src={data.icon}
+                                            alt={`${data.name} icon`}
+                                            style={{
+                                                width: '100%',
+                                                height: '100%',
+                                                objectFit: 'contain',
+                                                padding: '4px'
+                                            }}
+                                        />
+                                    </div>
+                                    <span className="ms-2">{data.name}</span>
+                                </div>
+                            </components.SingleValue>
+                        )
+                    }}
                     isSearchable={true}
                     isClearable={false}
                     placeholder="Select subscription provider..."
                     formatOptionLabel={provider => (
                         <div className="d-flex align-items-center justify-content-between w-100">
                             <div className="d-flex align-items-center">
-                                <div className="rounded bg-light d-flex align-items-center justify-content-center p-1"
-                                     style={{ 
-                                         width: '32px', 
-                                         height: '32px',
-                                         backgroundColor: 'var(--bs-gray-200) !important',
-                                         flexShrink: 0
-                                     }}>
+                                <div className="rounded-circle bg-light d-flex align-items-center justify-content-center p-1"
+                                    style={{
+                                        width: '32px',
+                                        height: '32px',
+                                        backgroundColor: 'var(--bs-gray-200) !important',
+                                        flexShrink: 0,
+                                        overflow: 'hidden' // Add this to clip overflow
+                                    }}>
                                     <img
                                         src={provider.icon}
                                         alt={`${provider.name} icon`}
                                         style={{
-                                            width: '24px',
-                                            height: '24px',
-                                            objectFit: 'contain'
+                                            width: '100%',    // Change to percentage
+                                            height: '100%',   // Change to percentage
+                                            objectFit: 'contain',
+                                            padding: '4px'    // Add padding to prevent touching edges
                                         }}
                                     />
                                 </div>
                                 <span className="ms-2">{provider.name}</span>
                             </div>
-                            <span style={{ 
+                            <span style={{
                                 color: 'var(--bs-body-color)',
                                 opacity: 0.5,
                                 fontSize: '0.75em'
@@ -338,6 +395,18 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
             </Form.Group>
 
             <Form.Group className="mb-3">
+                <Form.Check
+                    type="checkbox"
+                    label="Active Subscription"
+                    checked={formData.isActive}
+                    onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                />
+                <Form.Text className="text-muted">
+                    Checked if this subscription is currently active.
+                </Form.Text>
+            </Form.Group>
+
+            <Form.Group className="mb-3">
                 <Form.Label>
                     Payment Method <span className="text-danger">*</span>
                 </Form.Label>
@@ -357,7 +426,60 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
                     isInvalid={validated && !formData.paymentProviderId}
                     options={paymentProviders}
                     getOptionLabel={(option) => option.name}
-                    getOptionValue={(option) => option.id}
+                    components={{
+                        Option: ({ data, ...props }) => (
+                            <components.Option {...props}>
+                                <div className="d-flex align-items-center">
+                                    <div className="rounded-circle bg-light d-flex align-items-center justify-content-center"
+                                        style={{
+                                            width: '24px',
+                                            height: '24px',
+                                            backgroundColor: 'var(--bs-gray-200)',
+                                            flexShrink: 0,
+                                            overflow: 'hidden'
+                                        }}>
+                                        <img
+                                            src={data.icon}
+                                            alt={`${data.name} icon`}
+                                            style={{
+                                                width: '100%',
+                                                height: '100%',
+                                                objectFit: 'contain',
+                                                padding: '4px'
+                                            }}
+                                        />
+                                    </div>
+                                    <span className="ms-2">{data.name}</span>
+                                </div>
+                            </components.Option>
+                        ),
+                        SingleValue: ({ data, ...props }) => (
+                            <components.SingleValue {...props}>
+                                <div className="d-flex align-items-center">
+                                    <div className="rounded-circle bg-light d-flex align-items-center justify-content-center"
+                                        style={{
+                                            width: '24px',
+                                            height: '24px',
+                                            backgroundColor: 'var(--bs-gray-200)',
+                                            flexShrink: 0,
+                                            overflow: 'hidden'
+                                        }}>
+                                        <img
+                                            src={data.icon}
+                                            alt={`${data.name} icon`}
+                                            style={{
+                                                width: '100%',
+                                                height: '100%',
+                                                objectFit: 'contain',
+                                                padding: '4px'
+                                            }}
+                                        />
+                                    </div>
+                                    <span className="ms-2">{data.name}</span>
+                                </div>
+                            </components.SingleValue>
+                        )
+                    }}
                     isSearchable={true}
                     isClearable={false}
                     placeholder="Select payment method..."
@@ -365,11 +487,11 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
                         <div className="d-flex align-items-center justify-content-between w-100">
                             <div className="d-flex align-items-center">
                                 <div className="rounded d-flex align-items-center justify-content-center p-1"
-                                     style={{ 
-                                         width: '32px', 
-                                         height: '32px',
-                                         flexShrink: 0
-                                     }}>
+                                    style={{
+                                        width: '32px',
+                                        height: '32px',
+                                        flexShrink: 0
+                                    }}>
                                     <img
                                         src={provider.icon}
                                         alt={`${provider.name} icon`}
@@ -382,7 +504,7 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
                                 </div>
                                 <span className="ms-2">{provider.name}</span>
                             </div>
-                            <span style={{ 
+                            <span style={{
                                 fontSize: '0.875em',
                                 opacity: 0.6
                             }}>
@@ -461,6 +583,8 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
                     }}
                 />
             </Form.Group>
+
+
 
             {/* Update parent components to receive isValid state */}
             <div style={{ display: 'none' }}>

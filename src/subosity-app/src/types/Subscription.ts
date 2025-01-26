@@ -15,5 +15,6 @@ export interface Subscription {
     paymentDetails: string;
     notes?: string;
     isFreeTrial: boolean;
+    isActive: boolean;
     nickname?: string;
 }

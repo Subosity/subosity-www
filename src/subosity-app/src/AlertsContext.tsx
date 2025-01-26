@@ -31,7 +31,7 @@ export const AlertsProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     const fetchUnreadCount = async () => {
         if (!user) return;
-        
+
         const { count, error } = await supabase
             .from('subscription_alerts')
             .select('*', { count: 'exact' })
@@ -45,7 +45,7 @@ export const AlertsProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     const getUnreadCountForSubscription = async (subscriptionId: string) => {
         if (!user) return 0;
-        
+
         const { count, error } = await supabase
             .from('subscription_alerts')
             .select('*', { count: 'exact' })
@@ -107,7 +107,7 @@ export const AlertsProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                 .eq('id', alertId);
 
             if (updateError) throw updateError;
-            
+
             await fetchUnreadCount(); // Update count after snooze
             addToast('Alert snoozed for 24 hours', 'success');
             return true; // Return success status
@@ -180,8 +180,8 @@ export const AlertsProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }, [user]);
 
     return (
-        <AlertsContext.Provider value={{ 
-            unreadCount, 
+        <AlertsContext.Provider value={{
+            unreadCount,
             getUnreadCountForSubscription,
             handleDismiss,
             handleSnooze,

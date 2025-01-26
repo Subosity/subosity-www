@@ -4,6 +4,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { AuthError } from '@supabase/supabase-js';
 import { supabase } from '../../supabaseClient';
 import { useToast } from '../../ToastContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft, faInfoCircle, faShieldAlt, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 
 const Signup: React.FC = () => {
   const [email, setEmail] = useState<string>('');
@@ -69,7 +71,7 @@ const Signup: React.FC = () => {
       } else {
         throw new Error('Signup failed - no user data returned');
       }
-      
+
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An error occurred during signup';
       console.error('Caught error:', err); // Debug log
@@ -82,10 +84,12 @@ const Signup: React.FC = () => {
 
   return (
     <Container className="d-flex justify-content-center align-items-center">
-      <Card style={{ width: '100%', maxWidth: '800px' }}>
+      <Card style={{ width: '100%', maxWidth: '800px', marginTop: '4rem' }}>
         <Card.Body>
-          <h1 className="text-center mb-4">Sign Up</h1>
-          <p className="text-center mb-4">
+          <h1 className="text-center mb-4">
+            <FontAwesomeIcon icon={faUserPlus} className="me-3" />
+            Sign Up</h1>
+          <p className="text-center mb-4 pb-4" style={{ borderBottom: '1px solid #7d7d7d' }}>
             Please enter your email and password to create an account. If you already have an account, you can log in.
           </p>
           <Form onSubmit={handleSignUp}>
@@ -126,18 +130,19 @@ const Signup: React.FC = () => {
                 </Form.Group>
 
                 {error && <Alert variant="danger">{error}</Alert>}
-            <Button type="submit" className="w-100 mb-3" disabled={loading}>
-              {loading ? (
-                <>
-                  <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                  Signing up...
-                </>
-              ) : (
-                <>
-                  <i className="fas fa-user-plus me-2"></i>Sign Up
-                </>
-              )}
-            </Button>
+                <Button type="submit" className="w-100 mb-3" disabled={loading}>
+                  {loading ? (
+                    <>
+                      <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                      Signing up...
+                    </>
+                  ) : (
+                    <>
+                      <FontAwesomeIcon icon={faUserPlus} className="me-2" />
+                      Sign Up
+                    </>
+                  )}
+                </Button>
               </div>
 
               {/* Vertical Divider */}
@@ -148,7 +153,7 @@ const Signup: React.FC = () => {
               {/* Right Column - Helper Text */}
               <div className="col-md-5 d-flex align-items-center">
                 <Form.Text className="text-muted">
-                  <i className="fas fa-shield-alt me-2"></i>
+                  <FontAwesomeIcon icon={faShieldAlt} className="me-2" />
                   <strong>Strong Password Tips:</strong>
                   <ul className="mt-2 mb-0">
                     <li>Use at least 8 characters</li>
@@ -157,7 +162,7 @@ const Signup: React.FC = () => {
                     <li>Avoid using personal information</li>
                   </ul>
                   <small className="d-block mt-2">
-                    <i className="fas fa-info-circle me-1"></i>
+                    <FontAwesomeIcon icon={faInfoCircle} className="me-1" />
                     A strong password helps protect your account from unauthorized access.
                   </small>
                 </Form.Text>
@@ -168,9 +173,10 @@ const Signup: React.FC = () => {
           </Form>
           <hr className="my-3 w-100" />
           <div className="d-flex justify-content-center">
-          
+
             <Link to="/login" className="text-decoration-none">
-              <i className="fas fa-arrow-left me-2"></i>Back to Login
+              <FontAwesomeIcon icon={faArrowLeft} className="me-2" />
+              Back to Login
             </Link>
           </div>
         </Card.Body>

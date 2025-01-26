@@ -77,15 +77,15 @@ const Preferences: React.FC = () => {
     });
 
     return (
-      <div className="container py-4">
+        <div className="container py-4">
             <h3 className="mb-0">
                 <FontAwesomeIcon icon={faGear} className="me-2" />
                 Preferences
             </h3>
-            <p style={{ 
+            <p style={{
                 color: 'var(--bs-body-color)',
                 opacity: 0.75,
-                borderBottom: 'var(--bs-border-color) solid 1px' 
+                borderBottom: 'var(--bs-border-color) solid 1px'
             }} className="mb-4">
                 Customize your application settings
             </p>
@@ -107,8 +107,8 @@ const Preferences: React.FC = () => {
                                             Setting
                                             <FontAwesomeIcon icon={getSortIcon('title')} className="ms-2" />
                                         </th>
-                                        <th 
-                                            onClick={() => handleSort('preference_value')} 
+                                        <th
+                                            onClick={() => handleSort('preference_value')}
                                             style={{ cursor: 'pointer' }}
                                             className="text-center"
                                         >
@@ -124,7 +124,7 @@ const Preferences: React.FC = () => {
                                             <td>{pref.title}</td>
                                             <td className="text-center">{pref.preference_value}</td>
                                             <td className="text-center">
-                                                <Button 
+                                                <Button
                                                     variant="outline-primary"
                                                     size="sm"
                                                     onClick={() => handleEdit(pref)}

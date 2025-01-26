@@ -34,7 +34,8 @@ const EditSubscriptionModal: React.FC<Props> = ({ show, onHide, subscription, on
                     payment_provider_id: data.paymentProviderId,
                     payment_details: data.paymentDetails,
                     notes: data.notes,
-                    is_free_trial: data.isFreeTrial
+                    is_free_trial: data.isFreeTrial,
+                    is_active: data.isActive
                 })
                 .eq('id', subscription.id);
 
@@ -77,7 +78,7 @@ const EditSubscriptionModal: React.FC<Props> = ({ show, onHide, subscription, on
                         Back
                     </Button>
                     <Button variant="primary" onClick={() => formRef.current?.submitForm()}>
-                    <FontAwesomeIcon icon={faSave} className="me-2" />
+                        <FontAwesomeIcon icon={faSave} className="me-2" />
                         Save Changes
                     </Button>
                 </div>

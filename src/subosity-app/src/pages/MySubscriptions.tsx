@@ -73,7 +73,8 @@ const MySubscriptions = () => {
                 paymentProviderIcon: sub.payment_provider.icon,
                 paymentDetails: sub.payment_details,
                 notes: sub.notes,
-                isFreeTrial: sub.is_free_trial
+                isFreeTrial: sub.is_free_trial,
+                isActive: sub.is_active
             })) || []);
         } catch (error) {
             addToast('Error loading subscriptions', 'error');

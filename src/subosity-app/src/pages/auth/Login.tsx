@@ -1,10 +1,11 @@
 import React, { useState, FormEvent } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { Card, Container, Form, Button, Alert } from 'react-bootstrap';
 import { AuthError } from '@supabase/supabase-js';
 import { supabase } from '../../supabaseClient';
-import { useAuth } from '../../AuthContext';
 import { useToast } from '../../ToastContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faRotateRight, faSignIn, faSignInAlt, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState<string>('');
@@ -12,23 +13,32 @@ const Login: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const { addToast } = useToast();
 
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const { error, data } = await supabase.auth.signInWithPassword({ 
-        email, 
-        password 
+      const { error, data } = await supabase.auth.signInWithPassword({
+        email,
+        password
       });
-      
+
       if (error) {
         setError(error.message);
         addToast('Login failed', 'error');
       } else {
         addToast('Successfully logged in', 'success');
-        navigate('/');
+        // Get returnUrl from query params
+        const params = new URLSearchParams(location.search);
+        const returnUrl = params.get('returnUrl');
+        
+        if (returnUrl) {
+          navigate(decodeURIComponent(returnUrl));
+        } else {
+          navigate('/dashboard'); // Default redirect
+        }
       }
     } catch (err) {
       const authError = err as AuthError;
@@ -41,10 +51,12 @@ const Login: React.FC = () => {
 
   return (
     <Container className="d-flex justify-content-center align-items-center">
-      <Card style={{ width: '100%', maxWidth: '400px' }}>
+      <Card style={{ width: '100%', maxWidth: '400px', marginTop: '4rem' }}>
         <Card.Body>
-          <h1 className="text-center mb-4">Login</h1>
-          <p className="text-center mb-4">
+          <h1 className="text-center mb-4">
+            <FontAwesomeIcon icon={faSignIn} className="me-3" />
+            Login</h1>
+          <p className="text-center mb-4 pb-4" style={{ borderBottom: '1px solid #7d7d7d' }}>
             Please enter your email and password to log in. If you don't have an account, you can sign up.
           </p>
           <Form onSubmit={handleLogin}>
@@ -77,17 +89,20 @@ const Login: React.FC = () => {
                 </>
               ) : (
                 <>
-                  <i className="fas fa-sign-in-alt me-2"></i>Login
+                  <FontAwesomeIcon icon={faSignInAlt} className="me-2" />
+                  Login
                 </>
               )}
             </Button>
           </Form>
-          <div className="d-flex justify-content-between">
+          <div className="d-flex justify-content-between pt-2" style={{ borderTop: '1px solid #7d7d7d' }}>
             <Link to="/forgot-password" className="text-decoration-none">
-              <i className="fas fa-unlock-alt me-2"></i>Forgot password?
+              <FontAwesomeIcon icon={faRotateRight} className="me-2" />
+              Forgot password?
             </Link>
             <Link to="/signup" className="text-decoration-none">
-              <i className="fas fa-user-plus me-2"></i>Sign Up
+              <FontAwesomeIcon icon={faUserPlus} className="me-2" />
+              Sign Up
             </Link>
           </div>
         </Card.Body>

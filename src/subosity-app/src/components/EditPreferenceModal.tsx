@@ -63,7 +63,7 @@ const EditPreferenceModal: React.FC<Props> = ({ show, onHide, preference, onSubm
             if (!preference?.id) return;
 
             // Convert display value back to storage value for theme
-            const storageValue = preference.preference_key === 'theme' 
+            const storageValue = preference.preference_key === 'theme'
                 ? THEME_VALUES[value as keyof typeof THEME_VALUES]
                 : value.toString();
 

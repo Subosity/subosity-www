@@ -19,9 +19,9 @@ const UserAvatar: React.FC<UserAvatarProps> = ({ email, size = 32 }) => {
 
     if (!email) {
         return (
-            <div className="rounded-circle bg-secondary d-flex align-items-center justify-content-center" 
-                 style={{ width: `${size}px`, height: `${size}px` }}>
-                <FontAwesomeIcon icon={faUser} className="text-light" style={{ fontSize: `${size/2}px` }} />
+            <div className="rounded-circle bg-secondary d-flex align-items-center justify-content-center"
+                style={{ width: `${size}px`, height: `${size}px` }}>
+                <FontAwesomeIcon icon={faUser} className="text-light" style={{ fontSize: `${size / 2}px` }} />
             </div>
         )
     }
@@ -30,8 +30,8 @@ const UserAvatar: React.FC<UserAvatarProps> = ({ email, size = 32 }) => {
     const gravatarUrl = `https://secure.gravatar.com/avatar/${hash}?s=${size}&d=mp`
 
     return (
-        <div className="rounded-circle bg-secondary d-flex align-items-center justify-content-center" 
-             style={{ width: `${size}px`, height: `${size}px` }}>
+        <div className="rounded-circle bg-secondary d-flex align-items-center justify-content-center"
+            style={{ width: `${size}px`, height: `${size}px` }}>
             {!gravatarError ? (
                 <img
                     src={gravatarUrl}
@@ -41,9 +41,9 @@ const UserAvatar: React.FC<UserAvatarProps> = ({ email, size = 32 }) => {
                     style={{ width: `${size}px`, height: `${size}px`, objectFit: 'cover' }}
                 />
             ) : (
-                <span style={{ 
+                <span style={{
                     color: 'var(--bs-body-color)',
-                    fontSize: `${size/2}px`,
+                    fontSize: `${size / 2}px`,
                     fontWeight: 'bold'
                 }}>
                     {getInitials(email)}

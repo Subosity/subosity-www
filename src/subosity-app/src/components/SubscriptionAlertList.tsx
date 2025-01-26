@@ -1,12 +1,12 @@
 import React from 'react';
 import { ListGroup, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-    faCheck, 
+import {
+    faCheck,
     faClock,
     faCircleInfo,
     faTriangleExclamation,
-    faCircleExclamation 
+    faCircleExclamation
 } from '@fortawesome/free-solid-svg-icons';
 import { SubscriptionAlert } from '../types';
 
@@ -73,12 +73,12 @@ const SubscriptionAlertList: React.FC<Props> = ({ alerts, onDismiss, onSnooze, s
                             {showProvider && (
                                 <div className="me-3">
                                     <div className="rounded bg-light d-flex align-items-center justify-content-center p-1"
-                                         style={{ 
-                                             width: '32px', 
-                                             height: '32px',
-                                             backgroundColor: 'var(--bs-body-bg)',
-                                             border: '1px solid var(--bs-border-color)'
-                                         }}>
+                                        style={{
+                                            width: '32px',
+                                            height: '32px',
+                                            backgroundColor: 'var(--bs-body-bg)',
+                                            border: '1px solid var(--bs-border-color)'
+                                        }}>
                                         <img
                                             src={alert.subscription.subscription_provider.icon}
                                             alt={alert.subscription.subscription_provider.name}
@@ -89,8 +89,8 @@ const SubscriptionAlertList: React.FC<Props> = ({ alerts, onDismiss, onSnooze, s
                             )}
                             <div>
                                 <div className="d-flex align-items-center mb-1">
-                                    <FontAwesomeIcon 
-                                        icon={getSeverityIcon(alert.severity)} 
+                                    <FontAwesomeIcon
+                                        icon={getSeverityIcon(alert.severity)}
                                         style={{ color: getSeverityColor(alert.severity) }}
                                         className="me-2"
                                     />

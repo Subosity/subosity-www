@@ -6,7 +6,7 @@ import { AlertsProvider } from './AlertsContext';
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Navigation from './components/Navigation'
 import Footer from './components/Footer'
-import Home from './pages/Home'
+import Dashboard from './pages/Dashboard'
 import MySubscriptions from './pages/MySubscriptions'
 import About from './pages/About'
 import Privacy from './pages/Privacy'
@@ -19,12 +19,15 @@ import Profile from './pages/auth/Profile'
 import Preferences from './pages/auth/Preferences'
 import SubscriptionDetail from './pages/SubscriptionDetail'
 import { supabase } from './supabaseClient';
+import Home from './pages/Home';
+import Pricing from './pages/Pricing';
+import ProtectedRoute from './components/ProtectedRoute';
 
 const AppContent: React.FC = () => {
 
     return (
         <div className="d-flex flex-column min-vh-100">
-            <Navigation 
+            <Navigation
             />
             <main className="flex-grow-1">
                 <Routes>
@@ -32,16 +35,40 @@ const AppContent: React.FC = () => {
                     <Route path="/about" element={<About />} />
                     <Route path="/privacy" element={<Privacy />} />
                     <Route path="/terms" element={<Terms />} />
-                    <Route path="/mysubscriptions" element={<MySubscriptions />} />
-                    <Route path="/subscription/:id" element={<SubscriptionDetail />} />
+                    <Route path="/pricing" element={<Pricing />} />
+                    
+                    {/* Protected Routes */}
+                    <Route path="/dashboard" element={
+                        <ProtectedRoute>
+                            <Dashboard />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/mysubscriptions" element={
+                        <ProtectedRoute>
+                            <MySubscriptions />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/subscription/:id" element={
+                        <ProtectedRoute>
+                            <SubscriptionDetail />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/profile" element={
+                        <ProtectedRoute>
+                            <Profile />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/preferences" element={
+                        <ProtectedRoute>
+                            <Preferences />
+                        </ProtectedRoute>
+                    } />
 
                     {/* Auth Routes */}
                     <Route path="/login" element={<Login />} />
                     <Route path="/signup" element={<Signup />} />
                     <Route path="/forgot-password" element={<ForgotPassword />} />
                     <Route path="/change-password" element={<ChangePassword />} />
-                    <Route path="/profile" element={<Profile />} />
-                    <Route path="/preferences" element={<Preferences />} />
                 </Routes>
             </main>
             <Footer />
@@ -51,17 +78,17 @@ const AppContent: React.FC = () => {
 
 const App: React.FC = () => {
     return (
-        <ToastProvider>
-            <AuthProvider>
-                <ThemeProvider>
-                    <AlertsProvider>
-                        <BrowserRouter>
+        <BrowserRouter>
+            <ToastProvider>
+                <AuthProvider>
+                    <ThemeProvider>
+                        <AlertsProvider>
                             <AppContent />
-                        </BrowserRouter>
-                    </AlertsProvider>
-                </ThemeProvider>
-            </AuthProvider>
-        </ToastProvider>
+                        </AlertsProvider>
+                    </ThemeProvider>
+                </AuthProvider>
+            </ToastProvider>
+        </BrowserRouter>
     );
 };
 

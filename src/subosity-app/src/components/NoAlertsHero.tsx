@@ -21,9 +21,9 @@ const NoAlertsHero: React.FC<NoAlertsHeroProps> = ({ filterType }) => {
 
     return (
         <div className="text-center py-5">
-            <FontAwesomeIcon 
-                icon={faBellSlash} 
-                size="4x" 
+            <FontAwesomeIcon
+                icon={faBellSlash}
+                size="4x"
                 className="mb-3 text-secondary"
             />
             <h4>{messages[filterType]}</h4>

@@ -57,6 +57,7 @@ create table if not exists subscription (
   amount numeric(10,2),
   payment_details text,
   notes text,
+  is_active boolean default true,
   is_free_trial boolean default false,
   payment_provider_id uuid references payment_provider(id)
 );

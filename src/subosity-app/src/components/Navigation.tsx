@@ -11,7 +11,12 @@ import {
     faPalette,
     faHandHoldingDollar,
     faHome,
-    faBell
+    faBell,
+    faDashboard,
+    faTags,
+    faUserPlus,
+    faSignIn,
+    faInfoCircle
 } from '@fortawesome/free-solid-svg-icons'
 import { useTheme } from '../ThemeContext'
 import { useAuth } from '../AuthContext'
@@ -100,20 +105,38 @@ const Navigation: React.FC = () => {
                     <img src="/favicon.svg" className="me-2" style={{ height: '22px' }} />
                     <span>Subosity</span>
                 </Navbar.Brand>
-                
+
                 <Navbar.Toggle aria-controls="navbar-nav" />
-                
+
                 <Navbar.Collapse id="navbar-nav">
                     <Nav className="me-auto navbar-nav">
                         <Nav.Link as={Link} to="/">
                             <FontAwesomeIcon icon={faHome} className="me-2" />
                             Home
                         </Nav.Link>
-                        {user && (
-                            <Nav.Link as={Link} to="/mysubscriptions">
-                                <FontAwesomeIcon icon={faHandHoldingDollar} className="me-2" />
-                                Subscriptions
-                            </Nav.Link>
+
+                        {user ? (
+                            <>
+                                <Nav.Link as={Link} to="/dashboard">
+                                    <FontAwesomeIcon icon={faDashboard} className="me-2" />
+                                    Dashboard
+                                </Nav.Link>
+                                <Nav.Link as={Link} to="/mysubscriptions">
+                                    <FontAwesomeIcon icon={faHandHoldingDollar} className="me-2" />
+                                    Subscriptions
+                                </Nav.Link>
+                            </>
+                        ) : (
+                            <>
+                                <Nav.Link as={Link} to="/pricing">
+                                    <FontAwesomeIcon icon={faTags} className="me-2" />
+                                    Pricing
+                                </Nav.Link>
+                                <Nav.Link as={Link} to="/about">
+                                    <FontAwesomeIcon icon={faInfoCircle} className="me-2" />
+                                    About
+                                </Nav.Link>
+                            </>
                         )}
                     </Nav>
 
@@ -125,9 +148,9 @@ const Navigation: React.FC = () => {
                                     className="nav-link p-0"
                                     onClick={() => setShowAlerts(true)}
                                 >
-                                    <FontAwesomeIcon 
-                                        icon={faBell} 
-                                        className={unreadCount > 0 ? "text-warning" : "text-secondary"} 
+                                    <FontAwesomeIcon
+                                        icon={faBell}
+                                        className={unreadCount > 0 ? "text-warning" : "text-body-secondary"}
                                     />
                                     {unreadCount > 0 && (
                                         <span
@@ -185,9 +208,13 @@ const Navigation: React.FC = () => {
                                     Theme
                                 </Button>
                                 <div className="ms-2 me-2">|</div>
-                                <Nav.Link as={Link} to="/signup">Sign Up</Nav.Link>
+                                <Nav.Link as={Link} to="/signup">
+                                    <FontAwesomeIcon icon={faUserPlus} className="me-2" />
+                                    Sign Up</Nav.Link>
                                 <div className="ms-2 me-2">|</div>
-                                <Nav.Link as={Link} to="/login">Login</Nav.Link>
+                                <Nav.Link as={Link} to="/login">
+                                    <FontAwesomeIcon icon={faSignIn} className="me-2" />
+                                    Login</Nav.Link>
                             </>
                         )}
                     </Nav>

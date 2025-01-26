@@ -14,23 +14,23 @@ const Profile: React.FC = () => {
 
   useEffect(() => {
     if (params.get('passwordChanged') === 'true') {
-        // Add hidden form for password manager context
-        const form = document.createElement('form');
-        form.style.display = 'none';
-        form.innerHTML = `
+      // Add hidden form for password manager context
+      const form = document.createElement('form');
+      form.style.display = 'none';
+      form.innerHTML = `
             <input type="text" name="username" autocomplete="username" value="${params.get('email') || ''}" />
             <input type="password" name="password" autocomplete="current-password" />
         `;
-        document.body.appendChild(form);
-        
-        // Clean up after password manager has a chance to detect it
-        setTimeout(() => {
-            document.body.removeChild(form);
-            // Clean up URL
-            window.history.replaceState({}, '', '/profile');
-        }, 3000);
+      document.body.appendChild(form);
+
+      // Clean up after password manager has a chance to detect it
+      setTimeout(() => {
+        document.body.removeChild(form);
+        // Clean up URL
+        window.history.replaceState({}, '', '/profile');
+      }, 3000);
     }
-  }, []);
+  }, [params]);
 
   return (
     <Container className="py-4">
@@ -55,7 +55,7 @@ const Profile: React.FC = () => {
                 Your avatar is automatically loaded from Gravatar
               </p>
             </div>
-            
+
             <div className="mt-4">
               <h5 className="mb-3">Account Information</h5>
               <dl className="row">

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Badge, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrash, faRotate, faHand, faBell } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faTrash, faRotate, faHand, faBell, faCheckCircle, faClock } from '@fortawesome/free-solid-svg-icons';
 import { Subscription } from '../types';
 import { useNavigate } from 'react-router-dom';
 import { useAlerts } from '../AlertsContext';
@@ -52,15 +52,17 @@ const SubscriptionCard: React.FC<Props> = ({ subscription, onEdit, onDelete }) =
                                 width: '48px',
                                 height: '48px',
                                 backgroundColor: 'var(--bs-white)',
-                                flexShrink: 0
+                                flexShrink: 0,
+                                overflow: 'hidden' // Add this to clip overflow
                             }}>
                             <img
                                 src={subscription.providerIcon}
                                 alt={subscription.providerName}
                                 style={{
-                                    width: '40px',
-                                    height: '40px',
-                                    objectFit: 'contain'
+                                    width: '100%',    // Change to percentage
+                                    height: '100%',   // Change to percentage
+                                    objectFit: 'contain',
+                                    padding: '4px'    // Add padding to prevent touching edges
                                 }}
                             />
                         </div>
@@ -90,6 +92,13 @@ const SubscriptionCard: React.FC<Props> = ({ subscription, onEdit, onDelete }) =
                             </div>
                         </div>
                     </div>
+                    <Badge bg={subscription.isActive ? 'success' : 'secondary'} className="ms-2">
+                        <FontAwesomeIcon
+                            icon={subscription.isActive ? faCheckCircle : faClock}
+                            className="me-1"
+                        />
+                        {subscription.isActive ? 'Active' : 'Inactive'}
+                    </Badge>
                     <div className="d-flex align-items-center justify-content-end gap-2">
                         <Button
                             variant="link"

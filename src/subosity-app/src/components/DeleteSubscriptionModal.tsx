@@ -24,9 +24,9 @@ const DeleteSubscriptionModal: React.FC<Props> = ({ show, onHide, subscription, 
                 .from('subscription')
                 .delete()
                 .eq('id', subscription.id);
-            
+
             if (error) throw error;
-            
+
             addToast('Subscription deleted successfully', 'success');
             onDelete(subscription);
             onHide();
@@ -50,34 +50,34 @@ const DeleteSubscriptionModal: React.FC<Props> = ({ show, onHide, subscription, 
                 </div>
             </Offcanvas.Header>
             <Offcanvas.Body>
-            <div className="mt-4 text-danger">
-            <h5>Danger Zone:</h5>
-                <Alert variant="danger">
-                    
-                    <FontAwesomeIcon icon={faExclamationCircle} className="me-2" />
-                    This will permanently delete the following on this platform ONLY:
-                    <ul className="mb-0 mt-2">
-                        <li>The subscription information for <strong>{subscription?.providerName}</strong> on this platform.</li>
-                        <li>All payment history</li>
-                        <li>All renewal records</li>
-                        <li>All subscription notes and details</li>
-                    </ul>
-                </Alert>
-                <p className="mt-3" style={{ color: 'var(--bs-body-color)', fontSize: '.85em' }}>
-                    This does <strong>NOT</strong> affect your actual subscription. This just removes your information from this (Subosity) subscription tracking service.
-                    <br /><br />
-                    This action cannot be undone.
-                </p>
+                <div className="mt-4 text-danger">
+                    <h5>Danger Zone:</h5>
+                    <Alert variant="danger">
+
+                        <FontAwesomeIcon icon={faExclamationCircle} className="me-2" />
+                        This will permanently delete the following on this platform ONLY:
+                        <ul className="mb-0 mt-2">
+                            <li>The subscription information for <strong>{subscription?.providerName}</strong> on this platform.</li>
+                            <li>All payment history</li>
+                            <li>All renewal records</li>
+                            <li>All subscription notes and details</li>
+                        </ul>
+                    </Alert>
+                    <p className="mt-3" style={{ color: 'var(--bs-body-color)', fontSize: '.85em' }}>
+                        This does <strong>NOT</strong> affect your actual subscription. This just removes your information from this (Subosity) subscription tracking service.
+                        <br /><br />
+                        This action cannot be undone.
+                    </p>
                 </div>
             </Offcanvas.Body>
             <div className="p-3 border-top" style={{ backgroundColor: 'var(--bs-navbar-bg)' }}>
                 <div className="d-flex justify-content-end">
                     <Button variant="secondary" className="me-2" onClick={onHide}>
-                    <FontAwesomeIcon icon={faChevronLeft} className="me-2" />
+                        <FontAwesomeIcon icon={faChevronLeft} className="me-2" />
                         Back
                     </Button>
                     <Button variant="outline-danger" onClick={handleDelete}>
-                    <FontAwesomeIcon icon={faSkullCrossbones} className="me-2" />
+                        <FontAwesomeIcon icon={faSkullCrossbones} className="me-2" />
                         Permanently Delete
                     </Button>
                 </div>

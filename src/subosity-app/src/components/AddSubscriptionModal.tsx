@@ -35,7 +35,8 @@ const AddSubscriptionModal: React.FC<Props> = ({ show, onHide, onSubmit }) => {
                     payment_provider_id: data.paymentProviderId,
                     payment_details: data.paymentDetails,
                     notes: data.notes,
-                    is_free_trial: data.isFreeTrial || false
+                    is_free_trial: data.isFreeTrial || false,
+                    is_active: data.isActive || true
                 }]);
 
             if (error) throw error;
@@ -63,10 +64,10 @@ const AddSubscriptionModal: React.FC<Props> = ({ show, onHide, onSubmit }) => {
                 </div>
             </Offcanvas.Header>
             <Offcanvas.Body>
-                <SubscriptionForm 
-                    ref={formRef} 
-                    onSubmit={handleSubmit} 
-                    onCancel={onHide} 
+                <SubscriptionForm
+                    ref={formRef}
+                    onSubmit={handleSubmit}
+                    onCancel={onHide}
                 />
             </Offcanvas.Body>
             <div className="p-3 border-top" style={{ backgroundColor: 'var(--bs-navbar-bg)', color: 'var(--bs-body-color)' }}>

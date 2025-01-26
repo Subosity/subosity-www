@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Container, Card, Button, Badge, ListGroup } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-    faEdit, 
-    faTrash, 
-    faRotate, 
+import {
+    faEdit,
+    faTrash,
+    faRotate,
     faHand,
     faArrowLeft,
     faLink,
@@ -71,7 +71,7 @@ const SubscriptionDetail: React.FC = () => {
 
     const handleFilterChange = async (newFilter: 'all' | 'unread' | 'read') => {
         if (!id || newFilter === filterType) return;
-        
+
         setFilterType(newFilter);
         const result = await fetchAlerts({ subscriptionId: id, filterType: newFilter });
         setAlerts(result.alerts);
@@ -124,7 +124,7 @@ const SubscriptionDetail: React.FC = () => {
                 .single();
 
             if (error) throw error;
-            
+
             setSubscription({
                 id: data.id,
                 providerId: data.subscription_provider_id,
@@ -158,9 +158,9 @@ const SubscriptionDetail: React.FC = () => {
     const onAlertDismiss = async (alertId: string) => {
         const success = await handleDismiss(alertId);
         if (success) {
-            setAlerts(currentAlerts => 
-                currentAlerts.map(alert => 
-                    alert.id === alertId 
+            setAlerts(currentAlerts =>
+                currentAlerts.map(alert =>
+                    alert.id === alertId
                         ? { ...alert, read_at: new Date().toISOString() }
                         : alert
                 )
@@ -171,9 +171,9 @@ const SubscriptionDetail: React.FC = () => {
     const onAlertSnooze = async (alertId: string) => {
         const success = await handleSnooze(alertId);
         if (success) {
-            setAlerts(currentAlerts => 
-                currentAlerts.map(alert => 
-                    alert.id === alertId 
+            setAlerts(currentAlerts =>
+                currentAlerts.map(alert =>
+                    alert.id === alertId
                         ? { ...alert, read_at: new Date().toISOString() }
                         : alert
                 )
@@ -197,19 +197,31 @@ const SubscriptionDetail: React.FC = () => {
                     </div>
                 </div>
             ) : subscription && (
-                <Card style={{ 
-                    backgroundColor: 'var(--bs-body-bg)', 
+                <Card style={{
+                    backgroundColor: 'var(--bs-body-bg)',
                     color: 'var(--bs-body-color)',
                     borderColor: 'var(--bs-border-color)'
                 }}>
                     <Card.Body>
                         <div className="d-flex justify-content-between align-items-start mb-4">
                             <div className="d-flex">
-                                <div className="rounded-circle bg-light d-flex align-items-center justify-content-center p-2 me-3">
-                                    <img 
+                                <div className="rounded-circle bg-light d-flex align-items-center justify-content-center p-2 me-3"
+                                    style={{
+                                        width: '48px',
+                                        height: '48px',
+                                        minWidth: '48px', // Add this to prevent shrinking
+                                        flexShrink: 0,    // Add this to prevent shrinking
+                                        backgroundColor: 'var(--bs-white)'
+                                    }}>
+                                    <img
                                         src={subscription.providerIcon}
                                         alt={subscription.providerName}
-                                        style={{ width: '48px', height: '48px', objectFit: 'contain' }}
+                                        style={{
+                                            width: '32px',     // Reduce slightly from 48px
+                                            height: '32px',    // Make sure width/height are equal
+                                            objectFit: 'contain',
+                                            flexShrink: 0      // Prevent image from shrinking
+                                        }}
                                     />
                                 </div>
                                 <div>
@@ -218,8 +230,8 @@ const SubscriptionDetail: React.FC = () => {
                                         <div className="text-muted mb-2">({subscription.nickname})</div>
                                     )}
                                     <Badge bg={subscription.autoRenewal ? 'success' : 'secondary'}>
-                                        <FontAwesomeIcon 
-                                            icon={subscription.autoRenewal ? faRotate : faHand} 
+                                        <FontAwesomeIcon
+                                            icon={subscription.autoRenewal ? faRotate : faHand}
                                             className="me-2"
                                         />
                                         {subscription.autoRenewal ? 'Auto-Renewal' : 'Manual Renewal'}
@@ -254,7 +266,7 @@ const SubscriptionDetail: React.FC = () => {
                             <dd className="col-sm-9">
                                 <div className="d-flex align-items-center">
                                     <div className="rounded bg-light d-flex align-items-center justify-content-center p-1 me-2">
-                                        <img 
+                                        <img
                                             src={subscription.paymentProviderIcon}
                                             alt={subscription.paymentProviderName}
                                             style={{ width: '24px', height: '24px', objectFit: 'contain' }}
@@ -273,9 +285,9 @@ const SubscriptionDetail: React.FC = () => {
 
                             <dt className="col-sm-3">Unsubscribe</dt>
                             <dd className="col-sm-9">
-                                <Button 
-                                    variant="link" 
-                                    href={subscription.providerUnsubscribeUrl} 
+                                <Button
+                                    variant="link"
+                                    href={subscription.providerUnsubscribeUrl}
                                     target="_blank"
                                     className="p-0"
                                 >
@@ -289,8 +301,8 @@ const SubscriptionDetail: React.FC = () => {
             )}
 
             {alerts && (
-                <Card className="mt-4" style={{ 
-                    backgroundColor: 'var(--bs-body-bg)', 
+                <Card className="mt-4" style={{
+                    backgroundColor: 'var(--bs-body-bg)',
                     color: 'var(--bs-body-color)',
                     borderColor: 'var(--bs-border-color)'
                 }}>
@@ -309,7 +321,7 @@ const SubscriptionDetail: React.FC = () => {
                                         handleFilterChange('all');
                                     }}
                                 >
-                                   <FontAwesomeIcon icon={faEnvelopesBulk} className="me-2"/>All ({counts.all})
+                                    <FontAwesomeIcon icon={faEnvelopesBulk} className="me-2" />All ({counts.all})
                                 </Button>
                                 <Button
                                     type="button"
@@ -319,7 +331,7 @@ const SubscriptionDetail: React.FC = () => {
                                         handleFilterChange('unread');
                                     }}
                                 >
-                                    <FontAwesomeIcon icon={faEnvelope} className="me-2"/>Unread ({counts.unread})
+                                    <FontAwesomeIcon icon={faEnvelope} className="me-2" />Unread ({counts.unread})
                                 </Button>
                                 <Button
                                     type="button"
@@ -329,12 +341,12 @@ const SubscriptionDetail: React.FC = () => {
                                         handleFilterChange('read');
                                     }}
                                 >
-                                    <FontAwesomeIcon icon={faEnvelopeOpen} className="me-2"/>Read ({counts.read})
+                                    <FontAwesomeIcon icon={faEnvelopeOpen} className="me-2" />Read ({counts.read})
                                 </Button>
                             </div>
                         </div>
                         {alerts.length > 0 ? (
-                            <SubscriptionAlertList 
+                            <SubscriptionAlertList
                                 alerts={alerts}
                                 onDismiss={onAlertDismiss}
                                 onSnooze={onAlertSnooze}
