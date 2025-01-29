@@ -99,7 +99,7 @@ const ChangePassword: React.FC = () => {
                             style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }}
                         />
 
-                        <Card>
+                        <Card className="shadow">
                             <Card.Body>
                                 <div className="row">
                                     {/* Left Column - Password Input */}

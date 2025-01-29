@@ -37,7 +37,8 @@ const Dashboard: React.FC = () => {
     totalDaily: 0,
     autoRenewalCount: 0,
     categoryData: { labels: [], values: [] },
-    paymentData: { labels: [], values: [] }
+    paymentData: { labels: [], values: [] },
+    stateDistribution: {}
   });
 
   useEffect(() => {
@@ -95,6 +96,33 @@ const Dashboard: React.FC = () => {
 
       ctx.fillText(text, textX, textY);
       ctx.save();
+    }
+  };
+
+  // Add center text plugin for states chart
+  const centerTextPluginStates = {
+    id: 'centerTextStates',
+    afterDraw: (chart) => {
+        const { ctx, width, height } = chart;
+        ctx.restore();
+
+        // Calculate sum of only visible segments
+        const meta = chart.getDatasetMeta(0);
+        const total = meta.data.reduce((sum, dataPoint, index) => {
+            return dataPoint.hidden ? sum : sum + chart.data.datasets[0].data[index];
+        }, 0);
+
+        const fontSize = (height / 114).toFixed(2);
+        ctx.font = `${fontSize}em sans-serif`;
+        ctx.textBaseline = 'middle';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = getComputedStyle(document.documentElement)
+            .getPropertyValue('--bs-body-color')
+            .trim();
+
+        const textY = height / 2 - (height * 0.05);
+        ctx.fillText(total.toString(), width / 2, textY);
+        ctx.save();
     }
   };
 
@@ -173,7 +201,8 @@ const Dashboard: React.FC = () => {
         paymentData: {
           labels: Object.keys(paymentProviders),
           values: Object.values(paymentProviders)
-        }
+        },
+        stateDistribution: calculateStats(subscriptions).stateDistribution
       });
 
       setLoading(false);
@@ -189,17 +218,18 @@ const Dashboard: React.FC = () => {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: {
-        display: showLegend,
-        position: 'bottom' as const,
-        labels: {
-          color: 'var(--bs-body-color)',
-          padding: 10,
-          font: {
-            size: 12
-          }
+        legend: {
+            display: showLegend,
+            position: 'bottom' as const,
+            labels: {
+                color: getComputedStyle(document.documentElement)
+                    .getPropertyValue('--bs-body-color')
+                    .trim(),
+                padding: 10,
+                usePointStyle: true,
+                pointStyle: 'circle'
+            }
         }
-      }
     }
   });
 
@@ -215,6 +245,28 @@ const Dashboard: React.FC = () => {
         }
       }
     }
+  };
+
+  // Add state colors mapping
+  const stateColors = {
+    trial: getComputedColor('--bs-info'),
+    active: getComputedColor('--bs-success'),
+    canceled: getComputedColor('--bs-danger'),
+    expired: getComputedColor('--bs-secondary'),
+    paused: getComputedColor('--bs-warning')
+  };
+
+  // Update stats calculation
+  const calculateStats = (subscriptions: Subscription[]) => {
+    const stateGroups = subscriptions.reduce((acc, sub) => {
+      acc[sub.state] = (acc[sub.state] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    return {
+      ...stats,
+      stateDistribution: stateGroups
+    };
   };
 
   return (
@@ -381,37 +433,28 @@ const Dashboard: React.FC = () => {
               </Card>
             </Col>
             <Col xs={12} md={6} lg={3}>
-              <Card className="h-100 shadow">
+            <Card className="h-100 shadow">
                 <Card.Header className="bg-body-tertiary py-3">
                   <h5 className="mb-0 text-body">
-                    <FontAwesomeIcon icon={faCheckSquare} className="me-2" />
-                    Active Subscriptions
+                    <FontAwesomeIcon icon={faRotate} className="me-2" />
+                    Subscription States
                   </h5>
                 </Card.Header>
                 <Card.Body>
                   <div style={{ height: '300px' }}>
                     <Doughnut
                       data={{
-                        labels: ['Active', 'Inactive'],
+                        labels: Object.keys(stateColors).map(s => s.charAt(0).toUpperCase() + s.slice(1)),
                         datasets: [{
-                          data: [
-                            stats.activeSubscriptions,
-                            stats.totalSubscriptions - stats.activeSubscriptions
-                          ],
-                          backgroundColor: [
-                            getComputedColor('--bs-success'),
-                            getComputedColor('--bs-gray-500')
-                          ],
-                          borderColor: [
-                            getComputedColor('--bs-success'),
-                            getComputedColor('--bs-gray-500')
-                          ],
+                          data: Object.keys(stateColors).map(state => stats.stateDistribution[state] || 0),
+                          backgroundColor: Object.values(stateColors),
+                          borderColor: Object.values(stateColors),
                           borderWidth: 1,
                           cutout: '70%'
                         }]
                       }}
-                      options={getChartOptions()}
-                      plugins={[centerTextPluginActive]}
+                      options={getChartOptions()}  // Use same options as other charts
+                      plugins={[centerTextPluginStates]}
                     />
                   </div>
                 </Card.Body>

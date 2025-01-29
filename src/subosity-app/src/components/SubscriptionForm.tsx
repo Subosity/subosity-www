@@ -4,7 +4,32 @@ import { Subscription } from '../types';
 import { supabase } from '../supabaseClient';
 import Select, { components } from 'react-select';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCreditCard } from '@fortawesome/free-solid-svg-icons';
+import { faCreditCard, faClock, faCheckCircle, faBan, faTimesCircle, faPause } from '@fortawesome/free-solid-svg-icons';
+
+// Near the top with other interfaces
+type SubscriptionState = 'trial' | 'active' | 'canceled' | 'expired' | 'paused';
+
+const stateOptions = [
+    { value: 'trial', label: 'Free Trial', icon: faClock },
+    { value: 'active', label: 'Active', icon: faCheckCircle },
+    { value: 'canceled', label: 'Canceled', icon: faBan },
+    { value: 'expired', label: 'Expired', icon: faTimesCircle },
+    { value: 'paused', label: 'Paused', icon: faPause }
+];
+
+// Add custom SingleValue component near CustomOption
+const CustomSingleValue = ({ children, ...props }: any) => (
+    <components.SingleValue {...props}>
+        <div className="d-flex align-items-center">
+            <FontAwesomeIcon 
+                icon={props.data.icon} 
+                className="me-2" 
+                style={{ width: '16px' }}
+            />
+            {children}
+        </div>
+    </components.SingleValue>
+);
 
 // Update SubscriptionFormRef interface
 export interface SubscriptionFormRef {
@@ -31,7 +56,8 @@ interface ValidationErrors {
     providerId?: string;
     amount?: string;
     paymentProviderId?: string;
-    // Remove startDate
+    startDate?: string; // Add startDate
+    state?: string; // Add state
 }
 
 const commonInputStyles = {
@@ -78,6 +104,19 @@ const selectStyles = {
     })
 };
 
+const CustomOption = ({ children, ...props }: any) => (
+    <components.Option {...props}>
+        <div className="d-flex align-items-center">
+            <FontAwesomeIcon 
+                icon={props.data.icon} 
+                className="me-2" 
+                style={{ width: '16px' }}
+            />
+            {children}
+        </div>
+    </components.Option>
+);
+
 interface TouchedFields {
     [key: string]: boolean;
 }
@@ -91,18 +130,11 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [formData, setFormData] = useState<Partial<Subscription>>({
-        providerId: subscription?.providerId || '',
-        nickname: subscription?.nickname || '',  // Verify this line exists
-        startDate: subscription?.startDate || '',
-        autoRenewal: subscription?.autoRenewal || false,
-        renewalFrequency: subscription?.renewalFrequency || 'monthly',
-        amount: subscription?.amount || 0,
-        paymentProviderId: subscription?.paymentProviderId || '',
-        paymentDetails: subscription?.paymentDetails || '',
-        notes: subscription?.notes || '',
-        isFreeTrial: subscription?.isFreeTrial || false,
-        isActive: subscription?.isActive ?? true  // Add this line with default true
+        ...subscription,
+        state: subscription?.state // Ensure state is initialized from subscription
     });
+    console.log('Initial formData:', formData);
+    console.log('Initial state:', formData.state);
 
     const [isValid, setIsValid] = useState(false);
     const [errors, setErrors] = useState<ValidationErrors>({});
@@ -122,6 +154,14 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
 
         if (!data.paymentProviderId) {
             newErrors.paymentProviderId = 'Please select a payment method';
+        }
+
+        if (!data.startDate) {
+            newErrors.startDate = 'Start Date is required';
+        }
+
+        if (!data.state) {
+            newErrors.state = 'Please select a subscription state';
         }
 
         return newErrors;
@@ -199,6 +239,12 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
         isValid
     }));
 
+    useEffect(() => {
+        console.log('subscription prop:', subscription);
+        console.log('formData updated:', formData);
+        console.log('current state:', formData.state);
+    }, [subscription, formData]);
+
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
 
@@ -220,105 +266,56 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
                     onBlur={() => handleFieldTouch('providerId')}
                     required
                     isInvalid={validated && !formData.providerId}
-                    options={providers}
+                    options={[...providers].sort((a, b) => {
+                        // First sort by category
+                        const categoryCompare = (a.category || '').localeCompare(b.category || '');
+                        // If categories are the same, sort by name
+                        if (categoryCompare === 0) {
+                            return a.name.localeCompare(b.name);
+                        }
+                        return categoryCompare;
+                    })}
                     getOptionLabel={(option) => option.name}
-                    components={{
-                        Option: ({ data, ...props }) => (
-                            <components.Option {...props}>
-                                <div className="d-flex align-items-center">
-                                    <div className="rounded-circle bg-light d-flex align-items-center justify-content-center"
-                                        style={{
-                                            width: '24px',
-                                            height: '24px',
-                                            backgroundColor: 'var(--bs-gray-200)',
-                                            flexShrink: 0,
-                                            overflow: 'hidden'
-                                        }}>
-                                        <img
-                                            src={data.icon}
-                                            alt={`${data.name} icon`}
-                                            style={{
-                                                width: '100%',
-                                                height: '100%',
-                                                objectFit: 'contain',
-                                                padding: '4px'
-                                            }}
-                                        />
-                                    </div>
-                                    <span className="ms-2">{data.name}</span>
-                                </div>
-                            </components.Option>
-                        ),
-                        SingleValue: ({ data, ...props }) => (
-                            <components.SingleValue {...props}>
-                                <div className="d-flex align-items-center">
-                                    <div className="rounded-circle bg-light d-flex align-items-center justify-content-center"
-                                        style={{
-                                            width: '24px',
-                                            height: '24px',
-                                            backgroundColor: 'var(--bs-gray-200)',
-                                            flexShrink: 0,
-                                            overflow: 'hidden'
-                                        }}>
-                                        <img
-                                            src={data.icon}
-                                            alt={`${data.name} icon`}
-                                            style={{
-                                                width: '100%',
-                                                height: '100%',
-                                                objectFit: 'contain',
-                                                padding: '4px'
-                                            }}
-                                        />
-                                    </div>
-                                    <span className="ms-2">{data.name}</span>
-                                </div>
-                            </components.SingleValue>
-                        )
-                    }}
                     isSearchable={true}
                     isClearable={false}
                     placeholder="Select subscription provider..."
                     formatOptionLabel={provider => (
                         <div className="d-flex align-items-center justify-content-between w-100">
-                            <div className="d-flex align-items-center">
+                            <div className="d-flex align-items-center flex-shrink-0">
                                 <div className="rounded-circle bg-light d-flex align-items-center justify-content-center p-1"
                                     style={{
                                         width: '32px',
                                         height: '32px',
                                         backgroundColor: 'var(--bs-gray-200) !important',
                                         flexShrink: 0,
-                                        overflow: 'hidden' // Add this to clip overflow
+                                        overflow: 'hidden'
                                     }}>
                                     <img
                                         src={provider.icon}
                                         alt={`${provider.name} icon`}
                                         style={{
-                                            width: '100%',    // Change to percentage
-                                            height: '100%',   // Change to percentage
+                                            width: '150%',
+                                            height: '150%',
                                             objectFit: 'contain',
-                                            padding: '4px'    // Add padding to prevent touching edges
+                                            padding: '4px'
                                         }}
                                     />
                                 </div>
-                                <span className="ms-2">{provider.name}</span>
+                                <span className="ms-2" style={{ whiteSpace: 'nowrap' }}>{provider.name}</span>
                             </div>
-                            <span style={{
-                                color: 'var(--bs-body-color)',
-                                opacity: 0.5,
-                                fontSize: '0.75em'
+                            <small className="text-muted ms-3" style={{ 
+                                fontSize: '0.75em',
+                                whiteSpace: 'normal',
+                                minWidth: '80px',
+                                maxWidth: '120px',
+                                textAlign: 'right',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis'
                             }}>
                                 {provider.category}
-                            </span>
+                            </small>
                         </div>
                     )}
-                    filterOption={(option, input) => {
-                        const searchInput = input.toLowerCase();
-                        return (
-                            option.data.name.toLowerCase().includes(searchInput) ||
-                            (option.data.category && option.data.category.toLowerCase().includes(searchInput))
-                        );
-                    }}
                     styles={selectStyles}
                 />
                 {validated && errors.providerId && (
@@ -331,10 +328,17 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
                 <Form.Label>Start Date</Form.Label>
                 <Form.Control
                     type="date"
-                    value={formData.startDate || ''}
+                    name="startDate"
+                    value={formData.startDate}
                     onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                    placeholder="Select start date"
+                    isInvalid={validated && !!errors.startDate}
+                    required
                 />
+                {validated && errors.startDate && (
+                    <Form.Control.Feedback type="invalid">
+                        {errors.startDate}
+                    </Form.Control.Feedback>
+                )}
             </Form.Group>
 
             <Form.Group className="mb-3">
@@ -388,23 +392,25 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
             </Form.Group>
 
             <Form.Group className="mb-3">
-                <Form.Check
-                    type="checkbox"
-                    label="Free Trial"
-                    checked={formData.isFreeTrial}
-                    onChange={(e) => setFormData({ ...formData, isFreeTrial: e.target.checked })}
-                />
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-                <Form.Check
-                    type="checkbox"
-                    label="Active Subscription"
-                    checked={formData.isActive}
-                    onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                <Form.Label>Subscription State</Form.Label>
+                <Select
+                    value={stateOptions.find(option => option.value === formData.state)}
+                    onChange={(option) => {
+                        setFormData(prev => ({
+                            ...prev,
+                            state: option?.value as SubscriptionState
+                        }));
+                    }}
+                    options={stateOptions}
+                    styles={selectStyles}
+                    components={{ 
+                        Option: CustomOption,
+                        SingleValue: CustomSingleValue 
+                    }}
+                    isInvalid={validated && !!errors.state}
                 />
                 <Form.Text className="text-muted">
-                    Checked if this subscription is currently active.
+                    Changing the state will automatically record the state change history
                 </Form.Text>
             </Form.Group>
 
@@ -416,7 +422,7 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
                     <InputGroup.Text style={commonInputStyles}>
                         <FontAwesomeIcon icon={faCreditCard} />
                     </InputGroup.Text> */}
-                    
+
                 <Select
                     value={paymentProviders.find(p => p.id === formData.paymentProviderId)}
                     onChange={(option) => {
@@ -492,31 +498,39 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
                     placeholder="Select payment method..."
                     formatOptionLabel={provider => (
                         <div className="d-flex align-items-center justify-content-between w-100">
-                            <div className="d-flex align-items-center">
-                                <div className="rounded d-flex align-items-center justify-content-center p-1"
+                            <div className="d-flex align-items-center flex-shrink-0">
+                                <div className="rounded-circle bg-light d-flex align-items-center justify-content-center p-1"
                                     style={{
                                         width: '32px',
                                         height: '32px',
-                                        flexShrink: 0
+                                        backgroundColor: 'var(--bs-gray-200) !important',
+                                        flexShrink: 0,
+                                        overflow: 'hidden'
                                     }}>
                                     <img
                                         src={provider.icon}
                                         alt={`${provider.name} icon`}
                                         style={{
-                                            width: '24px',
-                                            height: '24px',
-                                            objectFit: 'contain'
+                                            width: '100%',
+                                            height: '100%',
+                                            objectFit: 'contain',
+                                            padding: '4px'
                                         }}
                                     />
                                 </div>
-                                <span className="ms-2">{provider.name}</span>
+                                <span className="ms-2" style={{ whiteSpace: 'nowrap' }}>{provider.name}</span>
                             </div>
-                            <span style={{
-                                fontSize: '0.875em',
-                                opacity: 0.6
+                            <small className="text-muted ms-3" style={{ 
+                                fontSize: '0.75em',
+                                whiteSpace: 'normal',
+                                minWidth: '80px',
+                                maxWidth: '120px',
+                                textAlign: 'right',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis'
                             }}>
                                 {provider.category}
-                            </span>
+                            </small>
                         </div>
                     )}
                     filterOption={(option, input) => {

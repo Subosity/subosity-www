@@ -14,7 +14,6 @@ export interface Subscription {
     paymentProviderIcon: string;
     paymentDetails: string;
     notes?: string;
-    isFreeTrial: boolean;
-    isActive: boolean;
+    state: 'trial' | 'active' | 'canceled' | 'expired' | 'paused';
     nickname?: string;
 }

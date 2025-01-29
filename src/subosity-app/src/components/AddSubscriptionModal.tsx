@@ -27,7 +27,7 @@ const AddSubscriptionModal: React.FC<Props> = ({ show, onHide, onSubmit }) => {
                 .insert([{
                     owner: user.id,
                     subscription_provider_id: data.providerId,
-                    nickname: data.nickname,  // Add this line
+                    nickname: data.nickname,
                     start_date: data.startDate,
                     autorenew: data.autoRenewal,
                     renew_frequency: data.renewalFrequency,
@@ -35,8 +35,7 @@ const AddSubscriptionModal: React.FC<Props> = ({ show, onHide, onSubmit }) => {
                     payment_provider_id: data.paymentProviderId,
                     payment_details: data.paymentDetails,
                     notes: data.notes,
-                    is_free_trial: data.isFreeTrial || false,
-                    is_active: data.isActive || true
+                    state: data.state || 'trial' // Replace is_free_trial and is_active with state
                 }]);
 
             if (error) throw error;

@@ -29,6 +29,8 @@ import DeleteSubscriptionModal from '../components/DeleteSubscriptionModal';
 import SubscriptionAlertList from '../components/SubscriptionAlertList';
 import { useAlerts } from '../AlertsContext';
 import NoAlertsHero from '../components/NoAlertsHero';
+import SubscriptionStateDisplay from '../components/SubscriptionStateDisplay';
+import SubscriptionTimeline from '../components/SubscriptionTimeline';
 
 const getSeverityIcon = (severity: string) => {
     switch (severity) {
@@ -146,8 +148,7 @@ const SubscriptionDetail: React.FC = () => {
                 paymentProviderIcon: data.payment_provider.icon,
                 paymentDetails: data.payment_details,
                 notes: data.notes,
-                isFreeTrial: data.is_free_trial,
-                isActive: data.is_active
+                state: data.state
             });
         } catch (error) {
             console.error('Error fetching subscription:', error);
@@ -220,8 +221,8 @@ const SubscriptionDetail: React.FC = () => {
                                         src={subscription.providerIcon}
                                         alt={subscription.providerName}
                                         style={{
-                                            width: '32px',     // Reduce slightly from 48px
-                                            height: '32px',    // Make sure width/height are equal
+                                            width: '150%',     // Reduce slightly from 48px
+                                            height: '150%',    // Make sure width/height are equal
                                             objectFit: 'contain',
                                             flexShrink: 0      // Prevent image from shrinking
                                         }}
@@ -300,14 +301,13 @@ const SubscriptionDetail: React.FC = () => {
                             </dd>
                         </dl>
                         <div className="d-flex justify-content-end">
-                            <Badge bg={subscription.isActive ? 'success' : 'secondary'} style={{ fontSize: '0.75em', minWidth: '6.5em' }}>
-                                <FontAwesomeIcon
-                                    icon={subscription.isActive ? faCheckCircle : faBan}
-                                    className="me-1"
-                                />
-                                {subscription.isActive ? 'Active' : 'Inactive'}
-                            </Badge>
+                            <SubscriptionStateDisplay state={subscription.state} />
                         </div>
+                        {subscription && (
+                            <div className="mt-4">
+                                <SubscriptionTimeline subscriptionId={subscription.id} />
+                            </div>
+                        )}
                     </Card.Body>
                 </Card>
             )}

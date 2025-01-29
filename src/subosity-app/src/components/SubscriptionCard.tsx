@@ -5,6 +5,7 @@ import { faEdit, faTrash, faRotate, faHand, faBell, faCheckCircle, faClock, faBa
 import { Subscription } from '../types';
 import { useNavigate } from 'react-router-dom';
 import { useAlerts } from '../AlertsContext';
+import SubscriptionStateDisplay from './SubscriptionStateDisplay';
 
 interface Props {
     subscription: Subscription;
@@ -60,8 +61,8 @@ const SubscriptionCard: React.FC<Props> = ({ subscription, onEdit, onDelete }) =
                                 src={subscription.providerIcon}
                                 alt={subscription.providerName}
                                 style={{
-                                    width: '100%',    // Change to percentage
-                                    height: '100%',   // Change to percentage
+                                    width: '150%',    // Change to percentage
+                                    height: '150%',   // Change to percentage
                                     objectFit: 'contain',
                                     padding: '4px'    // Add padding to prevent touching edges
                                 }}
@@ -123,13 +124,8 @@ const SubscriptionCard: React.FC<Props> = ({ subscription, onEdit, onDelete }) =
                     </div>
 
                     {/* Active/Inactive badge on the right */}
-                    <Badge bg={subscription.isActive ? 'success' : 'secondary'}>
-                        <FontAwesomeIcon
-                            icon={subscription.isActive ? faCheckCircle : faBan}
-                            className="me-1"
-                        />
-                        {subscription.isActive ? 'Active' : 'Inactive'}
-                    </Badge>
+                    <SubscriptionStateDisplay state={subscription.state} />
+                
                 </div>
 
                 {/* Action buttons at the top right */}
