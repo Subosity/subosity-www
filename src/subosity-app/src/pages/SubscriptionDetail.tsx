@@ -301,7 +301,10 @@ const SubscriptionDetail: React.FC = () => {
                             </dd>
                         </dl>
                         <div className="d-flex justify-content-end">
-                            <SubscriptionStateDisplay state={subscription.state} />
+                            <SubscriptionStateDisplay
+                                state={subscription.state}
+                                subscriptionId={subscription.id}
+                            />
                         </div>
                         {subscription && (
                             <div className="mt-4">

@@ -48,6 +48,16 @@ const SubscriptionTimeline: React.FC<Props> = ({ subscriptionId }) => {
         return moment.duration(end.diff(start)).humanize();
     };
 
+    // Add formatDate helper function
+    const formatDateWithTime = (date: string) => {
+        return moment(date).format('MMMM D, YYYY, h:mm:ss A z');
+    };
+
+    // Add helper for time since state change
+    const getTimeSinceStateChange = (date: string) => {
+        return moment(date).fromNow();
+    };
+
     useEffect(() => {
         const fetchTimeline = async () => {
             const { data, error } = await supabase
@@ -140,14 +150,15 @@ const SubscriptionTimeline: React.FC<Props> = ({ subscriptionId }) => {
                                                 }}>
                                                 <FontAwesomeIcon icon={stateInfo.icon} />
                                             </div>
-                                            <div className="text-center" 
-                                                style={{
-                                                    transition: 'all 0.2s ease-in-out'
-                                                }}>
+                                            <div className="text-center">
                                                 <div className="fw-bold" style={{ fontSize: '0.8em' }}>
                                                     {stateInfo.label}
                                                 </div>
-                                                <div className="text-body-secondary" style={{ fontSize: '0.75em' }}>
+                                                <div 
+                                                    className="text-body-secondary" 
+                                                    style={{ fontSize: '0.75em' }}
+                                                    title={formatDateWithTime(event.start_date)}
+                                                >
                                                     {new Date(event.start_date).toLocaleDateString()}
                                                 </div>
                                             </div>
@@ -189,8 +200,15 @@ const SubscriptionTimeline: React.FC<Props> = ({ subscriptionId }) => {
                                 <div className="fw-bold" style={{ fontSize: '0.8em' }}>
                                     {getStateInfo(events[events.length - 1].state).label}
                                 </div>
-                                <div className="text-body-secondary" style={{ fontSize: '0.75em' }}>
+                                <div 
+                                    className="text-body-secondary" 
+                                    style={{ fontSize: '0.6em' }}
+                                    title={formatDateWithTime(events[events.length - 1].start_date)}
+                                >
                                     {new Date(events[events.length - 1].start_date).toLocaleDateString()}
+                                </div>
+                                <div className="text-body-secondary" style={{ fontSize: '0.65em', fontStyle: 'italic' }}>
+                                    {getTimeSinceStateChange(events[events.length - 1].start_date)}
                                 </div>
                             </div>
                         </div>

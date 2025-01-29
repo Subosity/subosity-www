@@ -124,7 +124,10 @@ const SubscriptionCard: React.FC<Props> = ({ subscription, onEdit, onDelete }) =
                     </div>
 
                     {/* Active/Inactive badge on the right */}
-                    <SubscriptionStateDisplay state={subscription.state} />
+                    <SubscriptionStateDisplay
+                        state={subscription.state}
+                        subscriptionId={subscription.id}
+                    />
                 
                 </div>
 

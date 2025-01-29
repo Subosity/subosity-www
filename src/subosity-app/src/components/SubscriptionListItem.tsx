@@ -38,7 +38,7 @@ const SubscriptionListItem: React.FC<Props> = ({ subscription, onEdit, onDelete 
 
     useEffect(() => {
         if (!detailsRef.current) return;
-        
+
         const resizeObserver = new ResizeObserver(entries => {
             for (const entry of entries) {
                 setContainerWidth(entry.contentRect.width);
@@ -90,8 +90,8 @@ const SubscriptionListItem: React.FC<Props> = ({ subscription, onEdit, onDelete 
                         {subscription.providerName}
                     </span>
                     {subscription.nickname && (
-                        <span className="ms-1 text-body-secondary text-truncate" 
-                            style={{ 
+                        <span className="ms-1 text-body-secondary text-truncate"
+                            style={{
                                 fontSize: '0.75em',
                                 maxWidth: `${Math.max(containerWidth * 0.5, 60)}px`,
                                 flexShrink: 1
@@ -103,8 +103,8 @@ const SubscriptionListItem: React.FC<Props> = ({ subscription, onEdit, onDelete 
 
                 {/* Description - Debug subscription object */}
                 {subscription.providerDescription && (
-                    <div className="text-body-secondary text-truncate mb-1 d-none d-md-block " 
-                        style={{ 
+                    <div className="text-body-secondary text-truncate mb-1 d-none d-md-block "
+                        style={{
                             fontSize: '0.85em',
                         }}>
                         {subscription.providerDescription}
@@ -113,13 +113,13 @@ const SubscriptionListItem: React.FC<Props> = ({ subscription, onEdit, onDelete 
 
                 {/* Renewal and Amount Info */}
                 <div className="d-flex align-items-center gap-2 mt-1" style={{ fontSize: '0.85em' }}>
-                    <Badge 
-                        bg={subscription.autoRenewal ? 'success' : 'secondary'} 
+                    <Badge
+                        bg={subscription.autoRenewal ? 'success' : 'secondary'}
                         className="text-truncate"
                         style={{ minWidth: '6.5em' }}
                     >
-                        <FontAwesomeIcon 
-                            icon={subscription.autoRenewal ? faRotate : faHand} 
+                        <FontAwesomeIcon
+                            icon={subscription.autoRenewal ? faRotate : faHand}
                             className="me-1"
                         />
                         {subscription.renewalFrequency}
@@ -129,7 +129,7 @@ const SubscriptionListItem: React.FC<Props> = ({ subscription, onEdit, onDelete 
             </div>
 
             {/* Column 3: Payment Method - Right aligned */}
-            <div className="d-flex flex-column align-items-end ps-2" 
+            <div className="d-flex flex-column align-items-end ps-2"
                 style={{ minWidth: '32px', flexShrink: 1 }}> {/* Add ps-2 */}
                 <div className="rounded bg-light d-flex align-items-center justify-content-center mb-1"
                     style={{
@@ -147,14 +147,14 @@ const SubscriptionListItem: React.FC<Props> = ({ subscription, onEdit, onDelete 
                         }}
                     />
                 </div>
-                <span className="d-none d-md-block text-body-secondary text-end nowrap" 
+                <span className="d-none d-md-block text-body-secondary text-end nowrap"
                     style={{ fontSize: '0.75em', width: '100%' }}>
                     {subscription.paymentDetails}
                 </span>
             </div>
 
             {/* Column 4: Actions and Status */}
-            <div className="d-flex flex-column align-items-end" 
+            <div className="d-flex flex-column align-items-end"
                 style={{ width: '90px', flexShrink: 0 }}>
                 <div className="d-flex align-items-center gap-2 mb-1">
                     <div className="position-relative">
@@ -176,7 +176,10 @@ const SubscriptionListItem: React.FC<Props> = ({ subscription, onEdit, onDelete 
                         <FontAwesomeIcon icon={faTrash} />
                     </Button>
                 </div>
-                <SubscriptionStateDisplay state={subscription.state} />
+                <SubscriptionStateDisplay
+                    state={subscription.state}
+                    subscriptionId={subscription.id}
+                />
             </div>
         </div>
     );
