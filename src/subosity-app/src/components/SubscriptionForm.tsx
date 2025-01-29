@@ -300,8 +300,8 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
                                         src={provider.icon}
                                         alt={`${provider.name} icon`}
                                         style={{
-                                            width: '150%',
-                                            height: '150%',
+                                            width: '200%',
+                                            height: '200%',
                                             objectFit: 'contain',
                                             padding: '4px'
                                         }}
@@ -446,7 +446,6 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
                         setFormData(prev => ({
                             ...prev,
                             paymentProviderId: option?.id || '',
-                            // Only set paymentDetails if it's empty
                             paymentDetails: !prev.paymentDetails ? option?.name || '' : prev.paymentDetails
                         }));
                         handleFieldTouch('paymentProviderId');
@@ -454,7 +453,7 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
                     onBlur={() => handleFieldTouch('paymentProviderId')}
                     required
                     isInvalid={validated && !formData.paymentProviderId}
-                    options={paymentProviders}
+                    options={[...paymentProviders].sort((a, b) => a.name.localeCompare(b.name))}
                     getOptionLabel={(option) => option.name}
                     components={{
                         Option: ({ data, ...props }) => (
@@ -472,8 +471,8 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
                                             src={data.icon}
                                             alt={`${data.name} icon`}
                                             style={{
-                                                width: '100%',
-                                                height: '100%',
+                                                width: '150%',
+                                                height: '150%',
                                                 objectFit: 'contain',
                                                 padding: '4px'
                                             }}
