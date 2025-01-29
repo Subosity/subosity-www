@@ -264,7 +264,7 @@ const MySubscriptions = () => {
 
             {/* Search and Sort Controls - Always visible */}
             <div className="row mb-4">
-                <div className="col-md-5">
+                <div className="col-lg-5">
                     <InputGroup>
                         <InputGroup.Text style={{
                             backgroundColor: 'var(--bs-body-bg)',
@@ -284,7 +284,7 @@ const MySubscriptions = () => {
                         />
                     </InputGroup>
                 </div>
-                <div className="col-md-5">
+                <div className="col-lg-5">
                     <Select
                         isMulti
                         value={stateFilterOptions.filter(option =>
@@ -329,7 +329,7 @@ const MySubscriptions = () => {
                         }}
                     />
                 </div>
-                <div className="col-md-1">
+                <div className="col-lg-1">
                     <Form.Select
                         value={sortOrder}
                         onChange={(e) => setSortOrder(e.target.value as typeof sortOrder)}
@@ -339,7 +339,7 @@ const MySubscriptions = () => {
                         <option value="frequency">Sort by Frequency</option>
                     </Form.Select>
                 </div>
-                <div className="col-md-1">
+                <div className="col-lg-1">
                     <div className="btn-group w-100">
                         <Button
                             variant={viewMode === 'card' ? 'primary' : 'outline-primary'}

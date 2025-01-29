@@ -6,6 +6,7 @@ import { Subscription } from '../types';
 import { useAlerts } from '../AlertsContext';
 import { useNavigate } from 'react-router-dom';
 import SubscriptionStateDisplay from './SubscriptionStateDisplay';
+import RecurrenceComponent from './RecurrenceComponent';
 
 interface Props {
     subscription: Subscription;
@@ -115,16 +116,41 @@ const SubscriptionListItem: React.FC<Props> = ({ subscription, onEdit, onDelete 
                 <div className="d-flex align-items-center gap-2 mt-1" style={{ fontSize: '0.85em' }}>
                     <Badge
                         bg={subscription.autoRenewal ? 'success' : 'secondary'}
-                        className="text-truncate"
-                        style={{ minWidth: '6.5em' }}
+                        style={{
+                            whiteSpace: 'nowrap',
+                            minWidth: '110px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                        }}
                     >
                         <FontAwesomeIcon
                             icon={subscription.autoRenewal ? faRotate : faHand}
                             className="me-1"
                         />
-                        {subscription.renewalFrequency}
+                        <span className="d-none d-lg-block">
+                            {subscription.autoRenewal ? 'Auto-Renewal' : 'Manual Renewal'}
+                        </span>
                     </Badge>
+                    <style jsx>{`
+                        @media (max-width: 992px) {
+                            .badge {
+                                min-width: 0 !important;
+                            }
+                        }
+                    `}</style>
                     <span className="text-truncate">${subscription.amount.toFixed(2)}</span>
+                    <RecurrenceComponent
+                        subscription={subscription}
+                        mode="badge"
+                        thresholds={{ warning: 20, urgent: 10 }}
+                    />
+                    <span className="d-none d-lg-block">
+                        <RecurrenceComponent
+                            subscription={subscription}
+                            mode="text"
+                        />
+                    </span>
                 </div>
             </div>
 

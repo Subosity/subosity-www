@@ -31,6 +31,7 @@ import { useAlerts } from '../AlertsContext';
 import NoAlertsHero from '../components/NoAlertsHero';
 import SubscriptionStateDisplay from '../components/SubscriptionStateDisplay';
 import SubscriptionTimeline from '../components/SubscriptionTimeline';
+import RecurrenceComponent from '../components/RecurrenceComponent';
 
 const getSeverityIcon = (severity: string) => {
     switch (severity) {
@@ -260,7 +261,18 @@ const SubscriptionDetail: React.FC = () => {
                             <dd className="col-sm-9">{subscription.providerCategory}</dd>
 
                             <dt className="col-sm-3">Amount</dt>
-                            <dd className="col-sm-9">${subscription.amount.toFixed(2)} / {subscription.recurrenceRuleUiFriendly}</dd>
+                            <dd className="col-sm-9">${subscription.amount.toFixed(2)} /
+                                <RecurrenceComponent
+                                    subscription={subscription}
+                                    mode="text"
+                                />
+                                &nbsp;
+                                <RecurrenceComponent
+                                    subscription={subscription}
+                                    mode="badge"
+                                    thresholds={{ warning: 20, urgent: 10 }}
+                                />
+                            </dd>
 
                             <dt className="col-sm-3">Start Date</dt>
                             <dd className="col-sm-9">

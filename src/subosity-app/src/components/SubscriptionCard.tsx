@@ -6,6 +6,7 @@ import { Subscription } from '../types';
 import { useNavigate } from 'react-router-dom';
 import { useAlerts } from '../AlertsContext';
 import SubscriptionStateDisplay from './SubscriptionStateDisplay';
+import RecurrenceComponent from './RecurrenceComponent';
 
 interface Props {
     subscription: Subscription;
@@ -89,8 +90,13 @@ const SubscriptionCard: React.FC<Props> = ({ subscription, onEdit, onDelete }) =
                                     {subscription.providerDescription}
                                 </div>
                             )}
-                            <div style={{ color: 'var(--bs-body-color)', fontSize: '.85em' }}>
-                                Renews: <strong>{subscription.recurrenceRuleUiFriendly}</strong>
+                            <div style={{ color: 'var(--bs-body-color)' }}>
+                                ${subscription.amount}&nbsp;
+                                <RecurrenceComponent
+                                    subscription={subscription}
+                                    mode="badge"
+                                    thresholds={{ warning: 20, urgent: 10 }}
+                                />
                             </div>
                             <div className="mt-2">
                                 <Badge bg={subscription.autoRenewal ? 'success' : 'secondary'}>
@@ -98,7 +104,7 @@ const SubscriptionCard: React.FC<Props> = ({ subscription, onEdit, onDelete }) =
                                         icon={subscription.autoRenewal ? faRotate : faHand}
                                         className="me-2"
                                     />
-                                    {subscription.autoRenewal ? 'Auto-Renewal (' + subscription.renewalFrequency + ')' : 'Manual Renewal'}
+                                    {subscription.autoRenewal ? 'Auto-Renewal' : 'Manual Renewal'}
                                 </Badge>
                             </div>
                         </div>
@@ -128,7 +134,7 @@ const SubscriptionCard: React.FC<Props> = ({ subscription, onEdit, onDelete }) =
                         state={subscription.state}
                         subscriptionId={subscription.id}
                     />
-                
+
                 </div>
 
                 {/* Action buttons at the top right */}
