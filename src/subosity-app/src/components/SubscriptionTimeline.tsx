@@ -73,85 +73,141 @@ const SubscriptionTimeline: React.FC<Props> = ({ subscriptionId }) => {
     return (
         <div className="subscription-timeline p-3 rounded bg-body-tertiary border">
             <h6 className="mb-3">Subscription Timeline</h6>
-            <div className="timeline-container position-relative d-flex align-items-center" 
-                style={{ 
-                    minHeight: '100px',  // Increased from 60px to accommodate scaled final node
-                    overflowX: 'auto',
-                    overflowY: 'hidden',
-                    paddingTop: '1rem',
-                    paddingBottom: '1rem'
-                }}>
-                {/* Line connecting dots */}
-                <div 
-                    className="timeline-line position-absolute" 
-                    style={{
-                        height: '3px',
-                        backgroundColor: 'transparent',
-                        borderTop: '3px dotted var(--bs-border-color)',
-                        width: '100%',
-                        zIndex: 1
-                    }}
-                />
-                
-                {/* State change dots */}
-                <div className="d-flex justify-content-between w-100" 
-                    style={{ minWidth: events.length * 150 + 'px', zIndex: 2 }}>
-                    {events.map((event, index) => {
-                        const stateInfo = getStateInfo(event.state);
-                        const nextEvent = events[index + 1];
-                        const duration = nextEvent ? getDuration(event.start_date, nextEvent.start_date) : 
-                            getDuration(event.start_date, null);
+            <div className="position-relative" style={{ minHeight: '120px' }}>
+                {/* History Section (Scrollable) */}
+                <div className="timeline-scroll position-relative" 
+                    style={{ 
+                        marginRight: '120px', // Reduced from 180px
+                        overflowX: 'auto',
+                        overflowY: 'hidden'
+                    }}>
+                    <div className="timeline-container position-relative d-flex align-items-center">
+                        {/* Dotted Line - Extended */}
+                                                <div className="timeline-line position-absolute" 
+                            style={{
+                                height: '3px',
+                                backgroundColor: 'transparent',
+                                borderTop: '3px dotted var(--bs-border-color)',
+                                width: window.innerWidth < 768 
+                                    ? 'calc(100% + 120px)' // Mobile: extend to current state
+                                    : '100%',              // Desktop: normal width
+                                zIndex: 1
+                            }}
+                        />
+                        
+                        {/* Historical States */}
+                        <div className="d-flex" 
+                            style={{ 
+                                minWidth: (events.length - 1) * 150 + 'px',
+                                paddingTop: '1rem',
+                                paddingBottom: '1rem'
+                            }}>
+                            {events.slice(0, -1).map((event, index) => {
+                                const stateInfo = getStateInfo(event.state);
+                                const nextEvent = events[index + 1];
+                                const duration = nextEvent ? getDuration(event.start_date, nextEvent.start_date) : 
+                                    getDuration(event.start_date, null);
 
-                        return (
-                            <div key={`${event.state}-${event.start_date}`} 
-                                className="position-relative" 
-                                style={{ flex: 1 }}>
-                                <div className="timeline-point d-flex flex-column align-items-center">
-                                    {duration && index < events.length - 1 && (
-                                        <div 
-                                            className="d-none d-md-block position-absolute text-body-secondary px-2 rounded"
-                                            style={{
-                                                fontSize: '0.75em',
-                                                left: '100%',
-                                                top: '50%', // Move to vertical center
-                                                transform: 'translate(-50%, -50%)', // Center both horizontally and vertically
-                                                backgroundColor: 'var(--bs-body-bg)',
-                                                border: '1px solid var(--bs-border-color)',
-                                                zIndex: 3,
-                                                whiteSpace: 'nowrap'
-                                            }}
-                                        >
-                                            {duration}
+                                return (
+                                    <div key={`${event.state}-${event.start_date}`} 
+                                        className="position-relative" 
+                                        style={{ flex: 1 }}>
+                                        <div className="timeline-point d-flex flex-column align-items-center">
+                                            {duration && index < events.length - 1 && (
+                                                <div 
+                                                    className="d-none d-md-block position-absolute text-body-secondary px-2 rounded"
+                                                    style={{
+                                                        fontSize: '0.75em',
+                                                        left: '100%',
+                                                        top: '50%', // Move to vertical center
+                                                        transform: 'translate(-50%, -50%)', // Center both horizontally and vertically
+                                                        backgroundColor: 'var(--bs-body-bg)',
+                                                        border: '1px solid var(--bs-border-color)',
+                                                        zIndex: 3,
+                                                        whiteSpace: 'nowrap'
+                                                    }}
+                                                >
+                                                    {duration}
+                                                </div>
+                                            )}
+                                            <div className="rounded-circle d-flex align-items-center justify-content-center mb-2"
+                                                style={{
+                                                    width: '32px',
+                                                    height: '32px',
+                                                    backgroundColor: stateInfo.color,
+                                                    color: 'white',
+                                                    transition: 'all 0.2s ease-in-out'
+                                                }}>
+                                                <FontAwesomeIcon icon={stateInfo.icon} />
+                                            </div>
+                                            <div className="text-center" 
+                                                style={{
+                                                    transition: 'all 0.2s ease-in-out'
+                                                }}>
+                                                <div className="fw-bold" style={{ fontSize: '0.8em' }}>
+                                                    {stateInfo.label}
+                                                </div>
+                                                <div className="text-body-secondary" style={{ fontSize: '0.75em' }}>
+                                                    {new Date(event.start_date).toLocaleDateString()}
+                                                </div>
+                                            </div>
                                         </div>
-                                    )}
-                                    <div className="rounded-circle d-flex align-items-center justify-content-center mb-2"
-                                        style={{
-                                            width: index === events.length - 1 ? '40px' : '32px',
-                                            height: index === events.length - 1 ? '40px' : '32px',
-                                            backgroundColor: stateInfo.color,
-                                            color: 'white',
-                                            transform: index === events.length - 1 ? 'scale(1.25)' : 'none',
-                                            transition: 'all 0.2s ease-in-out'
-                                        }}>
-                                        <FontAwesomeIcon icon={stateInfo.icon} />
                                     </div>
-                                    <div className="text-center" 
-                                        style={{
-                                            transform: index === events.length - 1 ? 'scale(1.25)' : 'none',
-                                            transition: 'all 0.2s ease-in-out'
-                                        }}>
-                                        <div className="fw-bold" style={{ fontSize: '0.8em' }}>
-                                            {stateInfo.label}
-                                        </div>
-                                        <div className="text-body-secondary" style={{ fontSize: '0.75em' }}>
-                                            {new Date(event.start_date).toLocaleDateString()}
-                                        </div>
-                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Current State (Fixed) */}
+                {events.length > 0 && (
+                    <div className="position-absolute" 
+                        style={{ 
+                            right: '10px',  // Reduced from 20px
+                            top: '0',
+                            bottom: '0',
+                            width: '110px',  // Reduced from 160px
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            background: 'var(--bs-body-bg)',
+                            zIndex: 4
+                        }}>
+                        <div className="timeline-point d-flex flex-column align-items-center">
+                            <div className="rounded-circle d-flex align-items-center justify-content-center mb-2"
+                                style={{
+                                    width: '40px',
+                                    height: '40px',
+                                    backgroundColor: getStateInfo(events[events.length - 1].state).color,
+                                    color: 'white',
+                                    transform: 'scale(1.25)',
+                                    transition: 'all 0.2s ease-in-out'
+                                }}>
+                                <FontAwesomeIcon icon={getStateInfo(events[events.length - 1].state).icon} />
+                            </div>
+                            <div className="text-center" style={{ transform: 'scale(1.25)' }}>
+                                <div className="fw-bold" style={{ fontSize: '0.8em' }}>
+                                    {getStateInfo(events[events.length - 1].state).label}
+                                </div>
+                                <div className="text-body-secondary" style={{ fontSize: '0.75em' }}>
+                                    {new Date(events[events.length - 1].start_date).toLocaleDateString()}
                                 </div>
                             </div>
-                        );
-                    })}
-                </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Gradient Fade Effect */}
+                <div className="position-absolute" 
+                    style={{
+                        right: '120px',  // Match new margin
+                        top: 0,
+                        bottom: 0,
+                        width: '20px',  // Reduced from 40px
+                        background: 'linear-gradient(to right, transparent, var(--bs-body-bg))',
+                        zIndex: 3
+                    }}
+                />
             </div>
         </div>
     );

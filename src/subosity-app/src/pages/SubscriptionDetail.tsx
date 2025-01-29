@@ -333,7 +333,8 @@ const SubscriptionDetail: React.FC = () => {
                                         handleFilterChange('all');
                                     }}
                                 >
-                                    <FontAwesomeIcon icon={faEnvelopesBulk} className="me-2" />All ({counts.all})
+                                    <FontAwesomeIcon icon={faEnvelopesBulk} className="me-2" />
+                                    <span className="d-none d-sm-inline">All ({alerts.length})</span>
                                 </Button>
                                 <Button
                                     type="button"
@@ -343,7 +344,8 @@ const SubscriptionDetail: React.FC = () => {
                                         handleFilterChange('unread');
                                     }}
                                 >
-                                    <FontAwesomeIcon icon={faEnvelope} className="me-2" />Unread ({counts.unread})
+                                    <FontAwesomeIcon icon={faEnvelope} className="me-2" />
+                                    <span className="d-none d-sm-inline">Unread ({alerts.filter(a => !a.read).length})</span>
                                 </Button>
                                 <Button
                                     type="button"
@@ -353,7 +355,8 @@ const SubscriptionDetail: React.FC = () => {
                                         handleFilterChange('read');
                                     }}
                                 >
-                                    <FontAwesomeIcon icon={faEnvelopeOpen} className="me-2" />Read ({counts.read})
+                                    <FontAwesomeIcon icon={faEnvelopeOpen} className="me-2" />
+                                    <span className="d-none d-sm-inline">Read ({alerts.filter(a => a.read).length})</span>
                                 </Button>
                             </div>
                         </div>

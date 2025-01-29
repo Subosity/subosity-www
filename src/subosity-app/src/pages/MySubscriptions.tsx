@@ -96,7 +96,7 @@ const MySubscriptions = () => {
     const filterSubscriptions = (subs: Subscription[]): Subscription[] => {
         // First filter by state
         let filtered = subs.filter(sub => selectedStates.includes(sub.state));
-        
+
         // Then apply text search
         if (!searchText) return filtered;
 
@@ -265,9 +265,9 @@ const MySubscriptions = () => {
             <div className="row mb-4">
                 <div className="col-md-5">
                     <InputGroup>
-                        <InputGroup.Text style={{ 
-                            backgroundColor: 'var(--bs-body-bg)', 
-                            color: 'var(--bs-body-color)' 
+                        <InputGroup.Text style={{
+                            backgroundColor: 'var(--bs-body-bg)',
+                            color: 'var(--bs-body-color)'
                         }}>
                             <FontAwesomeIcon icon={faSearch} />
                         </InputGroup.Text>
@@ -286,7 +286,7 @@ const MySubscriptions = () => {
                 <div className="col-md-5">
                     <Select
                         isMulti
-                        value={stateFilterOptions.filter(option => 
+                        value={stateFilterOptions.filter(option =>
                             selectedStates.includes(option.value)
                         )}
                         onChange={(selected) => {
@@ -309,11 +309,11 @@ const MySubscriptions = () => {
                             }),
                             option: (base, state) => ({
                                 ...base,
-                                backgroundColor: state.isFocused 
-                                    ? 'var(--bs-primary)' 
+                                backgroundColor: state.isFocused
+                                    ? 'var(--bs-primary)'
                                     : 'var(--bs-body-bg)',
-                                color: state.isFocused 
-                                    ? 'white' 
+                                color: state.isFocused
+                                    ? 'white'
                                     : 'var(--bs-body-color)'
                             }),
                             multiValue: (base) => ({
@@ -328,7 +328,7 @@ const MySubscriptions = () => {
                         }}
                     />
                 </div>
-                <div className="col-md-2">
+                <div className="col-md-1">
                     <Form.Select
                         value={sortOrder}
                         onChange={(e) => setSortOrder(e.target.value as typeof sortOrder)}
@@ -337,6 +337,22 @@ const MySubscriptions = () => {
                         <option value="date">Sort by Date</option>
                         <option value="frequency">Sort by Frequency</option>
                     </Form.Select>
+                </div>
+                <div className="col-md-1">
+                    <div className="btn-group w-100">
+                        <Button
+                            variant={viewMode === 'card' ? 'primary' : 'outline-primary'}
+                            onClick={() => setViewMode('card')}
+                        >
+                            <FontAwesomeIcon icon={faThLarge} />
+                        </Button>
+                        <Button
+                            variant={viewMode === 'list' ? 'primary' : 'outline-primary'}
+                            onClick={() => setViewMode('list')}
+                        >
+                            <FontAwesomeIcon icon={faList} />
+                        </Button>
+                    </div>
                 </div>
             </div>
 

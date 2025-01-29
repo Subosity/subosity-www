@@ -54,10 +54,11 @@ const frequencyOptions = [
 // Update ValidationErrors interface
 interface ValidationErrors {
     providerId?: string;
+    startDate?: string;
     amount?: string;
+    renewalFrequency?: string;
+    state?: string;
     paymentProviderId?: string;
-    startDate?: string; // Add startDate
-    state?: string; // Add state
 }
 
 const commonInputStyles = {
@@ -144,24 +145,29 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
     const validateForm = (data: Partial<Subscription>): ValidationErrors => {
         const newErrors: ValidationErrors = {};
 
+        // Required field validations
         if (!data.providerId) {
-            newErrors.providerId = 'Please select a provider';
-        }
-
-        if (!data.amount || data.amount <= 0) {
-            newErrors.amount = 'Please enter a valid amount';
-        }
-
-        if (!data.paymentProviderId) {
-            newErrors.paymentProviderId = 'Please select a payment method';
+            newErrors.providerId = 'Please select a subscription provider';
         }
 
         if (!data.startDate) {
-            newErrors.startDate = 'Start Date is required';
+            newErrors.startDate = 'Please select a start date';
+        }
+
+        if (!data.amount || data.amount <= 0) {
+            newErrors.amount = 'Please enter a valid amount greater than 0';
+        }
+
+        if (!data.renewalFrequency) {
+            newErrors.renewalFrequency = 'Please select a renewal frequency';
         }
 
         if (!data.state) {
             newErrors.state = 'Please select a subscription state';
+        }
+
+        if (!data.paymentProviderId) {
+            newErrors.paymentProviderId = 'Please select a payment method';
         }
 
         return newErrors;
@@ -325,7 +331,9 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
 
             {/* Update Start Date field */}
             <Form.Group className="mb-3">
-                <Form.Label>Start Date</Form.Label>
+                <Form.Label>
+                    Start Date <span className="text-danger">*</span>
+                </Form.Label>
                 <Form.Control
                     type="date"
                     name="startDate"
@@ -368,7 +376,9 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
             </Form.Group>
 
             <Form.Group className="mb-3">
-                <Form.Label>Renewal Frequency</Form.Label>
+                <Form.Label>
+                    Renewal Frequency <span className="text-danger">*</span>
+                </Form.Label>
                 <Select
                     value={frequencyOptions.find(f => f.value === formData.renewalFrequency)}
                     onChange={(option) => {
@@ -376,10 +386,15 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
                             ...formData,
                             renewalFrequency: option?.value || 'monthly'
                         });
+                        handleFieldTouch('renewalFrequency');
                     }}
                     options={frequencyOptions}
                     styles={selectStyles}
+                    isInvalid={validated && !!errors.renewalFrequency}
                 />
+                {validated && errors.renewalFrequency && (
+                    <div className="text-danger small mt-1">{errors.renewalFrequency}</div>
+                )}
             </Form.Group>
 
             <Form.Group className="mb-3">
@@ -392,7 +407,9 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
             </Form.Group>
 
             <Form.Group className="mb-3">
-                <Form.Label>Subscription State</Form.Label>
+                <Form.Label>
+                    Subscription State <span className="text-danger">*</span>
+                </Form.Label>
                 <Select
                     value={stateOptions.find(option => option.value === formData.state)}
                     onChange={(option) => {
