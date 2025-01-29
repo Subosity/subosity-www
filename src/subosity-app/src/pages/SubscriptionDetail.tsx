@@ -140,7 +140,8 @@ const SubscriptionDetail: React.FC = () => {
                 providerUnsubscribeUrl: data.subscription_provider.unsubscribe_url,
                 nickname: data.nickname,
                 startDate: data.start_date,
-                renewalFrequency: data.renew_frequency,
+                recurrenceRule: data.recurrence_rule,
+                recurrenceRuleUiFriendly: data.recurrence_rule_ui_friendly,
                 autoRenewal: data.autorenew,
                 amount: data.amount,
                 paymentProviderId: data.payment_provider_id,
@@ -259,7 +260,7 @@ const SubscriptionDetail: React.FC = () => {
                             <dd className="col-sm-9">{subscription.providerCategory}</dd>
 
                             <dt className="col-sm-3">Amount</dt>
-                            <dd className="col-sm-9">${subscription.amount.toFixed(2)} / {subscription.renewalFrequency}</dd>
+                            <dd className="col-sm-9">${subscription.amount.toFixed(2)} / {subscription.recurrenceRuleUiFriendly}</dd>
 
                             <dt className="col-sm-3">Start Date</dt>
                             <dd className="col-sm-9">

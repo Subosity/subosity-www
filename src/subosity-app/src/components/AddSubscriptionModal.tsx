@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { Offcanvas, Button } from 'react-bootstrap';
 import { Subscription } from '../types';
 import SubscriptionForm, { SubscriptionFormRef } from './SubscriptionForm';
@@ -15,37 +15,48 @@ interface Props {
 
 const AddSubscriptionModal: React.FC<Props> = ({ show, onHide, onSubmit }) => {
     const { addToast } = useToast();
+    const [isFormValid, setIsFormValid] = useState(false);
     const formRef = useRef<SubscriptionFormRef>(null);
 
+    // Add logging to track flow
     const handleSubmit = async (data: Partial<Subscription>) => {
+        console.log('AddSubscriptionModal handleSubmit called with:', data);
         try {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) throw new Error('No authenticated user');
 
+            // Map form data to database fields
+            const subscriptionData = {
+                owner: user.id,
+                subscription_provider_id: data.providerId,
+                nickname: data.nickname,
+                start_date: data.startDate,
+                autorenew: data.autoRenewal,
+                amount: data.amount,
+                payment_provider_id: data.paymentProviderId,
+                payment_details: data.paymentDetails,
+                notes: data.notes,
+                state: data.state || 'active',
+                recurrence_rule: data.recurrenceRule,
+                recurrence_rule_ui_friendly: data.recurrenceRuleUiFriendly
+            };
+
+            console.log('Inserting subscription data:', subscriptionData);
             const { error } = await supabase
                 .from('subscription')
-                .insert([{
-                    owner: user.id,
-                    subscription_provider_id: data.providerId,
-                    nickname: data.nickname,
-                    start_date: data.startDate,
-                    autorenew: data.autoRenewal,
-                    renew_frequency: data.renewalFrequency,
-                    amount: data.amount,
-                    payment_provider_id: data.paymentProviderId,
-                    payment_details: data.paymentDetails,
-                    notes: data.notes,
-                    state: data.state || 'trial' // Replace is_free_trial and is_active with state
-                }]);
+                .insert([subscriptionData]);
 
-            if (error) throw error;
+            if (error) {
+                console.error('Supabase insert error:', error);
+                throw error;
+            }
 
             addToast('Subscription added successfully', 'success');
             onSubmit(data);
             onHide();
         } catch (error) {
+            console.error('Error in handleSubmit:', error);
             addToast('Failed to add subscription', 'error');
-            console.error('Error:', error);
         }
     };
 
@@ -67,6 +78,7 @@ const AddSubscriptionModal: React.FC<Props> = ({ show, onHide, onSubmit }) => {
                     ref={formRef}
                     onSubmit={handleSubmit}
                     onCancel={onHide}
+                    onValidationChange={setIsFormValid}
                 />
             </Offcanvas.Body>
             <div className="p-3 border-top" style={{ backgroundColor: 'var(--bs-navbar-bg)', color: 'var(--bs-body-color)' }}>
@@ -75,7 +87,11 @@ const AddSubscriptionModal: React.FC<Props> = ({ show, onHide, onSubmit }) => {
                         <FontAwesomeIcon icon={faChevronLeft} className="me-2" />
                         Back
                     </Button>
-                    <Button variant="primary" onClick={() => formRef.current?.submitForm()}>
+                    <Button 
+                        variant="primary" 
+                        onClick={() => formRef.current?.submitForm()}
+                        disabled={!isFormValid}
+                    >
                         <FontAwesomeIcon icon={faSave} className="me-2" />
                         Save Changes
                     </Button>

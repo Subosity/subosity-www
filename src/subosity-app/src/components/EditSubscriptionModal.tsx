@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useMemo, useState } from 'react';
 import { Offcanvas, Button } from 'react-bootstrap';
 import { Subscription } from '../types';
 import SubscriptionForm, { SubscriptionFormRef } from './SubscriptionForm';
@@ -14,9 +14,10 @@ interface Props {
     onSubmit: (data: Partial<Subscription>) => void;
 }
 
-const EditSubscriptionModal: React.FC<Props> = ({ show, onHide, subscription, onSubmit }) => {
+const EditSubscriptionModal: React.FC<Props> = ({ show, onHide, onSubmit, subscription }) => {
     const { addToast } = useToast();
     const formRef = useRef<SubscriptionFormRef>(null);
+    const [isFormValid, setIsFormValid] = useState(false);
 
     const handleSubmit = async (data: Partial<Subscription>) => {
         try {
@@ -29,12 +30,13 @@ const EditSubscriptionModal: React.FC<Props> = ({ show, onHide, subscription, on
                     nickname: data.nickname,
                     start_date: data.startDate,
                     autorenew: data.autoRenewal,
-                    renew_frequency: data.renewalFrequency,
                     amount: data.amount,
                     payment_provider_id: data.paymentProviderId,
                     payment_details: data.paymentDetails,
                     notes: data.notes,
-                    state: data.state || 'trial' // Replace is_free_trial and is_active with state
+                    state: data.state,
+                    recurrence_rule: data.recurrenceRule,
+                    recurrence_rule_ui_friendly: data.recurrenceRuleUiFriendly
                 })
                 .eq('id', subscription.id);
 
@@ -65,9 +67,10 @@ const EditSubscriptionModal: React.FC<Props> = ({ show, onHide, subscription, on
             <Offcanvas.Body>
                 <SubscriptionForm
                     ref={formRef}
-                    subscription={subscription || undefined}
+                    initialData={subscription}
                     onSubmit={handleSubmit}
                     onCancel={onHide}
+                    onValidationChange={setIsFormValid}
                 />
             </Offcanvas.Body>
             <div className="p-3 border-top" style={{ backgroundColor: 'var(--bs-navbar-bg)' }}>
@@ -76,7 +79,11 @@ const EditSubscriptionModal: React.FC<Props> = ({ show, onHide, subscription, on
                         <FontAwesomeIcon icon={faChevronLeft} className="me-2" />
                         Back
                     </Button>
-                    <Button variant="primary" onClick={() => formRef.current?.submitForm()}>
+                    <Button 
+                        variant="primary" 
+                        onClick={() => formRef.current?.submitForm()}
+                        disabled={!isFormValid}
+                    >
                         <FontAwesomeIcon icon={faSave} className="me-2" />
                         Save Changes
                     </Button>

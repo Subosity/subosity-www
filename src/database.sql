@@ -145,13 +145,13 @@ create table if not exists subscription (
   nickname text,
   start_date date not null default current_date,
   autorenew boolean default false,
-  renew_frequency text,
   amount numeric(10,2),
   payment_details text,
   notes text,
   state subscription_state not null default 'active',
   payment_provider_id uuid references payment_provider(id),
-  recurrence_rule text
+  recurrence_rule text,
+  recurrence_rule_ui_friendly text
 );
 
 -- Create subscription_alerts table

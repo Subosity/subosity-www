@@ -4,7 +4,8 @@ import { Subscription } from '../types';
 import { supabase } from '../supabaseClient';
 import Select, { components } from 'react-select';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCreditCard, faClock, faCheckCircle, faBan, faTimesCircle, faPause } from '@fortawesome/free-solid-svg-icons';
+import { faCreditCard, faClock, faCheckCircle, faBan, faTimesCircle, faPause, faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
+import RecurrenceModal from './RecurrenceModal';
 
 // Near the top with other interfaces
 type SubscriptionState = 'trial' | 'active' | 'canceled' | 'expired' | 'paused';
@@ -39,9 +40,10 @@ export interface SubscriptionFormRef {
 
 // Update the Props interface to match database schema
 interface Props {
-    subscription?: Subscription;
+    initialData?: Partial<Subscription>;  // Change this from subscription?
     onSubmit: (data: Partial<Subscription>) => void;
     onCancel: () => void;
+    onValidationChange?: (isValid: boolean) => void;  // Add this
 }
 
 const frequencyOptions = [
@@ -59,6 +61,7 @@ interface ValidationErrors {
     renewalFrequency?: string;
     state?: string;
     paymentProviderId?: string;
+    recurrenceRule?: string;
 }
 
 const commonInputStyles = {
@@ -122,7 +125,12 @@ interface TouchedFields {
     [key: string]: boolean;
 }
 
-const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription, onSubmit, onCancel }, ref) => {
+const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ 
+    initialData, 
+    onSubmit, 
+    onCancel,
+    onValidationChange 
+}, ref) => {
     // Add touched state
     const [touched, setTouched] = useState<TouchedFields>({});
 
@@ -130,12 +138,11 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
     const [paymentProviders, setPaymentProviders] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [formData, setFormData] = useState<Partial<Subscription>>({
-        ...subscription,
-        state: subscription?.state // Ensure state is initialized from subscription
-    });
-    console.log('Initial formData:', formData);
-    console.log('Initial state:', formData.state);
+    const [formData, setFormData] = useState<Partial<Subscription>>(() => ({
+        state: 'trial',  // Default state
+        ...initialData   // Spread the initial data if provided
+    }));
+    const [showRecurrenceModal, setShowRecurrenceModal] = useState(false);
 
     const [isValid, setIsValid] = useState(false);
     const [errors, setErrors] = useState<ValidationErrors>({});
@@ -145,27 +152,21 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
     const validateForm = (data: Partial<Subscription>): ValidationErrors => {
         const newErrors: ValidationErrors = {};
 
-        // Required field validations
         if (!data.providerId) {
             newErrors.providerId = 'Please select a subscription provider';
         }
-
         if (!data.startDate) {
             newErrors.startDate = 'Please select a start date';
         }
-
         if (!data.amount || data.amount <= 0) {
-            newErrors.amount = 'Please enter a valid amount greater than 0';
+            newErrors.amount = 'Please enter a valid amount';
         }
-
-        if (!data.renewalFrequency) {
-            newErrors.renewalFrequency = 'Please select a renewal frequency';
+        if (!data.recurrenceRule) {
+            newErrors.recurrenceRule = 'Please define the recurrence pattern';
         }
-
         if (!data.state) {
             newErrors.state = 'Please select a subscription state';
         }
-
         if (!data.paymentProviderId) {
             newErrors.paymentProviderId = 'Please select a payment method';
         }
@@ -173,6 +174,7 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
         return newErrors;
     };
 
+    // Add logging to validation
     useEffect(() => {
         const newErrors = validateForm(formData);
         setErrors(newErrors);
@@ -209,15 +211,13 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
         fetchProviders();
     }, []);
 
-    // Update handleSubmit function
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
+    // Update handleSubmit to work without event
+    const handleSubmit = () => {
         setValidated(true);
         const newErrors = validateForm(formData);
         setErrors(newErrors);
 
         if (Object.keys(newErrors).length === 0) {
-            // Transform empty date string to null before submitting
             const submissionData = {
                 ...formData,
                 startDate: formData.startDate || null
@@ -228,34 +228,48 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
 
     const handleFieldTouch = (field: string) => {
         setTouched(prev => ({ ...prev, [field]: true }));
+        const newErrors = validateForm(formData);
+        const valid = Object.keys(newErrors).length === 0;
+        setErrors(newErrors);
+        setIsValid(valid);
+    };
+
+    // Add logging to form data changes
+    const handleChange = (field: string, value: any) => {
+        setFormData(prev => {
+            const newData = { ...prev, [field]: value };
+            const newErrors = validateForm(newData);
+            setErrors(newErrors);
+            setIsValid(Object.keys(newErrors).length === 0);
+            return newData;
+        });
     };
 
     // Update useImperativeHandle
     useImperativeHandle(ref, () => ({
-        submitForm: () => {
-            setValidated(true);
-            if (isValid) {
-                const submissionData = {
-                    ...formData,
-                    startDate: formData.startDate || null
-                };
-                onSubmit(submissionData);
-            }
-        },
-        isValid
-    }));
+        submitForm: () => handleSubmit(), // Remove event parameter
+        isValid: Object.keys(validateForm(formData)).length === 0
+    }), [formData, handleSubmit]);
 
+    // Add a useEffect to log state changes
     useEffect(() => {
-        console.log('subscription prop:', subscription);
-        console.log('formData updated:', formData);
-        console.log('current state:', formData.state);
-    }, [subscription, formData]);
+        const currentErrors = validateForm(formData);
+        const valid = Object.keys(currentErrors).length === 0;
+    }, [formData, touched, validated]);
+
+    // Add validation effect
+    useEffect(() => {
+        const newErrors = validateForm(formData);
+        const valid = Object.keys(newErrors).length === 0;
+        setIsValid(valid);
+        onValidationChange?.(valid);
+    }, [formData, onValidationChange]);
 
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
 
     return (
-        <Form noValidate validated={validated} onSubmit={handleSubmit}>
+        <Form noValidate validated={validated}>
             <Form.Group className="mb-3">
                 <Form.Label>
                     Subscription Provider <span className="text-danger">*</span>
@@ -377,23 +391,31 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
 
             <Form.Group className="mb-3">
                 <Form.Label>
-                    Renewal Frequency <span className="text-danger">*</span>
+                    Recurrence <span className="text-danger">*</span>
                 </Form.Label>
-                <Select
-                    value={frequencyOptions.find(f => f.value === formData.renewalFrequency)}
-                    onChange={(option) => {
-                        setFormData({
-                            ...formData,
-                            renewalFrequency: option?.value || 'monthly'
-                        });
-                        handleFieldTouch('renewalFrequency');
-                    }}
-                    options={frequencyOptions}
-                    styles={selectStyles}
-                    isInvalid={validated && !!errors.renewalFrequency}
-                />
-                {validated && errors.renewalFrequency && (
-                    <div className="text-danger small mt-1">{errors.renewalFrequency}</div>
+                <div className="d-flex align-items-center">
+                    <div className="flex-grow-1">
+                        {formData.recurrenceRuleUiFriendly ? (
+                            <div className="form-control text-truncate">
+                                {formData.recurrenceRuleUiFriendly}
+                            </div>
+                        ) : (
+                            <div className="form-control text-muted">
+                                Define when this subscription repeats...
+                            </div>
+                        )}
+                    </div>
+                    <Button 
+                        variant="outline-secondary" 
+                        className="ms-2"
+                        onClick={() => setShowRecurrenceModal(true)}
+                    >
+                        <FontAwesomeIcon icon={faCalendarAlt} className="me-2" />
+                        Change
+                    </Button>
+                </div>
+                {validated && errors.recurrenceRule && (
+                    <div className="text-danger small mt-1">{errors.recurrenceRule}</div>
                 )}
             </Form.Group>
 
@@ -622,7 +644,19 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({ subscription,
                 />
             </Form.Group>
 
-
+            <RecurrenceModal
+                show={showRecurrenceModal}
+                onHide={() => setShowRecurrenceModal(false)}
+                initialRule={formData.recurrenceRule}
+                onSave={(rule, description) => {
+                    setFormData(prev => ({ 
+                        ...prev, 
+                        recurrenceRule: rule,
+                        recurrenceRuleUiFriendly: description // Maps to recurrence_rule_ui_friendly in database
+                    }));
+                    setShowRecurrenceModal(false);
+                }}
+            />
 
             {/* Update parent components to receive isValid state */}
             <div style={{ display: 'none' }}>

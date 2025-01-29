@@ -6,7 +6,6 @@ export interface Subscription {
     providerCategory: string;
     providerIcon: string;
     startDate: string | null;
-    renewalFrequency: string;
     autoRenewal: boolean;
     amount: number;
     paymentProviderId: string;
@@ -16,4 +15,6 @@ export interface Subscription {
     notes?: string;
     state: 'trial' | 'active' | 'canceled' | 'expired' | 'paused';
     nickname?: string;
+    recurrence_rule?: string;
+    recurrence_rule_ui_friendly?: string;
 }

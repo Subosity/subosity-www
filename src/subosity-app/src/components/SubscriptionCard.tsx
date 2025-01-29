@@ -90,7 +90,7 @@ const SubscriptionCard: React.FC<Props> = ({ subscription, onEdit, onDelete }) =
                                 </div>
                             )}
                             <div style={{ color: 'var(--bs-body-color)', fontSize: '.85em' }}>
-                                Renews: <strong>{subscription.renewalFrequency} @ ${subscription.amount.toFixed(2)}</strong>
+                                Renews: <strong>{subscription.recurrenceRuleUiFriendly}</strong>
                             </div>
                             <div className="mt-2">
                                 <Badge bg={subscription.autoRenewal ? 'success' : 'secondary'}>

@@ -75,7 +75,8 @@ const MySubscriptions = () => {
                 providerIcon: sub.subscription_provider.icon,
                 nickname: sub.nickname,  // Add this line
                 startDate: sub.start_date,
-                renewalFrequency: sub.renew_frequency,
+                recurrenceRule: sub.recurrence_rule,
+                recurrenceRuleUiFriendly: sub.recurrence_rule_ui_friendly,
                 autoRenewal: sub.autorenew,
                 amount: sub.amount,
                 paymentProviderId: sub.payment_provider_id,
@@ -112,7 +113,7 @@ const MySubscriptions = () => {
                 sub.paymentDetails,
                 sub.notes,
                 sub.state,
-                sub.renewalFrequency,
+                sub.recurrenceRule,
                 // Convert numerical/date values to strings
                 sub.amount?.toString(),
                 sub.startDate?.toString(),
@@ -137,7 +138,7 @@ const MySubscriptions = () => {
                 case 'date':
                     return new Date(a.startDate || 0).getTime() - new Date(b.startDate || 0).getTime();
                 case 'frequency':
-                    return (a.renewalFrequency || '').localeCompare(b.renewalFrequency || '');
+                    return (a.recurrenceRule || '').localeCompare(b.recurrenceRule || '');
                 default:
                     return 0;
             }
