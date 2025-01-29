@@ -98,14 +98,10 @@ const RecurrenceModal: React.FC<Props> = ({ show, onHide, initialRule, onSave })
             borderColor: 'var(--bs-border-color)',
             color: 'var(--bs-body-color)'
         }),
-        input: (base: any) => ({
-            ...base,
-            color: 'var(--bs-body-color)'
-        }),
         menu: (base: any) => ({
             ...base,
             backgroundColor: 'var(--bs-body-bg)',
-            borderColor: 'var(--bs-border-color)'
+            border: '1px solid var(--bs-border-color)'
         }),
         option: (base: any, state: any) => ({
             ...base,
@@ -114,9 +110,33 @@ const RecurrenceModal: React.FC<Props> = ({ show, onHide, initialRule, onSave })
                 : 'var(--bs-body-bg)',
             color: state.isFocused 
                 ? 'white' 
-                : 'var(--bs-body-color)'
+                : 'var(--bs-body-color)',
+            ':active': {
+                backgroundColor: 'var(--bs-primary)'
+            }
         }),
         singleValue: (base: any) => ({
+            ...base,
+            color: 'var(--bs-body-color)'
+        }),
+        multiValue: (base: any) => ({
+            ...base,
+            backgroundColor: 'var(--bs-primary)',
+            color: 'white'
+        }),
+        multiValueLabel: (base: any) => ({
+            ...base,
+            color: 'white'
+        }),
+        multiValueRemove: (base: any) => ({
+            ...base,
+            color: 'white',
+            ':hover': {
+                backgroundColor: 'var(--bs-primary-dark)',
+                color: 'white'
+            }
+        }),
+        input: (base: any) => ({
             ...base,
             color: 'var(--bs-body-color)'
         })
