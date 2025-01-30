@@ -84,6 +84,19 @@ const CustomOption = ({ children, ...props }: any) => (
     </components.Option>
 );
 
+const CustomFontOption = ({ children, ...props }: any) => (
+    <components.Option {...props}>
+        <div className="d-flex align-items-center">
+            <FontAwesomeIcon 
+                icon={props.data.icon} 
+                className="me-2" 
+                style={{ width: '16px' }}
+            />
+            {children}
+        </div>
+    </components.Option>
+);
+
 // Update SubscriptionFormRef interface
 export interface SubscriptionFormRef {
     submitForm: () => void;
@@ -478,7 +491,7 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({
                     options={stateOptions}
                     styles={selectStyles}
                     components={{ 
-                        Option: CustomOption,
+                        Option: CustomFontOption,
                         SingleValue: CustomSingleValue 
                     }}
                     isInvalid={validated && !!errors.state}

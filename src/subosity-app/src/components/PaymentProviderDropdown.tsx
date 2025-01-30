@@ -21,6 +21,43 @@ interface Props {
     touched?: boolean;
 }
 
+const CustomSingleValue = ({ children, ...props }: any) => (
+    <components.SingleValue {...props}>
+        <div className="d-flex align-items-center">
+            {props.data.icon && (
+                <div className="rounded-circle d-flex align-items-center justify-content-center"
+                    style={{
+                        width: '24px',
+                        height: '24px',
+                        backgroundColor: 'var(--bs-gray-200)',
+                        flexShrink: 0,
+                        overflow: 'hidden'
+                    }}>
+                    <img
+                        src={props.data.icon}
+                        alt=""
+                        style={{
+                            width: '150%',
+                            height: '150%',
+                            objectFit: 'contain'
+                        }}
+                    />
+                </div>
+            )}
+            <div className="ms-2">
+                <div>{props.data.name}</div>
+                <div style={{
+                    fontSize: '0.75em',
+                    opacity: 0.6,
+                    color: 'var(--bs-secondary-text)'
+                }}>
+                    {props.data.category}
+                </div>
+            </div>
+        </div>
+    </components.SingleValue>
+);
+
 const CustomOption = ({ children, ...props }: any) => (
     <components.Option {...props}>
         <div className="d-flex align-items-center justify-content-between w-100">
@@ -44,7 +81,16 @@ const CustomOption = ({ children, ...props }: any) => (
                         }}
                     />
                 </div>
-                <span className="ms-2">{children}</span>
+                <div className="ms-2">
+                    <div>{props.data.name}</div>
+                    <div style={{
+                        fontSize: '0.75em',
+                        opacity: 0.6,
+                        color: 'var(--bs-secondary-text)'
+                    }}>
+                        {props.data.category}
+                    </div>
+                </div>
             </div>
         </div>
     </components.Option>
@@ -67,11 +113,11 @@ const selectStyles = {
     }),
     option: (base: any, state: any) => ({
         ...base,
-        backgroundColor: state.isFocused 
-            ? 'var(--bs-primary)' 
+        backgroundColor: state.isFocused
+            ? 'var(--bs-primary)'
             : 'var(--bs-body-bg)',
-        color: state.isFocused 
-            ? 'white' 
+        color: state.isFocused
+            ? 'white'
             : 'var(--bs-body-color)'
     }),
     singleValue: (base: any) => ({
@@ -104,7 +150,7 @@ const PaymentProviderDropdown: React.FC<Props> = ({
                 .from('payment_provider')
                 .select('*')
                 .order('name');
-            
+
             if (data) {
                 setProviders(data);
             }
@@ -126,7 +172,10 @@ const PaymentProviderDropdown: React.FC<Props> = ({
                 ...providers,
                 ADD_NEW_PROVIDER
             ]}
-            components={{ Option: CustomOption }}
+            components={{
+                Option: CustomOption,
+                SingleValue: CustomSingleValue
+            }}
             styles={selectStyles}
             isSearchable={true}
             placeholder="Select payment method..."
