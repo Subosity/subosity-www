@@ -264,6 +264,19 @@ $RECYCLE.BIN/
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,macos,linux,git,node,visualstudiocode,react
 
+### Deno ###
+/.idea/
+/.vscode/
+
+/node_modules
+
+.env
+*.orig
+*.pyc
+*.swp
+
+
 reset-demo*.sh
 src/subosity-app/.env.development
 src/subosity-app/supabase/config.toml
+src/subosity-app/supabase/functions/fetch-metadata/.npmrc

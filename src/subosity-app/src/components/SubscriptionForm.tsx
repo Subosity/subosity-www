@@ -374,8 +374,18 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({
     return (
         <Form noValidate validated={validated}>
             <Form.Group className="mb-3">
-                <Form.Label>
-                    Subscription Provider <span className="text-danger">*</span>
+                <Form.Label className="d-flex justify-content-between align-items-center">
+                    <span>
+                        Subscription Provider <span className="text-danger">*</span>
+                    </span>
+                    <Button 
+                        variant="link" 
+                        size="sm" 
+                        className="p-0" 
+                        onClick={() => setShowAddProvider(true)}
+                    >
+                        Add New...
+                    </Button>
                 </Form.Label>
                 <SubscriptionProviderDropdown
                     value={providers.find(p => p.id === formData.providerId)}

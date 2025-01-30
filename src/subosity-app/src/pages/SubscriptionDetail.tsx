@@ -235,6 +235,9 @@ const SubscriptionDetail: React.FC = () => {
                                     {subscription.nickname && (
                                         <div className="text-muted mb-2">({subscription.nickname})</div>
                                     )}
+                                    <div className='text-muted' style={{fontSize: '0.85em'}}>
+                                    {subscription.providerDescription}
+                                    </div>
                                     <Badge bg={subscription.autoRenewal ? 'success' : 'secondary'}>
                                         <FontAwesomeIcon
                                             icon={subscription.autoRenewal ? faRotate : faHand}
@@ -245,20 +248,21 @@ const SubscriptionDetail: React.FC = () => {
                                 </div>
                             </div>
                             <div className="d-flex align-items-center gap-2">
-                                <Button variant="outline-primary" className="d-inline-flex align-items-center" onClick={() => setShowEdit(true)}>
+                                <Button variant="outline-primary" size="sm" className="d-inline-flex align-items-center" onClick={() => setShowEdit(true)}>
                                     <FontAwesomeIcon icon={faEdit} className="me-2" />
                                     Edit
                                 </Button>
-                                <Button variant="outline-danger" className="d-inline-flex align-items-center" onClick={() => setShowDelete(true)}>
+                                <Button variant="outline-danger" size="sm" className="d-inline-flex align-items-center" onClick={() => setShowDelete(true)}>
                                     <FontAwesomeIcon icon={faTrash} className="me-2" />
                                     Delete
                                 </Button>
                             </div>
                         </div>
 
+                        <Card className="mb-4 shadow p-3">
                         <dl className="row">
                             <dt className="col-sm-3">Category</dt>
-                            <dd className="col-sm-9">{subscription.providerCategory}</dd>
+                            <dd className="col-sm-9">{subscription.providerCategory || 'Unknown Category'}</dd>
 
                             <dt className="col-sm-3">Amount</dt>
                             <dd className="col-sm-9">${subscription.amount.toFixed(2)} /
@@ -313,6 +317,7 @@ const SubscriptionDetail: React.FC = () => {
                                 </Button>
                             </dd>
                         </dl>
+                        </Card>
                         <div className="d-flex justify-content-end">
                             <SubscriptionStateDisplay
                                 state={subscription.state}
