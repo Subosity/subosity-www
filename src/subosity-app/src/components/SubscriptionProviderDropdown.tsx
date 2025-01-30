@@ -91,29 +91,39 @@ const CustomSingleValue = ({ children, ...props }: any) => (
     </components.SingleValue>
 );
 
-const selectStyles = {
-    control: (base: any) => ({
-        ...base,
-        backgroundColor: 'var(--bs-body-bg)',
-        borderColor: 'var(--bs-border-color)'
+const customStyles = {
+    control: (provided: any, state: any) => ({
+        ...provided,
+        background: 'var(--bs-body-bg)',
+        borderColor: 'var(--bs-border-color)',
+        '&:hover': {
+            borderColor: 'var(--bs-primary)'
+        }
     }),
-    menu: (base: any) => ({
-        ...base,
-        backgroundColor: 'var(--bs-body-bg)',
-        borderColor: 'var(--bs-border-color)'
+    menu: (provided: any) => ({
+        ...provided,
+        background: 'var(--bs-body-bg)',
+        border: '1px solid var(--bs-border-color)'
     }),
-    option: (base: any, state: any) => ({
-        ...base,
+    option: (provided: any, state: any) => ({
+        ...provided,
         backgroundColor: state.isFocused 
             ? 'var(--bs-primary)' 
             : 'var(--bs-body-bg)',
         color: state.isFocused 
-            ? 'white' 
+            ? 'var(--bs-light)' 
             : 'var(--bs-body-color)',
-        cursor: 'pointer'
+        '&:hover': {
+            backgroundColor: 'var(--bs-primary)',
+            color: 'var(--bs-light)'
+        }
     }),
-    singleValue: (base: any) => ({
-        ...base,
+    singleValue: (provided: any) => ({
+        ...provided,
+        color: 'var(--bs-body-color)'
+    }),
+    input: (provided: any) => ({
+        ...provided,
         color: 'var(--bs-body-color)'
     })
 };
@@ -147,7 +157,17 @@ const SubscriptionProviderDropdown: React.FC<Props> = ({
                 Option: CustomOption,
                 SingleValue: CustomSingleValue 
             }}
-            styles={selectStyles}
+            styles={customStyles}
+            theme={(theme) => ({
+                ...theme,
+                colors: {
+                    ...theme.colors,
+                    primary: 'var(--bs-primary)',
+                    primary75: 'var(--bs-primary-rgb)',
+                    primary50: 'var(--bs-primary-rgb)',
+                    primary25: 'var(--bs-primary-rgb)'
+                }
+            })}
             filterOption={(option, inputValue) => {
                 const { name, description } = option.data;
                 const searchValue = inputValue.toLowerCase();

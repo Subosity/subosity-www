@@ -179,6 +179,12 @@ const PaymentProviderDropdown: React.FC<Props> = ({
             styles={selectStyles}
             isSearchable={true}
             placeholder="Select payment method..."
+            filterOption={(option, inputValue) => {
+                const { name, description } = option.data;
+                const searchValue = inputValue.toLowerCase();
+                return name.toLowerCase().includes(searchValue) || 
+                       (description || '').toLowerCase().includes(searchValue);
+            }}
         />
     );
 };
