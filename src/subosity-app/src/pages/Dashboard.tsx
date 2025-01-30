@@ -16,6 +16,8 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearSca
 import { supabase } from '../supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
+import { getYearlyOccurrences } from '../utils/recurrenceUtils';
+
 
 // Register ChartJS components
 ChartJS.register(
@@ -128,7 +130,7 @@ const Dashboard: React.FC = () => {
 
   const fetchDashboardData = async () => {
     try {
-      setLoading(true); // Ensure loading is true when fetch starts
+      setLoading(true);
 
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
@@ -137,16 +139,21 @@ const Dashboard: React.FC = () => {
         return;
       }
 
-      //console.log('Fetching subscriptions for user:', user.id); // Debug log
-
+      // Get ALL subscriptions with their latest state from history
       const { data: subscriptions, error } = await supabase
-        .from('subscription') // Check table name
+        .from('subscription')
         .select(`
           *,
           subscription_provider:subscription_provider_id(category, name),
-          payment_provider:payment_provider_id(name)
+          payment_provider:payment_provider_id(name),
+          subscription_history!inner(
+            state,
+            start_date,
+            end_date
+          )
         `)
-        .eq('owner', user.id);
+        .eq('owner', user.id)
+        .is('subscription_history.end_date', null);
 
       if (error) {
         console.error('Supabase error:', error);
@@ -154,46 +161,42 @@ const Dashboard: React.FC = () => {
       }
 
       if (!subscriptions) {
-        //console.log('No subscriptions found');
         setLoading(false);
         return;
       }
 
-      //console.log('Fetched subscriptions:', subscriptions); // Debug log
+      // Filter active subscriptions for cost calculations
+      const activeSubscriptions = subscriptions.filter(sub => 
+        ['active', 'trial'].includes(sub.subscription_history[0]?.state)
+      );
 
-      // Process subscription data
       const categories = {};
       const paymentProviders = {};
-      let monthlyTotal = 0;
-
-      subscriptions?.forEach(sub => {
-        // Category stats
+      
+      const now = new Date();
+      const endOfYear = new Date(now.getFullYear(), 11, 31);
+      
+      let yearlyTotal = 0;
+      activeSubscriptions.forEach(sub => {
+        const amount = sub.amount || 0;
+        const yearOccurrences = getYearlyOccurrences(sub.recurrence_rule, now, endOfYear);
+        const yearCost = yearOccurrences * amount;
+        yearlyTotal += yearCost;
+        
         const category = sub.subscription_provider?.category || 'Unknown';
         categories[category] = (categories[category] || 0) + 1;
-
-        // Payment provider stats
+        
         const provider = sub.payment_provider?.name || 'Unknown';
         paymentProviders[provider] = (paymentProviders[provider] || 0) + 1;
-
-        // Calculate costs
-        if (sub.is_active) {
-          const amount = sub.amount || 0;
-          switch (sub.renew_frequency) {
-            case 'monthly': monthlyTotal += amount; break;
-            case 'yearly': monthlyTotal += amount / 12; break;
-            case 'weekly': monthlyTotal += amount * 52 / 12; break;
-            case 'quarterly': monthlyTotal += amount * 4 / 12; break;
-          }
-        }
       });
 
       setStats({
-        totalSubscriptions: subscriptions?.length || 0,
-        activeSubscriptions: subscriptions?.filter(s => s.is_active).length || 0,
-        totalMonthly: monthlyTotal,
-        totalYearly: monthlyTotal * 12,
-        totalDaily: monthlyTotal / 30,
-        autoRenewalCount: subscriptions?.filter(s => s.autorenew === true).length || 0,
+        totalSubscriptions: subscriptions.length,
+        activeSubscriptions: activeSubscriptions.length,
+        totalMonthly: yearlyTotal / 12,
+        totalYearly: yearlyTotal,
+        totalDaily: yearlyTotal / 365,
+        autoRenewalCount: activeSubscriptions.filter(s => s.autorenew).length,
         categoryData: {
           labels: Object.keys(categories),
           values: Object.values(categories)
@@ -208,7 +211,6 @@ const Dashboard: React.FC = () => {
       setLoading(false);
     } catch (error) {
       console.error('Error in fetchDashboardData:', error);
-    } finally {
       setLoading(false);
     }
   };

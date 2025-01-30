@@ -288,3 +288,17 @@ export const getDetailedDescription = (rule: string): string => {
         return 'Invalid recurrence rule';
     }
 };
+
+export const getYearlyOccurrences = (rule: string, startDate: Date, endDate: Date): number => {
+  if (!rule) return 0;
+  
+  try {
+    const rrule = RRule.fromString(rule);
+    // Get all occurrences between start and end date
+    const occurrences = rrule.between(startDate, endDate, true);
+    return occurrences.length;
+  } catch (error) {
+    console.error('Error calculating occurrences:', error);
+    return 0;
+  }
+};
