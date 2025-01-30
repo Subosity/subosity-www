@@ -4,8 +4,11 @@ import { Subscription } from '../types';
 import { supabase } from '../supabaseClient';
 import Select, { components } from 'react-select';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCreditCard, faClock, faCheckCircle, faBan, faTimesCircle, faPause, faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
+import { faCreditCard, faClock, faCheckCircle, faBan, faTimesCircle, faPause, faCalendarAlt, faPlus } from '@fortawesome/free-solid-svg-icons';
 import RecurrenceModal from './RecurrenceModal';
+import AddSubscriptionProviderModal from './AddSubscriptionProviderModal';
+import SubscriptionProviderDropdown from './SubscriptionProviderDropdown';
+import PaymentProviderDropdown from './PaymentProviderDropdown';
 
 // Near the top with other interfaces
 type SubscriptionState = 'trial' | 'active' | 'canceled' | 'expired' | 'paused';
@@ -30,6 +33,55 @@ const CustomSingleValue = ({ children, ...props }: any) => (
             {children}
         </div>
     </components.SingleValue>
+);
+
+// Custom Option Component
+const CustomOption = ({ children, ...props }: any) => (
+    <components.Option {...props}>
+        <div className="d-flex align-items-center">
+            {props.data.icon && (
+                <div 
+                    className="rounded-circle d-flex align-items-center justify-content-center"
+                    style={{
+                        width: '24px',
+                        height: '24px',
+                        backgroundColor: 'var(--bs-gray-200)',
+                        flexShrink: 0,
+                        overflow: 'hidden'
+                    }}
+                >
+                    <img
+                        src={props.data.icon}
+                        alt=""
+                        style={{
+                            width: '150%',
+                            height: '150%',
+                            objectFit: 'contain'
+                        }}
+                    />
+                </div>
+            )}
+            <div className="ms-2">
+                {props.data.category && !props.data.isAddNew && (
+                    <div style={{ 
+                        fontSize: '0.75em', 
+                        opacity: 0.6,
+                        color: 'var(--bs-secondary-text)'
+                    }}>
+                        {props.data.category}
+                    </div>
+                )}
+                {props.data.isAddNew ? (
+                    <div style={{ color: 'var(--bs-primary)' }}>
+                        <FontAwesomeIcon icon={faPlus} className="me-2" />
+                        {children}
+                    </div>
+                ) : (
+                    <div style={{ color: 'var(--bs-body-color)' }}>{children}</div>
+                )}
+            </div>
+        </div>
+    </components.Option>
 );
 
 // Update SubscriptionFormRef interface
@@ -75,6 +127,7 @@ const commonPlaceholderStyles = {
     color: 'var(--bs-body-color)'
 };
 
+// Select styles
 const selectStyles = {
     control: (base: any) => ({
         ...base,
@@ -88,13 +141,17 @@ const selectStyles = {
         ...base,
         ...commonPlaceholderStyles
     }),
-    option: (base: any) => ({
+    option: (base: any, state: any) => ({
         ...base,
-        backgroundColor: 'var(--bs-body-bg)',
-        color: 'var(--bs-body-color)',
-        ':hover': {
-            backgroundColor: 'var(--bs-primary)',
-            color: 'white'
+        backgroundColor: state.isFocused 
+            ? 'var(--bs-primary)' 
+            : 'var(--bs-body-bg)',
+        color: state.isFocused 
+            ? 'white' 
+            : 'var(--bs-body-color)',
+        cursor: 'pointer',
+        ':active': {
+            backgroundColor: 'var(--bs-primary)'
         }
     }),
     menu: (base: any) => ({
@@ -105,21 +162,25 @@ const selectStyles = {
     singleValue: (base: any) => ({
         ...base,
         color: 'var(--bs-body-color)'
+    }),
+    multiValue: (base: any) => ({
+        ...base,
+        backgroundColor: 'var(--bs-primary)',
+        color: 'white'
+    }),
+    multiValueLabel: (base: any) => ({
+        ...base,
+        color: 'white'
+    }),
+    multiValueRemove: (base: any) => ({
+        ...base,
+        color: 'white',
+        ':hover': {
+            backgroundColor: 'var(--bs-primary-dark)',
+            color: 'white'
+        }
     })
 };
-
-const CustomOption = ({ children, ...props }: any) => (
-    <components.Option {...props}>
-        <div className="d-flex align-items-center">
-            <FontAwesomeIcon 
-                icon={props.data.icon} 
-                className="me-2" 
-                style={{ width: '16px' }}
-            />
-            {children}
-        </div>
-    </components.Option>
-);
 
 interface TouchedFields {
     [key: string]: boolean;
@@ -147,6 +208,35 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({
     const [isValid, setIsValid] = useState(false);
     const [errors, setErrors] = useState<ValidationErrors>({});
     const [validated, setValidated] = useState(false);
+
+    // Add showAddProvider state
+    const [showAddProvider, setShowAddProvider] = useState(false);
+
+    // Add OTHER_PROVIDER_ID constant
+    const OTHER_PROVIDER_ID = '7991366e-b1cd-5397-9c99-5926b64a6511';
+
+    // Near the top with other constants
+    const ADD_NEW_PROVIDER_OPTION = {
+        id: 'add-new',
+        name: 'Add a new provider...',
+        isAddNew: true,
+        icon: null
+    };
+
+    // Constants for special options
+    const OTHER_PROVIDER = {
+        id: '7991366e-b1cd-5397-9c99-5926b64a6511',
+        name: 'Other',
+        category: 'Other',
+        icon: null
+    };
+
+    const ADD_NEW_PROVIDER = {
+        id: 'add-new',
+        name: 'Add a new provider...',
+        isAddNew: true,
+        icon: null
+    };
 
     // Update validateForm function
     const validateForm = (data: Partial<Subscription>): ValidationErrors => {
@@ -274,73 +364,15 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({
                 <Form.Label>
                     Subscription Provider <span className="text-danger">*</span>
                 </Form.Label>
-                <Select
+                <SubscriptionProviderDropdown
                     value={providers.find(p => p.id === formData.providerId)}
-                    onChange={(option) => {
-                        setFormData({
-                            ...formData,
-                            providerId: option?.id || ''
-                        });
-                        handleFieldTouch('providerId');
+                    onChange={(id) => {
+                        handleChange('providerId', id);
                     }}
-                    onBlur={() => handleFieldTouch('providerId')}
-                    required
-                    isInvalid={validated && !formData.providerId}
-                    options={[...providers].sort((a, b) => {
-                        // First sort by category
-                        const categoryCompare = (a.category || '').localeCompare(b.category || '');
-                        // If categories are the same, sort by name
-                        if (categoryCompare === 0) {
-                            return a.name.localeCompare(b.name);
-                        }
-                        return categoryCompare;
-                    })}
-                    getOptionLabel={(option) => option.name}
-                    isSearchable={true}
-                    isClearable={false}
-                    placeholder="Select subscription provider..."
-                    formatOptionLabel={provider => (
-                        <div className="d-flex align-items-center justify-content-between w-100">
-                            <div className="d-flex align-items-center flex-shrink-0">
-                                <div className="rounded-circle bg-light d-flex align-items-center justify-content-center p-1"
-                                    style={{
-                                        width: '32px',
-                                        height: '32px',
-                                        backgroundColor: 'var(--bs-gray-200) !important',
-                                        flexShrink: 0,
-                                        overflow: 'hidden'
-                                    }}>
-                                    <img
-                                        src={provider.icon}
-                                        alt={`${provider.name} icon`}
-                                        style={{
-                                            width: '200%',
-                                            height: '200%',
-                                            objectFit: 'contain',
-                                            padding: '4px'
-                                        }}
-                                    />
-                                </div>
-                                <span className="ms-2" style={{ whiteSpace: 'nowrap' }}>{provider.name}</span>
-                            </div>
-                            <small className="text-muted ms-3" style={{ 
-                                fontSize: '0.75em',
-                                whiteSpace: 'normal',
-                                minWidth: '80px',
-                                maxWidth: '120px',
-                                textAlign: 'right',
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis'
-                            }}>
-                                {provider.category}
-                            </small>
-                        </div>
-                    )}
-                    styles={selectStyles}
+                    onAddNew={() => setShowAddProvider(true)}
+                    error={errors.providerId}
+                    touched={validated}
                 />
-                {validated && errors.providerId && (
-                    <div className="text-danger small mt-1">{errors.providerId}</div>
-                )}
             </Form.Group>
 
             {/* Update Start Date field */}
@@ -396,7 +428,10 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({
                 <div className="d-flex align-items-center">
                     <div className="flex-grow-1">
                         {formData.recurrenceRuleUiFriendly ? (
-                            <div className="form-control text-truncate">
+                            <div className="form-control text-truncate"
+                    readOnly
+                    style={{ resize: 'none', height: 'auto', whiteSpace: 'normal', fontStyle: 'italic' }}
+                    rows={3}>
                                 {formData.recurrenceRuleUiFriendly}
                             </div>
                         ) : (
@@ -457,133 +492,15 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({
                 <Form.Label>
                     Payment Method <span className="text-danger">*</span>
                 </Form.Label>
-                {/* <InputGroup hasValidation>
-                    <InputGroup.Text style={commonInputStyles}>
-                        <FontAwesomeIcon icon={faCreditCard} />
-                    </InputGroup.Text> */}
-
-                <Select
+                <PaymentProviderDropdown
                     value={paymentProviders.find(p => p.id === formData.paymentProviderId)}
-                    onChange={(option) => {
-                        setFormData(prev => ({
-                            ...prev,
-                            paymentProviderId: option?.id || '',
-                            paymentDetails: !prev.paymentDetails ? option?.name || '' : prev.paymentDetails
-                        }));
-                        handleFieldTouch('paymentProviderId');
+                    onChange={(id) => {
+                        handleChange('paymentProviderId', id);
                     }}
-                    onBlur={() => handleFieldTouch('paymentProviderId')}
-                    required
-                    isInvalid={validated && !formData.paymentProviderId}
-                    options={[...paymentProviders].sort((a, b) => a.name.localeCompare(b.name))}
-                    getOptionLabel={(option) => option.name}
-                    components={{
-                        Option: ({ data, ...props }) => (
-                            <components.Option {...props}>
-                                <div className="d-flex align-items-center">
-                                    <div className="rounded-circle bg-light d-flex align-items-center justify-content-center"
-                                        style={{
-                                            width: '24px',
-                                            height: '24px',
-                                            backgroundColor: 'var(--bs-gray-200)',
-                                            flexShrink: 0,
-                                            overflow: 'hidden'
-                                        }}>
-                                        <img
-                                            src={data.icon}
-                                            alt={`${data.name} icon`}
-                                            style={{
-                                                width: '150%',
-                                                height: '150%',
-                                                objectFit: 'contain',
-                                                padding: '4px'
-                                            }}
-                                        />
-                                    </div>
-                                    <span className="ms-2">{data.name}</span>
-                                </div>
-                            </components.Option>
-                        ),
-                        SingleValue: ({ data, ...props }) => (
-                            <components.SingleValue {...props}>
-                                <div className="d-flex align-items-center">
-                                    <div className="rounded-circle bg-light d-flex align-items-center justify-content-center"
-                                        style={{
-                                            width: '24px',
-                                            height: '24px',
-                                            backgroundColor: 'var(--bs-gray-200)',
-                                            flexShrink: 0,
-                                            overflow: 'hidden'
-                                        }}>
-                                        <img
-                                            src={data.icon}
-                                            alt={`${data.name} icon`}
-                                            style={{
-                                                width: '100%',
-                                                height: '100%',
-                                                objectFit: 'contain',
-                                                padding: '4px'
-                                            }}
-                                        />
-                                    </div>
-                                    <span className="ms-2">{data.name}</span>
-                                </div>
-                            </components.SingleValue>
-                        )
-                    }}
-                    isSearchable={true}
-                    isClearable={false}
-                    placeholder="Select payment method..."
-                    formatOptionLabel={provider => (
-                        <div className="d-flex align-items-center justify-content-between w-100">
-                            <div className="d-flex align-items-center flex-shrink-0">
-                                <div className="rounded-circle bg-light d-flex align-items-center justify-content-center p-1"
-                                    style={{
-                                        width: '32px',
-                                        height: '32px',
-                                        backgroundColor: 'var(--bs-gray-200) !important',
-                                        flexShrink: 0,
-                                        overflow: 'hidden'
-                                    }}>
-                                    <img
-                                        src={provider.icon}
-                                        alt={`${provider.name} icon`}
-                                        style={{
-                                            width: '100%',
-                                            height: '100%',
-                                            objectFit: 'contain',
-                                            padding: '4px'
-                                        }}
-                                    />
-                                </div>
-                                <span className="ms-2" style={{ whiteSpace: 'nowrap' }}>{provider.name}</span>
-                            </div>
-                            <small className="text-muted ms-3" style={{ 
-                                fontSize: '0.75em',
-                                whiteSpace: 'normal',
-                                minWidth: '80px',
-                                maxWidth: '120px',
-                                textAlign: 'right',
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis'
-                            }}>
-                                {provider.category}
-                            </small>
-                        </div>
-                    )}
-                    filterOption={(option, input) => {
-                        const searchInput = input.toLowerCase();
-                        return (
-                            option.data.name.toLowerCase().includes(searchInput) ||
-                            (option.data.category && option.data.category.toLowerCase().includes(searchInput))
-                        );
-                    }}
-                    styles={selectStyles}
+                    onAddNew={() => setShowAddPaymentProvider(true)}
+                    error={errors.paymentProviderId}
+                    touched={validated}
                 />
-                {validated && errors.paymentProviderId && (
-                    <div className="text-danger small mt-1">{errors.paymentProviderId}</div>
-                )}
-                {/* </InputGroup> */}
             </Form.Group>
 
             <Form.Group className="mb-3">
@@ -655,6 +572,16 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({
                         recurrenceRuleUiFriendly: description // Maps to recurrence_rule_ui_friendly in database
                     }));
                     setShowRecurrenceModal(false);
+                }}
+            />
+
+            {/* Add the modal */}
+            <AddSubscriptionProviderModal
+                show={showAddProvider}
+                onHide={() => setShowAddProvider(false)}
+                onSave={(data) => {
+                    // Handle new provider data
+                    setShowAddProvider(false);
                 }}
             />
 

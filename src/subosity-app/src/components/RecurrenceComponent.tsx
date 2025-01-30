@@ -9,6 +9,7 @@ import {
 import { Subscription } from '../types';
 import moment from 'moment';
 import { RRule } from 'rrule';
+import { getNextOccurrence } from '../utils/recurrenceUtils';
 
 interface Props {
     subscription: Subscription;
@@ -29,17 +30,6 @@ const RecurrenceComponent: React.FC<Props> = ({
     mode, 
     thresholds = defaultThresholds 
 }) => {
-    const getNextOccurrence = (rule: string): Date | null => {
-        try {
-            const rrule = RRule.fromString(rule);
-            const next = rrule.after(new Date());
-            return next;
-        } catch (error) {
-            console.error('Error parsing RRULE:', error);
-            return null;
-        }
-    };
-
     const getSeverity = (nextDate: Date | null): 'success' | 'warning' | 'danger' => {
         if (!nextDate) return 'danger';
         
