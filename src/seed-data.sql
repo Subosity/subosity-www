@@ -138,7 +138,20 @@ WITH user_id AS (
     (uuid_generate_v5(uuid_ns_dns(), 'Pandora Premium'), 'Pandora Premium', 'https://static.cdnlogo.com/logos/p/16/pandora.svg', true, true, (SELECT id FROM user_id), 'Personalized music streaming', 'https://www.pandora.com', 'Music', ''),
     (uuid_generate_v5(uuid_ns_dns(), 'SiriusXM'), 'SiriusXM', 'https://static.cdnlogo.com/logos/s/2/siriusxm.svg', true, true, (SELECT id FROM user_id), 'Satellite and streaming radio service', 'https://www.siriusxm.com', 'Music', ''),
     (uuid_generate_v5(uuid_ns_dns(), 'Deezer'), 'Deezer', 'https://static.cdnlogo.com/logos/d/9/deezer.svg', true, true, (SELECT id FROM user_id), 'Music streaming platform', 'https://www.deezer.com', 'Music', ''),
-    (uuid_generate_v5(uuid_ns_dns(), 'Spotify'), 'Spotify',       'https://static.cdnlogo.com/logos/s/89/spotify.svg', true, true, (SELECT id FROM user_id), 'Music streaming service', 'https://www.spotify.com', 'Music', 'https://support.spotify.com/us/article/how-to-cancel-your-subscription/')
+    (uuid_generate_v5(uuid_ns_dns(), 'Spotify'), 'Spotify',       'https://static.cdnlogo.com/logos/s/89/spotify.svg', true, true, (SELECT id FROM user_id), 'Music streaming service', 'https://www.spotify.com', 'Music', 'https://support.spotify.com/us/article/how-to-cancel-your-subscription/'),
+
+    -- Automotive Insurance
+    (uuid_generate_v5(uuid_ns_dns(), 'State Farm'), 'State Farm', 'https://cdn.brandfetch.io/statefarm.com/w/400/h/400?c=1idjkRT8v70n1S-W2J_', true, true, (SELECT id FROM user_id), 'Automotive insurance provider', 'https://www.statefarm.com', 'Insurance', ''),
+    (uuid_generate_v5(uuid_ns_dns(), 'Geico'), 'Geico', 'https://static.cdnlogo.com/logos/g/5/geico.svg', true, true, (SELECT id FROM user_id), 'Automotive insurance provider', 'https://www.geico.com', 'Insurance', ''),
+    (uuid_generate_v5(uuid_ns_dns(), 'Progressive'), 'Progressive', 'https://static.cdnlogo.com/logos/p/75/progressive.svg', true, true, (SELECT id FROM user_id), 'Automotive insurance provider', 'https://www.progressive.com', 'Insurance', ''),
+    (uuid_generate_v5(uuid_ns_dns(), 'Allstate'), 'Allstate', 'https://static.cdnlogo.com/logos/a/40/allstate-insurance-1.svg', true, true, (SELECT id FROM user_id), 'Automotive insurance provider', 'https://www.allstate.com', 'Insurance', ''),
+    (uuid_generate_v5(uuid_ns_dns(), 'USAA'), 'USAA', 'https://static.cdnlogo.com/logos/u/15/usaa.svg', true, true, (SELECT id FROM user_id), 'Automotive insurance provider', 'https://www.usaa.com', 'Insurance', ''),
+    (uuid_generate_v5(uuid_ns_dns(), 'Liberty Mutual'), 'Liberty Mutual', 'https://static.cdnlogo.com/logos/l/90/liberty-mutual.svg', true, true, (SELECT id FROM user_id), 'Automotive insurance provider', 'https://www.libertymutual.com', 'Insurance', ''),
+    (uuid_generate_v5(uuid_ns_dns(), 'Farmers'), 'Farmers', 'https://static.cdnlogo.com/logos/f/30/farmers-insurance.svg', true, true, (SELECT id FROM user_id), 'Automotive insurance provider', 'https://www.farmers.com', 'Insurance', ''),
+    (uuid_generate_v5(uuid_ns_dns(), 'Nationwide'), 'Nationwide', 'https://static.cdnlogo.com/logos/n/83/nationwide-mutual-insurance-company.svg', true, true, (SELECT id FROM user_id), 'Automotive insurance provider', 'https://www.nationwide.com', 'Insurance', ''),
+    (uuid_generate_v5(uuid_ns_dns(), 'American Family'), 'American Family', 'https://static.cdnlogo.com/logos/a/55/american-family-insurance.svg', true, true, (SELECT id FROM user_id), 'Automotive insurance provider', 'https://www.amfam.com', 'Insurance', ''),
+    (uuid_generate_v5(uuid_ns_dns(), 'Travelers'), 'Travelers', 'https://static.cdnlogo.com/logos/t/13/the-travelers-companies.svg', true, true, (SELECT id FROM user_id), 'Automotive insurance provider', 'https://www.travelers.com', 'Insurance', '')
+
 ON CONFLICT (id) DO UPDATE SET
     name = EXCLUDED.name,
     icon = EXCLUDED.icon,
