@@ -149,6 +149,8 @@ const CalendarPage: React.FC = () => {
                 style={{
                     width: '24px',
                     height: '24px',
+                    borderRadius: '4px',
+                    aspectRatio: '1 / 1',
                     backgroundColor: 'var(--bs-white)',
                     overflow: 'hidden'
                 }}>
@@ -163,13 +165,15 @@ const CalendarPage: React.FC = () => {
                     }}
                 />
             </div>
-            <span style={{ fontSize: '0.75em', marginRight: 'auto' }}>
+            <span className="d-none d-md-block" style={{ fontSize: '0.75em', marginRight: 'auto' }}>
                 ${event.resource.amount.toFixed(2)}
             </span>
             <div className="rounded-circle bg-light d-flex align-items-center justify-content-center"
                 style={{
                     width: '24px',
                     height: '24px',
+                    borderRadius: '4px',
+                    aspectRatio: '1 / 1',
                     backgroundColor: 'var(--bs-white)',
                     overflow: 'hidden'
                 }}>
