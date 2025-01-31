@@ -10,6 +10,8 @@ import '../styles/calendar.css';
 import SubscriptionListItem from '../components/SubscriptionListItem';
 import { Subscription } from '../types/Subscription';
 import SubscriptionCard from '../components/SubscriptionCard';
+import DeleteSubscriptionModal from '../components/DeleteSubscriptionModal';
+import EditSubscriptionModal from '../components/EditSubscriptionModal';
 
 const localizer = momentLocalizer(moment);
 
@@ -32,6 +34,9 @@ const CalendarPage: React.FC = () => {
     const [events, setEvents] = useState<CalendarEvent[]>([]);
     const [currentDate, setCurrentDate] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+    const [selectedSubscription, setSelectedSubscription] = useState<Subscription | null>(null);
+    const [showEdit, setShowEdit] = useState(false);
+    const [showDelete, setShowDelete] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const { theme } = useTheme();
     const isDarkMode = theme === 'Dark' || (theme === 'Auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
@@ -246,10 +251,12 @@ const CalendarPage: React.FC = () => {
                                                 onEdit={(sub) => {
                                                     setSelectedSubscription(sub);
                                                     setShowEdit(true);
+                                                    setShowModal(false);
                                                 }}
                                                 onDelete={(sub) => {
                                                     setSelectedSubscription(sub);
                                                     setShowDelete(true);
+                                                    setShowModal(false);
                                                 }}
                                             />
                                         </div>
@@ -259,6 +266,25 @@ const CalendarPage: React.FC = () => {
                     )}
                 </Modal.Body>
             </Modal>
+            <DeleteSubscriptionModal
+                show={showDelete}
+                onHide={() => setShowDelete(false)}
+                subscription={selectedSubscription}
+                onDelete={async () => {
+                    await fetchSubscriptionEvents(); // Refresh the list
+                    setShowDelete(false);
+                }}
+            />
+
+            <EditSubscriptionModal
+                show={showEdit}
+                onHide={() => setShowEdit(false)}
+                subscription={selectedSubscription}
+                onSubmit={async (data) => {
+                    await fetchSubscriptionEvents(); // Refresh the list after update
+                    setShowEdit(false);
+                }}
+            />
         </Container>
     );
 };
