@@ -3,7 +3,7 @@ import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { supabase } from '../supabaseClient';
-import { calculateOccurrences } from '../utils/recurrenceUtils';
+import { getOccurrencesInRange } from '../utils/recurrenceUtils';
 import { useTheme } from '../ThemeContext';
 import { Container, Modal } from 'react-bootstrap';
 import '../styles/calendar.css';
@@ -75,11 +75,12 @@ const CalendarPage: React.FC = () => {
         console.log(' - Month end:', monthEnd);
 
         const monthEvents = subscriptions.flatMap(sub => {
-            const renewalDates = calculateOccurrences(
+            console.log('Start date:', sub.start_date || sub.subscription_history?.[sub.subscription_history.length - 1]?.start_date);
+            const renewalDates = getOccurrencesInRange(
                 sub.recurrence_rule,
                 monthStart,
                 monthEnd,
-                sub.subscription_history?.[0]?.start_date
+                sub.start_date || sub.subscription_history?.[sub.subscription_history.length - 1]?.start_date
             );
 
             return renewalDates.map(date => ({

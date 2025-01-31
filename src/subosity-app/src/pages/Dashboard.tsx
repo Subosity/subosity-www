@@ -16,7 +16,7 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearSca
 import { supabase } from '../supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
-import { getYearlyOccurrences } from '../utils/recurrenceUtils';
+import { getOccurrencesCountInRange } from '../utils/recurrenceUtils';
 
 
 // Register ChartJS components
@@ -179,7 +179,7 @@ const Dashboard: React.FC = () => {
       let yearlyTotal = 0;
       activeSubscriptions.forEach(sub => {
         const amount = sub.amount || 0;
-        const yearOccurrences = getYearlyOccurrences(sub.recurrence_rule, now, endOfYear);
+        const yearOccurrences = getOccurrencesCountInRange(sub.recurrence_rule, now, endOfYear);
         const yearCost = yearOccurrences * amount;
         yearlyTotal += yearCost;
         
