@@ -407,7 +407,11 @@ const SubscriptionForm = forwardRef<SubscriptionFormRef, Props>(({
                     type="date"
                     name="startDate"
                     value={formData.startDate}
-                    onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                    onChange={(e) => {
+                        const localDate = new Date(e.target.value);
+                        const utcDate = new Date(Date.UTC(localDate.getFullYear(), localDate.getMonth(), localDate.getDate()));
+                        setFormData({ ...formData, startDate: utcDate.toISOString().split('T')[0] });
+                    }}
                     isInvalid={validated && !!errors.startDate}
                     required
                 />
