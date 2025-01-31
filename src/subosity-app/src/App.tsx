@@ -22,6 +22,7 @@ import { supabase } from './supabaseClient';
 import Home from './pages/Home';
 import Pricing from './pages/Pricing';
 import ProtectedRoute from './components/ProtectedRoute';
+import CalendarPage from './pages/CalendarPage';
 
 const AppContent: React.FC = () => {
 
@@ -36,7 +37,7 @@ const AppContent: React.FC = () => {
                     <Route path="/privacy" element={<Privacy />} />
                     <Route path="/terms" element={<Terms />} />
                     <Route path="/pricing" element={<Pricing />} />
-                    
+
                     {/* Protected Routes */}
                     <Route path="/dashboard" element={
                         <ProtectedRoute>
@@ -51,6 +52,11 @@ const AppContent: React.FC = () => {
                     <Route path="/subscription/:id" element={
                         <ProtectedRoute>
                             <SubscriptionDetail />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/calendar" element={
+                        <ProtectedRoute>
+                            <CalendarPage />
                         </ProtectedRoute>
                     } />
                     <Route path="/profile" element={

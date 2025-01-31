@@ -302,3 +302,43 @@ export const getYearlyOccurrences = (rule: string, startDate: Date, endDate: Dat
     return 0;
   }
 };
+
+export const calculateOccurrences = (
+    rule: string, 
+    startDate: Date, 
+    endDate: Date, 
+    originalStartDate?: Date | string
+): Date[] => {
+    if (!rule) return [];
+
+    try {
+        const rrule = RRule.fromString(rule);
+        const ruleStart = originalStartDate ? new Date(originalStartDate) : startDate;
+        ruleStart.setHours(0, 0, 0, 0);
+
+        // Map RRULE options correctly
+        const options = {
+            freq: rrule.options.freq,
+            interval: rrule.options.interval,
+            bysetpos: rrule.options.bysetpos,
+            byweekday: rrule.options.byweekday, // Use only byweekday, not byday
+            dtstart: ruleStart
+        };
+
+        // console.log('RRULE Options:', {
+        //     original: rule,
+        //     parsed: options,
+        //     start: ruleStart,
+        //     range: { startDate, endDate }
+        // });
+
+        const newRule = new RRule(options);
+        const occurrences = newRule.between(startDate, endDate, true);
+        
+        //console.log('Occurrences found:', occurrences);
+        return occurrences;
+    } catch (error) {
+        console.error('Error calculating occurrences:', error);
+        return [];
+    }
+};

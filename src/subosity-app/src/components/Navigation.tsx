@@ -16,7 +16,8 @@ import {
     faTags,
     faUserPlus,
     faSignIn,
-    faInfoCircle
+    faInfoCircle,
+    faCalendar
 } from '@fortawesome/free-solid-svg-icons'
 import { useTheme } from '../ThemeContext'
 import { useAuth } from '../AuthContext'
@@ -57,7 +58,7 @@ const Navigation: React.FC = () => {
     };
 
     return (
-        <Navbar expand="lg" className="navbar shadow-sm">
+        <Navbar expand="lg" className={`navbar-${isDarkMode ? 'dark' : 'light'} bg-${isDarkMode ? 'dark' : 'light'}`}>
             <Container>
                 <Navbar.Brand as={Link} to="/" className="navbar-brand d-flex align-items-center">
                     <img src="/favicon.svg" className="me-2" style={{ height: '22px' }} />
@@ -82,6 +83,10 @@ const Navigation: React.FC = () => {
                                 <Nav.Link as={Link} to="/mysubscriptions">
                                     <FontAwesomeIcon icon={faHandHoldingDollar} className="me-2" />
                                     Subscriptions
+                                </Nav.Link>
+                                <Nav.Link as={Link} to="/calendar">
+                                    <FontAwesomeIcon icon={faCalendar} className="me-2" />
+                                    Calendar
                                 </Nav.Link>
                             </>
                         ) : (
