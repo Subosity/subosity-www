@@ -75,14 +75,14 @@ export default defineConfig({
         screenshots: [
           {
             src: '/screenshots/desktop.png',
-            sizes: '1920x1080',
+            sizes: '1122x623',
             type: 'image/png',
             form_factor: 'wide',
             label: 'Subosity Desktop Dashboard'
           },
           {
             src: '/screenshots/mobile.png',
-            sizes: '1080x1920',
+            sizes: '377x669',
             type: 'image/png',
             form_factor: 'narrow',
             label: 'Subosity Mobile Dashboard'

@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
 
 const PWAInstall = () => {
-  const [installPrompt, setInstallPrompt] = useState<any>(null)
+  const [installPrompt, setInstallPrompt] = useState(null)
 
   useEffect(() => {
-    const handleBeforeInstallPrompt = (e: Event) => {
+    const handleBeforeInstallPrompt = (e) => {
       e.preventDefault()
       setInstallPrompt(e)
     }
@@ -15,8 +15,9 @@ const PWAInstall = () => {
 
   const handleInstallClick = async () => {
     if (!installPrompt) return
-    const result = await installPrompt.prompt()
-    console.debug('Install prompt result:', result)
+    installPrompt.prompt()
+    const { outcome } = await installPrompt.userChoice
+    console.log(`User response to the install prompt: ${outcome}`)
     setInstallPrompt(null)
   }
 
