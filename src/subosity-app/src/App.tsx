@@ -8,6 +8,7 @@ import Privacy from './pages/Privacy'
 import Terms from './pages/Terms'
 import Home from './pages/Home';
 import Pricing from './pages/Pricing';
+import PWAInstall from './components/PWAInstall'
 
 const AppContent: React.FC = () => {
 
@@ -34,6 +35,7 @@ const App: React.FC = () => {
         <BrowserRouter>
             <ThemeProvider>
                 <AppContent />
+                <PWAInstall />
             </ThemeProvider>
         </BrowserRouter>
     );
