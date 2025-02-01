@@ -51,7 +51,11 @@ const Home = () => {
                 size="lg"
                 variant="light"
                 className="me-3"
-                onClick={() => window.location.href = import.meta.env.VITE_APP_URL}
+                onClick={() => {
+                  const appUrl = import.meta.env.VITE_APP_URL || 'https://app.subosity.com';
+                  console.log('Navigating to:', appUrl);
+                  window.location.href = appUrl;
+                }}
               >
                 <FontAwesomeIcon icon={faUserPlus} className="me-2" />
                 Get Started
