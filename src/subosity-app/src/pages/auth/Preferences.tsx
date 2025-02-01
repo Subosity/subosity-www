@@ -42,7 +42,7 @@ const Preferences: React.FC = () => {
     const [sortField, setSortField] = useState<SortField>('preference_key');
     const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
     const { addToast } = useToast();
-    const { theme, setTheme } = useTheme();
+    const { theme, applyTheme } = useTheme();
     const { user } = useAuth();
 
     useEffect(() => {
@@ -133,7 +133,7 @@ const Preferences: React.FC = () => {
 
         if (themeData) {
             const effectiveTheme = themeData.preferences?.[0]?.preference_value ?? themeData.preference_value;
-            setTheme(effectiveTheme as 'Auto' | 'Light' | 'Dark');
+            applyTheme(effectiveTheme as 'Auto' | 'Light' | 'Dark');
         }
         
         setShowEdit(false);
