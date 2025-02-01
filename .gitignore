@@ -280,3 +280,4 @@ reset-demo*.sh
 src/subosity-app/.env.development
 src/subosity-app/supabase/config.toml
 src/subosity-app/supabase/functions/fetch-metadata/.npmrc
+src/subosity-app/prod-dump.sql
