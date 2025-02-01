@@ -1,6 +1,7 @@
 {
   "name": "Subosity",
   "short_name": "Subosity",
+  "description": "Subscription Management Made Simple",
   "icons": [
     {
       "src": "/icon-192x192.png",
@@ -15,7 +16,8 @@
       "purpose": "maskable"
     }
   ],
-  "theme_color": "#ffffff",
-  "background_color": "#000000",
+  "theme_color": "#000000",
+  "background_color": "#ffffff",
+  "start_url": "/",
   "display": "standalone"
 }
