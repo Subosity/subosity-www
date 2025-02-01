@@ -32,6 +32,15 @@ jobs:
         run: |
           echo "VITE_APP_URL=${{ secrets.VITE_APP_URL }}" >> ./src/subosity-app/.env
 
+      - name: Generate Version
+        id: version
+        run: |
+          TIMESTAMP=$(date '+%Y.%m%d.%H%M')
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          VERSION="v${TIMESTAMP}-${SHORT_SHA}"
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo ${VERSION} > ./src/subosity-app/public/version.txt
+
       - name: Install Dependencies
         working-directory: ./src/subosity-app
         run: npm ci
