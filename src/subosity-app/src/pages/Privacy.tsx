@@ -85,7 +85,7 @@ const Privacy = () => {
               You have complete control over your data:
             </p>
             <ul>
-              <li>Download your complete data anytime from your <Link to="/profile">account settings</Link></li>
+              <li>Download your complete data anytime from your account settings</li>
               <li>Update or correct your information at any time</li>
               <li>Choose what information to share and track</li>
               <li>Opt in/out of email notifications</li>

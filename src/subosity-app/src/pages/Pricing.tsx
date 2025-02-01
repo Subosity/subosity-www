@@ -13,7 +13,6 @@ import {
     faBell
 } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../AuthContext';
 import '../styles/pricing.css';
 
 
@@ -67,8 +66,7 @@ const PricingTier = ({
                 ))}
             </ul>
             <Button 
-                as={Link} 
-                to="/signup" 
+                onClick={() => window.location.href = import.meta.env.VITE_APP_URL}
                 variant={buttonVariant} 
                 size="lg" 
                 className="w-100 mt-auto"
@@ -81,7 +79,6 @@ const PricingTier = ({
 );
 
 const Pricing = () => {
-    const { user } = useAuth();
 
     const plans = [
         {

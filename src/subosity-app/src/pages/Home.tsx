@@ -1,18 +1,16 @@
 import React from 'react';
 import { Container, Row, Col, Button, Card } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-  faChartPie, 
-  faBell, 
+import {
+  faChartPie,
+  faBell,
   faListCheck,
   faArrowRight,
   faUserPlus
 } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../AuthContext';
 
 const Home = () => {
-  const { user } = useAuth();
 
   const features = [
     {
@@ -46,27 +44,23 @@ const Home = () => {
                 Manage Your Subscriptions Smarter
               </h1>
               <p className="lead mb-4">
-                Track, analyze, and manage all your subscriptions in one place. 
+                Track, analyze, and manage all your subscriptions in one place.
                 From streaming services to memberships, never lose track of your recurring payments again.
               </p>
-              <Button 
-                as={Link} 
-                to={user ? "/dashboard" : "/signup"} 
-                size="lg" 
-                variant="light" 
+              <Button
+                size="lg"
+                variant="light"
                 className="me-3"
+                onClick={() => window.location.href = import.meta.env.VITE_APP_URL}
               >
-                <FontAwesomeIcon 
-                  icon={user ? faArrowRight : faUserPlus} 
-                  className="me-2" 
-                />
-                {user ? 'Go to My Subscriptions' : 'Create Free Account'}
+                <FontAwesomeIcon icon={faUserPlus} className="me-2" />
+                Get Started
               </Button>
             </Col>
             <Col md={6}>
-              <img 
-                src="https://picsum.photos/800/400.jpg?random=4" 
-                alt="Subscription Management" 
+              <img
+                src="https://picsum.photos/800/400.jpg?random=4"
+                alt="Subscription Management"
                 className="img-fluid rounded shadow-lg"
               />
             </Col>
@@ -80,7 +74,7 @@ const Home = () => {
         <Row>
           {features.map((feature, index) => (
             <Col key={index} md={4} className="mb-4">
-              <Card 
+              <Card
                 className="h-100 shadow border"
                 style={{
                   backgroundColor: 'var(--bs-body-bg)',
@@ -88,17 +82,17 @@ const Home = () => {
                   boxShadow: 'var(--bs-box-shadow)'
                 }}
               >
-                <Card.Img 
-                  variant="top" 
-                  src={feature.image} 
+                <Card.Img
+                  variant="top"
+                  src={feature.image}
                   alt={feature.title}
                   style={{ height: '200px', objectFit: 'cover' }}
                 />
                 <Card.Body className="text-center">
                   <div className="feature-icon mb-3">
-                    <FontAwesomeIcon 
-                      icon={feature.icon} 
-                      size="2x" 
+                    <FontAwesomeIcon
+                      icon={feature.icon}
+                      size="2x"
                       className="text-primary"
                     />
                   </div>
@@ -119,19 +113,15 @@ const Home = () => {
             Join thousands of users who are taking control of their subscriptions.
             <br />No credit card required - get started for free!
           </p>
-          <Button 
-            as={Link} 
-            to={user ? "/dashboard" : "/signup"} 
-            size="lg" 
-            variant="primary"
-            className="px-4"
-          >
-            <FontAwesomeIcon 
-              icon={user ? faArrowRight : faUserPlus} 
-              className="me-2" 
-            />
-            {user ? 'Go to My Subscriptions' : 'Create Free Account'}
-          </Button>
+          <Button
+                size="lg"
+                variant="light"
+                className="px-4"
+                onClick={() => window.location.href = import.meta.env.VITE_APP_URL}
+              >
+                <FontAwesomeIcon icon={faUserPlus} className="me-2" />
+                Get Started
+              </Button>
         </Container>
       </div>
     </div>
