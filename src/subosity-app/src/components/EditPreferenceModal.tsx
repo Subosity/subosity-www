@@ -11,7 +11,6 @@ import ConfirmResetPreferenceModal from './ConfirmResetPreferenceModal';
 
 interface Preference {
     id: string;
-    title: string;
     preference_key: string;
     preference_value: string;
     data_type: string;
@@ -192,7 +191,7 @@ const EditPreferenceModal: React.FC<EditPreferenceModalProps> = ({
                             Edit Preference
                         </Offcanvas.Title>
                         <div style={{ fontSize: '0.85em', opacity: 0.6 }}>
-                            {preference?.title}
+                            {preference?.preference_key} {/* Change from preference?.title to preference?.preference_key */}
                         </div>
                     </div>
                 </Offcanvas.Header>
@@ -264,6 +263,7 @@ const EditPreferenceModal: React.FC<EditPreferenceModalProps> = ({
                 onHide={() => setShowResetConfirm(false)}
                 onConfirm={confirmReset}
                 systemDefaultValue={systemDefault}
+                dataType={preference?.data_type || 'text'}
             />
         </>
     );

@@ -12,6 +12,7 @@ import { Subscription } from '../types/Subscription';
 import SubscriptionCard from '../components/SubscriptionCard';
 import DeleteSubscriptionModal from '../components/DeleteSubscriptionModal';
 import EditSubscriptionModal from '../components/EditSubscriptionModal';
+import { useToast } from '../ToastContext';
 
 const localizer = momentLocalizer(moment);
 
@@ -40,9 +41,9 @@ const CalendarPage: React.FC = () => {
     const [showModal, setShowModal] = useState(false);
     const { theme } = useTheme();
     const isDarkMode = theme === 'Dark' || (theme === 'Auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    const { addToast } = useToast();
 
     const fetchSubscriptionEvents = async (start: Date) => {
-        console.log('Fetching events for:', start);
         const { data: subscriptions, error } = await supabase
             .from('subscription')
             .select(`
@@ -69,18 +70,14 @@ const CalendarPage: React.FC = () => {
 
         if (error) {
             console.error('Error fetching subscriptions:', error);
+            addToast('An error occurred while fetching subscriptions', 'error');
             return;
         }
 
         const monthStart = moment(start).startOf('month').toDate();
         const monthEnd = moment(start).endOf('month').toDate();
 
-        console.log('Found subscriptions:', subscriptions);
-        console.log(' - Month start:', monthStart);
-        console.log(' - Month end:', monthEnd);
-
         const monthEvents = subscriptions.flatMap(sub => {
-            console.log('Start date:', sub.start_date || sub.subscription_history?.[sub.subscription_history.length - 1]?.start_date);
             const renewalDates = getOccurrencesInRange(
                 sub.recurrence_rule,
                 monthStart,
@@ -271,7 +268,7 @@ const CalendarPage: React.FC = () => {
                 onHide={() => setShowDelete(false)}
                 subscription={selectedSubscription}
                 onDelete={async () => {
-                    await fetchSubscriptionEvents(); // Refresh the list
+                    await fetchSubscriptionEvents(currentDate); // Refresh the list
                     setShowDelete(false);
                 }}
             />
@@ -281,7 +278,7 @@ const CalendarPage: React.FC = () => {
                 onHide={() => setShowEdit(false)}
                 subscription={selectedSubscription}
                 onSubmit={async (data) => {
-                    await fetchSubscriptionEvents(); // Refresh the list after update
+                    await fetchSubscriptionEvents(currentDate); // Refresh the list after update
                     setShowEdit(false);
                 }}
             />

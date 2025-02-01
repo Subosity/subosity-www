@@ -1,7 +1,7 @@
 import React from 'react';
-import { Offcanvas, Button, Alert } from 'react-bootstrap';
+import { Offcanvas, Button, Alert, Badge } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronLeft, faRotateLeft, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
+import { faChevronLeft, faRotateLeft, faExclamationTriangle, faCode } from '@fortawesome/free-solid-svg-icons';
 import { useTheme } from '../ThemeContext';
 
 interface Props {
@@ -9,16 +9,18 @@ interface Props {
     onHide: () => void;
     onConfirm: () => void;
     systemDefaultValue: string;
+    dataType: 'text' | 'json' | 'number' | 'choice';
 }
 
 const ConfirmResetPreferenceModal: React.FC<Props> = ({
     show,
     onHide,
     onConfirm,
-    systemDefaultValue
+    systemDefaultValue,
+    dataType
 }) => {
     const { theme } = useTheme();
-    
+
     return (
         <Offcanvas show={show} onHide={onHide} placement="end">
             <Offcanvas.Header closeButton className="bg-warning text-white">
@@ -38,12 +40,22 @@ const ConfirmResetPreferenceModal: React.FC<Props> = ({
                     <Alert variant="warning">
                         <FontAwesomeIcon icon={faExclamationTriangle} className="me-2" />
                         This will reset this preference to the following system default:
-                        <div className="mt-3 p-2 border rounded" 
-                            style={{ 
+                        <div className="mt-3 p-2 border rounded"
+                            style={{
                                 backgroundColor: 'var(--bs-body-bg)',
                                 color: 'var(--bs-body-color)'
-                            }}>
-                            <strong>{systemDefaultValue}</strong>
+                            }}> {dataType === 'json' ? (
+                                <>
+                                    <Badge bg="success" className="py-1 px-2">
+                                        <FontAwesomeIcon icon={faCode} className="me-1" />
+                                        JSON
+                                    </Badge>
+                                </>
+                            ) : (
+
+                                <strong>{systemDefaultValue}</strong>
+
+                            )}
                         </div>
                         <p className="mt-3 mb-0">
                             Your custom setting will be removed.

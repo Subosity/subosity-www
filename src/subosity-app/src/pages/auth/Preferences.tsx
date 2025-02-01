@@ -7,10 +7,10 @@ import { useToast } from '../../ToastContext';
 import EditPreferenceModal from '../../components/EditPreferenceModal';
 import { useTheme } from '../../ThemeContext';
 import { useAuth } from '../../AuthContext';
+import EditNotificationPreferences from '../../components/EditNotificationPreferences';
 
 interface Preference {
     preference_key: string;
-    preference_title: string;
     preference_description: string;
     effective_value: string;
     effective_jsonb: any; // Change to any to handle JSON objects
@@ -31,7 +31,7 @@ const formatPreferenceValue = (pref: Preference) => {
     return pref.effective_value;
 };
 
-type SortField = 'preference_title' | 'effective_value';
+type SortField = 'preference_key' | 'effective_value';
 type SortDirection = 'asc' | 'desc';
 
 const Preferences: React.FC = () => {
@@ -39,10 +39,10 @@ const Preferences: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [showEdit, setShowEdit] = useState(false);
     const [selectedPreference, setSelectedPreference] = useState<Preference | null>(null);
-    const [sortField, setSortField] = useState<SortField>('preference_title');
+    const [sortField, setSortField] = useState<SortField>('preference_key');
     const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
     const { addToast } = useToast();
-    const { theme } = useTheme();
+    const { theme, setTheme } = useTheme();
     const { user } = useAuth();
 
     useEffect(() => {
@@ -56,7 +56,6 @@ const Preferences: React.FC = () => {
                 .from('preference_system_defaults')
                 .select(`
                     preference_key,
-                    preference_title,
                     preference_description,
                     preference_data_type,
                     preference_value,
@@ -74,7 +73,6 @@ const Preferences: React.FC = () => {
             // Format the data to match our interface
             const formattedData = defaults.map(def => ({
                 preference_key: def.preference_key,
-                preference_title: def.preference_title,
                 preference_description: def.preference_description,
                 effective_value: def.preferences?.[0]?.preference_value ?? def.preference_value,
                 effective_jsonb: def.preferences?.[0]?.preference_jsonb ?? def.preference_jsonb,
@@ -117,6 +115,30 @@ const Preferences: React.FC = () => {
         return aVal > bVal ? multiplier : -multiplier;
     });
 
+    const handlePreferenceUpdate = async () => {
+        await fetchPreferences();
+        
+        // After any preference change (save OR reset), check if it was the Theme
+        const { data: themeData } = await supabase
+            .from('preference_system_defaults')
+            .select(`
+                preference_value,
+                preferences (
+                    preference_value
+                )
+            `)
+            .eq('preference_key', 'Theme')
+            .eq('preferences.owner', user.id)
+            .single();
+
+        if (themeData) {
+            const effectiveTheme = themeData.preferences?.[0]?.preference_value ?? themeData.preference_value;
+            setTheme(effectiveTheme as 'Auto' | 'Light' | 'Dark');
+        }
+        
+        setShowEdit(false);
+    };
+
     return (
         <div className="container py-4">
             <h3 className="mb-0">
@@ -152,7 +174,7 @@ const Preferences: React.FC = () => {
                             >
                                 {/* Title - Full width on mobile, 4 cols on desktop */}
                                 <div className="col-12 col-md-4 mb-2 mb-md-0">
-                                    <h6 className="mb-1">{pref.preference_title}</h6>
+                                    <h6 className="mb-1">{pref.preference_key}</h6>
                                     <small className="text-muted">
                                         {pref.preference_description}
                                     </small>
@@ -192,15 +214,21 @@ const Preferences: React.FC = () => {
                 )}
             </Container>
 
-            <EditPreferenceModal
-                show={showEdit}
-                onHide={() => setShowEdit(false)}
-                preference={selectedPreference}
-                onSubmit={async () => {
-                    await fetchPreferences();
-                    setShowEdit(false);
-                }}
-            />
+            {selectedPreference?.preference_key === "Notifications" ? (
+                <EditNotificationPreferences
+                    show={showEdit}
+                    onHide={() => setShowEdit(false)}
+                    preference={selectedPreference}
+                    onSubmit={handlePreferenceUpdate}
+                />
+            ) : (
+                <EditPreferenceModal
+                    show={showEdit}
+                    onHide={() => setShowEdit(false)}
+                    preference={selectedPreference}
+                    onSubmit={handlePreferenceUpdate}
+                />
+            )}
         </div>
     );
 };
