@@ -23,16 +23,16 @@ const PWAInstall = () => {
 
   if (!installPrompt) return null
 
-  return (
-    <div className="position-fixed bottom-0 end-0 m-3">
-      <button 
-        className="btn btn-primary"
-        onClick={handleInstallClick}
-      >
-        Install App
-      </button>
-    </div>
-  )
+  // return (
+  //   <div className="position-fixed bottom-0 end-0 m-3">
+  //     <button 
+  //       className="btn btn-primary"
+  //       onClick={handleInstallClick}
+  //     >
+  //       Install App
+  //     </button>
+  //   </div>
+  // )
 }
 
 export default PWAInstall
