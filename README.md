@@ -9,6 +9,8 @@
 ![FontAwesome](https://img.shields.io/badge/FontAwesome-6.7.2-528DD7?style=for-the-badge&logo=fontawesome&logoColor=white)
 ![Node.js](https://img.shields.io/badge/Node.js-20-339933?style=for-the-badge&logo=node.js&logoColor=white)
 ![NPM](https://img.shields.io/badge/NPM-Latest-CB3837?style=for-the-badge&logo=npm&logoColor=white)
+![WCAG 2.1 AA](https://img.shields.io/badge/WCAG-2.1%20AA-green?style=for-the-badge)
+![Accessibility](https://img.shields.io/badge/Accessibility-Compliant-green?style=for-the-badge&logo=accessible-icon)
 
 This is the public site for Subosity, a subscription management platform. This is now a Gatsby Static Site Generator (SSG) with React and TypeScript.
 
