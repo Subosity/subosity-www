@@ -1,4 +1,4 @@
-# Subosity - Public Site
+# Subosity - Public WWW Site
 
 ![Gatsby](https://img.shields.io/badge/Gatsby-5.14.1-663399?style=for-the-badge&logo=gatsby&logoColor=white)
 ![React](https://img.shields.io/badge/React-18.2.0-61DAFB?style=for-the-badge&logo=react&logoColor=black)
