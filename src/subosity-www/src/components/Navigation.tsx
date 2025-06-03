@@ -64,9 +64,12 @@ const Navigation: React.FC = () => {
 
                     <Nav className="navbar-nav d-flex align-items-center">
 
-                    <Button
+                        <Button
                             variant="primary"
-                            onClick={() => window.location.href = process.env.GATSBY_APP_URL}
+                            as="a"
+                            href={process.env.GATSBY_APP_URL}
+                            target="_blank"
+                            rel="noopener noreferrer"
                         >
                             <FontAwesomeIcon icon={faUserPlus} className="me-2" />
                             Get Started

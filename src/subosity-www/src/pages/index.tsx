@@ -52,7 +52,10 @@ const IndexPage: React.FC<PageProps> = () => {
                       size="lg"
                       variant="light"
                       className="me-3"
-                      onClick={() => window.location.href = process.env.GATSBY_APP_URL}
+                      as="a"
+                      href={process.env.GATSBY_APP_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
                     >
                       <FontAwesomeIcon icon={faUserPlus} className="me-2" />
                       Get Started
@@ -118,7 +121,10 @@ const IndexPage: React.FC<PageProps> = () => {
                       size="lg"
                       variant="light"
                       className="px-4"
-                      onClick={() => window.location.href = process.env.GATSBY_APP_URL}
+                      as="a"
+                      href={process.env.GATSBY_APP_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
                     >
                       <FontAwesomeIcon icon={faUserPlus} className="me-2" />
                       Get Started

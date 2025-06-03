@@ -65,8 +65,11 @@ const PricingTier = ({
                     </li>
                 ))}
             </ul>
+            
             <Button 
-                onClick={() => window.location.href = process.env.GATSBY_APP_URL}
+                href={process.env.GATSBY_APP_URL + "/signup?tier=" + title.toLowerCase().replace(/\s+/g, '-')}
+                target="_blank"
+                rel="noopener noreferrer"
                 variant={buttonVariant} 
                 size="lg" 
                 className="w-100 mt-auto"
