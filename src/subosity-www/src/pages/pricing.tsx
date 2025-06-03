@@ -14,6 +14,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import type { HeadFC, PageProps } from "gatsby"
 import Layout from '../components/Layout';
+import { APP_CONFIG } from '../config';
 import '../styles/pricing.css';
 
 const PricingTier = ({ 
@@ -22,8 +23,16 @@ const PricingTier = ({
     yearlyPrice,
     icon, 
     features, 
-    isPopular,
+    isPopular = false,
     buttonVariant = "primary" 
+}: {
+    title: string;
+    price: number;
+    yearlyPrice: number;
+    icon: any;
+    features: string[];
+    isPopular?: boolean;
+    buttonVariant?: string;
 }) => (
     <Card 
         className={`w-100 pricing-card ${isPopular ? 'popular' : ''}`}
@@ -67,12 +76,13 @@ const PricingTier = ({
             </ul>
             
             <Button 
-                href={process.env.GATSBY_APP_URL + "/signup?tier=" + title.toLowerCase().replace(/\s+/g, '-')}
+                href={`${APP_CONFIG.appUrl}/signup?tier=${title.toLowerCase().replace(/\s+/g, '-')}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 variant={buttonVariant} 
                 size="lg" 
                 className="w-100 mt-auto"
+                as="a"
             >
                 <FontAwesomeIcon icon={faUserPlus} className="me-2" />
                 Get Started

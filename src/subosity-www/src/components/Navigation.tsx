@@ -19,6 +19,7 @@ import {
     faCalendar,
     faCirclePlay
 } from '@fortawesome/free-solid-svg-icons'
+import { APP_CONFIG } from '../config'
 import { useTheme } from '../ThemeContext'
 import { Button, Dropdown, Navbar, Nav, Container } from 'react-bootstrap'
 
@@ -67,7 +68,7 @@ const Navigation: React.FC = () => {
                         <Button
                             variant="primary"
                             as="a"
-                            href={process.env.GATSBY_APP_URL}
+                            href={`${APP_CONFIG.appUrl}/signup`}
                             target="_blank"
                             rel="noopener noreferrer"
                         >

@@ -10,6 +10,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import type { HeadFC, PageProps } from "gatsby"
 import Layout from '../components/Layout';
+import { APP_CONFIG } from '../config';
 
 const IndexPage: React.FC<PageProps> = () => {
   const features = [
@@ -53,7 +54,7 @@ const IndexPage: React.FC<PageProps> = () => {
                       variant="light"
                       className="me-3"
                       as="a"
-                      href={process.env.GATSBY_APP_URL}
+                      href={`${APP_CONFIG.appUrl}/signup`}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
@@ -122,7 +123,7 @@ const IndexPage: React.FC<PageProps> = () => {
                       variant="light"
                       className="px-4"
                       as="a"
-                      href={process.env.GATSBY_APP_URL}
+                      href={`${APP_CONFIG.appUrl}/signup`}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
