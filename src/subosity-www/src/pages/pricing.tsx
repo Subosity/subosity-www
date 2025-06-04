@@ -50,7 +50,10 @@ const PricingTier = ({
         )}
         <Card.Body className={`p-4 text-center d-flex flex-column ${isPopular ? 'shadow-lg' : 'shadow'}`}>
             <div className="mb-4">
-                <FontAwesomeIcon icon={icon} size="3x" className="text-primary" />
+                <img src={`/images/${icon}.png`} 
+                     alt={`${title} icon`} 
+                     className="pricing-icon mb-3" 
+                     style={{ width: '128px', height: '128px' }} />
             </div>
             <h3 className="mb-3">{title}</h3>
             <div className="mb-4">
@@ -98,7 +101,7 @@ const Pricing: React.FC<PageProps> = () => {
             title: "Free",
             price: 0,
             yearlyPrice: 0,
-            icon: faBell,
+            icon: "logo",
             features: [
                 "Track up to 30 subscriptions",
                 "In-app notifications",
@@ -110,10 +113,10 @@ const Pricing: React.FC<PageProps> = () => {
             buttonVariant: "outline-primary"
         },
         {
-            title: "Power User",
+            title: "Plus",
             price: 4.99,
             yearlyPrice: 49.99,
-            icon: faInfinity,
+            icon: "logo_plus",
             isPopular: true,
             features: [
                 "Track up to 1000 subscriptions",
@@ -125,12 +128,12 @@ const Pricing: React.FC<PageProps> = () => {
             ]
         },
         {
-            title: "Family Plan",
+            title: "Family",
             price: 19.99,
             yearlyPrice: 199.99,
-            icon: faUsers,
+            icon: "logo_family",
             features: [
-                "Everything in Power User",
+                "Everything in Plus",
                 "Up to 6 family accounts",
                 "Shared subscriptions",
                 "Family dashboard",

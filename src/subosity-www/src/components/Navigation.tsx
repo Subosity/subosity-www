@@ -37,7 +37,7 @@ const Navigation: React.FC = () => {
         <Navbar expand="lg" className={`navbar-${isDarkMode ? 'dark' : 'light'} bg-${isDarkMode ? 'dark' : 'light'}`}>
             <Container>
                 <Navbar.Brand as={Link} to="/" className="navbar-brand d-flex align-items-center">
-                    <img src="/images/logo.png" className="me-2" style={{ height: '22px' }} />
+                    <img src="/images/logo.png" className="me-2" style={{ height: '32px' }} />
                     <span>Subosity</span>
                 </Navbar.Brand>
 
