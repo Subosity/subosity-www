@@ -414,3 +414,69 @@ body.loading .gatsby-focus-wrapper {
     --bs-btn-disabled-border-color: #9b2c2c;
     --bs-gradient: none;
 }
+
+/* Theme Selector Styles */
+#theme-dropdown {
+  transition: all 0.2s ease-in-out;
+  border-radius: 50% !important;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#theme-dropdown:hover {
+  background-color: var(--bs-secondary-bg) !important;
+  transform: scale(1.05);
+}
+
+#theme-dropdown:focus {
+  box-shadow: 0 0 0 0.2rem rgba(44, 82, 130, 0.25) !important;
+}
+
+/* Theme dropdown menu improvements */
+.dropdown-menu .dropdown-item {
+  transition: all 0.15s ease-in-out;
+  border-radius: 0.375rem;
+  margin: 0.125rem 0.5rem;
+  padding: 0.5rem 0.75rem;
+}
+
+.dropdown-menu .dropdown-item:hover {
+  background-color: var(--bs-primary-bg-subtle);
+  color: var(--bs-primary-text-emphasis);
+}
+
+.dropdown-menu .dropdown-item.active {
+  background-color: var(--bs-primary);
+  color: var(--bs-white);
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 767.98px) {
+  #theme-dropdown {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .navbar-nav {
+    gap: 0.5rem;
+  }
+  
+  .dropdown-menu {
+    min-width: 150px;
+    right: 0 !important;
+    left: auto !important;
+  }
+}
+
+/* Improved navbar mobile layout */
+@media (max-width: 991.98px) {
+  .navbar-collapse .navbar-nav:last-child {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--bs-border-color);
+    justify-content: space-between;
+  }
+}
