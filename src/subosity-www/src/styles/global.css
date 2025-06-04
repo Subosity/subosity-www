@@ -3,12 +3,29 @@ body.loading {
   visibility: hidden !important;
 }
 
-body {
+html, body {
   visibility: visible;
-  transition: opacity 0.15s ease-in-out;
+  transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
 }
 
-/* Smooth transitions for navigation */
+/* Theme-specific enhancements */
+[data-bs-theme="dark"] {
+  color-scheme: dark;
+}
+
+[data-bs-theme="light"] {
+  color-scheme: light;
+}
+
+/* Ensure all elements have smooth theme transitions */
+*, *::before, *::after {
+  transition: background-color 0.15s ease-in-out, 
+              color 0.15s ease-in-out, 
+              border-color 0.15s ease-in-out,
+              box-shadow 0.15s ease-in-out;
+}
+
+/* Override any conflicting transitions during page load */
 .gatsby-focus-wrapper {
   transition: opacity 0.15s ease-in-out;
 }

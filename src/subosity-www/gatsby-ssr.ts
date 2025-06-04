@@ -1,7 +1,50 @@
 import React from "react"
 import type { GatsbySSR } from "gatsby"
 
-export const onRenderBody: GatsbySSR["onRenderBody"] = ({ setHeadComponents }) => {
+export const onRenderBody: GatsbySSR["onRenderBody"] = ({ setHeadComponents, setPreBodyComponents }) => {
+  // Add blocking script to set theme immediately - must run synchronously
+  setPreBodyComponents([
+    React.createElement("script", {
+      key: "theme-blocking-script",
+      dangerouslySetInnerHTML: {
+        __html: `
+          (function() {
+            function setTheme() {
+              try {
+                var theme = localStorage.getItem('subosity-theme') || 'Auto';
+                var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                var actualTheme = theme === 'Auto' ? (prefersDark ? 'dark' : 'light') : theme.toLowerCase();
+                document.documentElement.setAttribute('data-bs-theme', actualTheme);
+                document.body.setAttribute('data-bs-theme', actualTheme);
+                
+                // Also set class for additional styling hooks
+                document.documentElement.className = actualTheme + '-theme';
+                
+                // Dispatch custom event for components to listen to
+                if (typeof window !== 'undefined' && window.dispatchEvent) {
+                  window.dispatchEvent(new CustomEvent('themeChange', { detail: { theme: actualTheme } }));
+                }
+              } catch (e) {
+                // Fallback to light theme if there's any error
+                document.documentElement.setAttribute('data-bs-theme', 'light');
+                document.body.setAttribute('data-bs-theme', 'light');
+                document.documentElement.className = 'light-theme';
+              }
+            }
+            
+            // Run immediately
+            setTheme();
+            
+            // Also run when DOM is ready (fallback)
+            if (document.readyState === 'loading') {
+              document.addEventListener('DOMContentLoaded', setTheme);
+            }
+          })();
+        `
+      }
+    })
+  ]);
+  
   setHeadComponents([
     React.createElement("link", {
       key: "bootstrap-css",
@@ -18,22 +61,36 @@ export const onRenderBody: GatsbySSR["onRenderBody"] = ({ setHeadComponents }) =
             visibility: hidden !important;
           }
           
-          body {
+          html, body {
             visibility: visible;
-            transition: opacity 0.15s ease-in-out;
+            transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
           }
           
-          /* Critical Bootstrap variables */
+          /* Critical Bootstrap variables for both themes */
           :root {
             --bs-primary: #2c5282;
             --bs-secondary: #718096;
-            --bs-body-bg: #ffffff;
-            --bs-body-color: #212529;
             --bs-body-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
           }
           
+          /* Light theme variables */
+          [data-bs-theme="light"] {
+            --bs-body-bg: #ffffff;
+            --bs-body-color: #212529;
+            --bs-navbar-bg: #ffffff;
+            --bs-navbar-color: #212529;
+          }
+          
+          /* Dark theme variables */
+          [data-bs-theme="dark"] {
+            --bs-body-bg: #212529;
+            --bs-body-color: #ffffff;
+            --bs-navbar-bg: #212529;
+            --bs-navbar-color: #ffffff;
+          }
+          
           /* Critical layout styles */
-          body {
+          html, body {
             margin: 0;
             font-family: var(--bs-body-font-family);
             font-size: 1rem;
@@ -62,6 +119,13 @@ export const onRenderBody: GatsbySSR["onRenderBody"] = ({ setHeadComponents }) =
             align-items: center;
             justify-content: space-between;
             padding: 0.5rem 1rem;
+            background-color: var(--bs-navbar-bg);
+            color: var(--bs-navbar-color);
+          }
+          
+          /* Ensure theme changes are immediate */
+          * {
+            transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out, border-color 0.15s ease-in-out;
           }
         `
       }
