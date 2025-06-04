@@ -16,12 +16,47 @@
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
 }
 
+.pricing-card.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.pricing-card.disabled:hover {
+    transform: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.pricing-card.blurred {
+    filter: blur(8px);
+    cursor: not-allowed;
+    pointer-events: none;
+    user-select: none;
+}
+
+.pricing-card.blurred:hover {
+    transform: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+/* Disable interactions for disabled/blurred cards */
+.pricing-card.disabled *,
+.pricing-card.blurred * {
+    pointer-events: none;
+    user-select: none;
+}
+
 @media (max-width: 768px) {
     .pricing-card.popular {
         transform: none;
     }
     
     .pricing-card:hover {
+        transform: none;
+    }
+    
+    .pricing-card.disabled:hover,
+    .pricing-card.blurred:hover {
         transform: none;
     }
 }

@@ -24,7 +24,10 @@ const PricingTier = ({
     icon, 
     features, 
     isPopular = false,
-    buttonVariant = "primary" 
+    buttonVariant = "primary",
+    enabled = true,
+    blurred = false,
+    visible = true
 }: {
     title: string;
     price: number;
@@ -33,11 +36,19 @@ const PricingTier = ({
     features: string[];
     isPopular?: boolean;
     buttonVariant?: string;
-}) => (
+    enabled?: boolean;
+    blurred?: boolean;
+    visible?: boolean;
+}) => {
+    // Don't render if not visible
+    if (!visible) return null;
+
+    return (
     <Card 
-        className={`w-100 pricing-card ${isPopular ? 'popular' : ''}`}
-        style={{ minHeight: isPopular ? '700px' : 'auto' ,
-            borderWidth: isPopular ? '8px' : 'auto' ,
+        className={`w-100 pricing-card ${isPopular ? 'popular' : ''} ${!enabled ? 'disabled' : ''} ${blurred ? 'blurred' : ''}`}
+        style={{ 
+            minHeight: isPopular ? '700px' : 'auto',
+            borderWidth: isPopular ? '8px' : 'auto'
         }}
     >
         {isPopular && (
@@ -86,13 +97,15 @@ const PricingTier = ({
                 size="lg" 
                 className="w-100 mt-auto"
                 as="a"
+                disabled={!enabled || blurred}
             >
                 <FontAwesomeIcon icon={faUserPlus} className="me-2" />
                 Get Started
             </Button>
         </Card.Body>
     </Card>
-);
+    );
+};
 
 const Pricing: React.FC<PageProps> = () => {
 
@@ -110,7 +123,10 @@ const Pricing: React.FC<PageProps> = () => {
                 "Basic reporting & analytics",
                 "Community support"
             ],
-            buttonVariant: "outline-primary"
+            buttonVariant: "outline-primary",
+            enabled: true,
+            blurred: false,
+            visible: true
         },
         {
             title: "Plus",
@@ -125,7 +141,10 @@ const Pricing: React.FC<PageProps> = () => {
                 "Priority support",
                 "Advanced analytics",
                 "API access"
-            ]
+            ],
+            enabled: false,
+            blurred: true,
+            visible: true
         },
         {
             title: "Family",
@@ -139,7 +158,10 @@ const Pricing: React.FC<PageProps> = () => {
                 "Family dashboard",
                 "Granular permissions",
                 "24/7 priority support"
-            ]
+            ],
+            enabled: false,
+            blurred: true,
+            visible: true
         }
     ];
 
