@@ -1,4 +1,4 @@
-// Load Bootstrap first, then custom styles
+// Load Bootstrap and custom styles - Bootstrap bundled with webpack for consistency
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './src/styles/global.css';
 

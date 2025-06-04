@@ -46,12 +46,6 @@ export const onRenderBody: GatsbySSR["onRenderBody"] = ({ setHeadComponents, set
   ]);
   
   setHeadComponents([
-    React.createElement("link", {
-      key: "bootstrap-css",
-      rel: "stylesheet",
-      href: "https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css",
-      crossOrigin: "anonymous"
-    }),
     React.createElement("style", {
       key: "critical-css",
       dangerouslySetInnerHTML: {
@@ -75,18 +69,18 @@ export const onRenderBody: GatsbySSR["onRenderBody"] = ({ setHeadComponents, set
           
           /* Light theme variables */
           [data-bs-theme="light"] {
-            --bs-body-bg: #ffffff;
-            --bs-body-color: #212529;
-            --bs-navbar-bg: #dddddd;
-            --bs-navbar-color: #212529;
+            --bs-body-bg: #ffffff !important;
+            --bs-body-color: #212529 !important;
+            --bs-navbar-bg: #dddddd !important;
+            --bs-navbar-color: #212529 !important;
           }
           
           /* Dark theme variables */
           [data-bs-theme="dark"] {
-            --bs-body-bg: #212529;
-            --bs-body-color: #ffffff;
-            --bs-navbar-bg: #495057;
-            --bs-navbar-color: #ffffff;
+            --bs-body-bg: #212529 !important;
+            --bs-body-color: #ffffff !important;
+            --bs-navbar-bg: #495057 !important;
+            --bs-navbar-color: #ffffff !important;
           }
           
           /* Critical layout styles */
