@@ -77,7 +77,7 @@ export const onRenderBody: GatsbySSR["onRenderBody"] = ({ setHeadComponents, set
           [data-bs-theme="light"] {
             --bs-body-bg: #ffffff;
             --bs-body-color: #212529;
-            --bs-navbar-bg: #ffffff;
+            --bs-navbar-bg: #dddddd;
             --bs-navbar-color: #212529;
           }
           
@@ -85,7 +85,7 @@ export const onRenderBody: GatsbySSR["onRenderBody"] = ({ setHeadComponents, set
           [data-bs-theme="dark"] {
             --bs-body-bg: #212529;
             --bs-body-color: #ffffff;
-            --bs-navbar-bg: #212529;
+            --bs-navbar-bg: #495057;
             --bs-navbar-color: #ffffff;
           }
           
