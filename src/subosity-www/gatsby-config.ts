@@ -4,7 +4,7 @@ const config: GatsbyConfig = {
   siteMetadata: {
     title: `Subosity`,
     description: `Subscription management platform`,
-    siteUrl: `https://subosity.github.io`,
+    siteUrl: `https://subosity.com`,
   },
   // More easily incorporate content into your pages through automatic TypeScript type generation and better GraphQL IntelliSense.
   // If you use VSCode you can also use the GraphQL plugin

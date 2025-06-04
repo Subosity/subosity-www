@@ -129,6 +129,64 @@ export const onRenderBody: GatsbySSR["onRenderBody"] = ({ setHeadComponents, set
           }
         `
       }
-    })
+    }),
+    // Open Graph meta tags
+    React.createElement("meta", {
+      key: "og-title",
+      property: "og:title",
+      content: "Subosity - Manage Your Subscriptions Smarter"
+    }),
+    React.createElement("meta", {
+      key: "og-description", 
+      property: "og:description",
+      content: "Track, analyze, and manage all your subscriptions in one place. From streaming services to memberships, never lose track of your recurring payments again."
+    }),
+    React.createElement("meta", {
+      key: "og-image",
+      property: "og:image", 
+      content: "https://subosity.com/images/social-card.png"
+    }),
+    React.createElement("meta", {
+      key: "og-image-width",
+      property: "og:image:width",
+      content: "1200"
+    }),
+    React.createElement("meta", {
+      key: "og-image-height", 
+      property: "og:image:height",
+      content: "630"
+    }),
+    React.createElement("meta", {
+      key: "og-type",
+      property: "og:type",
+      content: "website"
+    }),
+    React.createElement("meta", {
+      key: "og-url",
+      property: "og:url", 
+      content: "https://subosity.com"
+    }),
+    
+    // Twitter Card meta tags
+    React.createElement("meta", {
+      key: "twitter-card",
+      name: "twitter:card",
+      content: "summary_large_image"
+    }),
+    React.createElement("meta", {
+      key: "twitter-title",
+      name: "twitter:title", 
+      content: "Subosity - Manage Your Subscriptions Smarter"
+    }),
+    React.createElement("meta", {
+      key: "twitter-description",
+      name: "twitter:description",
+      content: "Track, analyze, and manage all your subscriptions in one place. From streaming services to memberships, never lose track of your recurring payments again."
+    }),
+    React.createElement("meta", {
+      key: "twitter-image",
+      name: "twitter:image",
+      content: "https://subosity.com/images/social-card.png"
+    }),
   ])
 }
