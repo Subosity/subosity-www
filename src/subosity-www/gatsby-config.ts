@@ -11,7 +11,30 @@ const config: GatsbyConfig = {
   // Learn more at: https://gatsby.dev/graphql-typegen
   graphqlTypegen: true,
   plugins: [
+    // PostCSS for Tailwind and other CSS processing
     `gatsby-plugin-postcss`,
+    // Styled components for better CSS-in-JS support
+    {
+      resolve: `gatsby-plugin-styled-components`,
+      options: {
+        displayName: process.env.NODE_ENV !== 'production',
+        fileName: false,
+      },
+    },
+    // PWA manifest
+    {
+      resolve: `gatsby-plugin-manifest`,
+      options: {
+        name: `Subosity`,
+        short_name: `Subosity`,
+        start_url: `/`,
+        background_color: `#ffffff`,
+        theme_color: `#2c5282`,
+        display: `minimal-ui`,
+        icon: `static/images/logo.png`,
+        cache_busting_mode: 'none',
+      },
+    },
   ],
 }
 

@@ -1,5 +1,40 @@
-/* Import Bootstrap */
-@import "bootstrap/dist/css/bootstrap.min.css";
+/* Prevent FOUC (Flash of Unstyled Content) - Critical styles first */
+body.loading {
+  visibility: hidden !important;
+}
+
+body {
+  visibility: visible;
+  transition: opacity 0.15s ease-in-out;
+}
+
+/* Smooth transitions for navigation */
+.gatsby-focus-wrapper {
+  transition: opacity 0.15s ease-in-out;
+}
+
+body.loading .gatsby-focus-wrapper {
+  opacity: 0.8;
+}
+
+/* Loading state for smoother transitions */
+.page-transition-enter {
+  opacity: 0;
+}
+
+.page-transition-enter-active {
+  opacity: 1;
+  transition: opacity 150ms ease-in;
+}
+
+.page-transition-exit {
+  opacity: 1;
+}
+
+.page-transition-exit-active {
+  opacity: 0;
+  transition: opacity 150ms ease-in;
+}
 
 :root {
   /* Core theme colors */

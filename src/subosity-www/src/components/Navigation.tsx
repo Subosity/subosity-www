@@ -17,7 +17,8 @@ import {
     faSignIn,
     faInfoCircle,
     faCalendar,
-    faCirclePlay
+    faCirclePlay,
+    faServer
 } from '@fortawesome/free-solid-svg-icons'
 import { APP_CONFIG } from '../config'
 import { useTheme } from '../ThemeContext'
@@ -54,6 +55,10 @@ const Navigation: React.FC = () => {
                             <Nav.Link as={Link} to="/pricing">
                                 <FontAwesomeIcon icon={faTags} className="me-2" />
                                 Pricing
+                            </Nav.Link>
+                            <Nav.Link as={Link} to="/self-hosting">
+                                <FontAwesomeIcon icon={faServer} className="me-2" />
+                                Self-Hosting
                             </Nav.Link>
                             <Nav.Link as={Link} to="/about">
                                 <FontAwesomeIcon icon={faInfoCircle} className="me-2" />
