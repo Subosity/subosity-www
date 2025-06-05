@@ -159,8 +159,8 @@ const Pricing: React.FC<PageProps> = () => {
                 "Advanced analytics",
                 "API access"
             ],
-            enabled: false,
-            blurred: true,
+            enabled: true,
+            blurred: false,
             visible: true,
             underConstruction: false
         },
@@ -177,8 +177,8 @@ const Pricing: React.FC<PageProps> = () => {
                 "Granular permissions",
                 "24/7 priority support"
             ],
-            enabled: false,
-            blurred: true,
+            enabled: true,
+            blurred: false,
             visible: true,
             underConstruction: false
         }
