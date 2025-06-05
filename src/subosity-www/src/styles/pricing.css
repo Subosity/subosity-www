@@ -46,6 +46,83 @@
     user-select: none;
 }
 
+/* Under Construction Banner */
+.pricing-card.under-construction {
+    position: relative;
+    overflow: hidden;
+}
+
+.construction-banner {
+    position: absolute;
+    top: 50px;
+    left: -15px;
+    right: -15px;
+    z-index: 1000;
+    pointer-events: none;
+    transform: rotate(-8deg);
+    overflow: hidden;
+    filter: none !important;
+    backdrop-filter: none !important;
+}
+
+.construction-banner * {
+    filter: none !important;
+    backdrop-filter: none !important;
+}
+
+.construction-tape {
+    background: repeating-linear-gradient(
+        45deg,
+        #ffeb3b,
+        #ffeb3b 15px,
+        #333 15px,
+        #333 30px
+    );
+    height: 40px;
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    border: 2px solid #333;
+    border-radius: 6px;
+    transform: perspective(80px) rotateX(8deg);
+    animation: sag 3s ease-in-out infinite alternate;
+    width: 100%;
+    max-width: 280px;
+    margin: 0 auto;
+}
+
+.construction-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-weight: bold;
+    font-size: 1.0rem;
+    color: white;
+    text-shadow: 
+        -1px -1px 0 black,
+        1px -1px 0 black,
+        -1px 1px 0 black,
+        1px 1px 0 black,
+        -2px 0 0 black,
+        2px 0 0 black,
+        0 -2px 0 black,
+        0 2px 0 black;
+    -webkit-text-stroke: 1px black;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 95%;
+}
+
+@keyframes sag {
+    0% {
+        transform: perspective(100px) rotateX(10deg) translateY(0px);
+    }
+    100% {
+        transform: perspective(100px) rotateX(10deg) translateY(8px);
+    }
+}
+
 @media (max-width: 768px) {
     .pricing-card.popular {
         transform: none;
@@ -58,5 +135,21 @@
     .pricing-card.disabled:hover,
     .pricing-card.blurred:hover {
         transform: none;
+    }
+
+    .construction-banner {
+        top: 35px;
+        left: -10px;
+        right: -10px;
+        transform: rotate(-5deg);
+    }
+    
+    .construction-tape {
+        height: 30px;
+        max-width: 220px;
+    }
+    
+    .construction-text {
+        font-size: 0.75rem;
     }
 }

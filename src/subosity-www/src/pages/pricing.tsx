@@ -10,7 +10,8 @@ import {
     faDownload,
     faGears,
     faUserPlus,
-    faBell
+    faBell,
+    faPersonDigging
 } from '@fortawesome/free-solid-svg-icons';
 import type { HeadFC, PageProps } from "gatsby"
 import Layout from '../components/Layout';
@@ -27,7 +28,8 @@ const PricingTier = ({
     buttonVariant = "primary",
     enabled = true,
     blurred = false,
-    visible = true
+    visible = true,
+    underConstruction = false
 }: {
     title: string;
     price: number;
@@ -39,18 +41,31 @@ const PricingTier = ({
     enabled?: boolean;
     blurred?: boolean;
     visible?: boolean;
+    underConstruction?: boolean;
 }) => {
     // Don't render if not visible
     if (!visible) return null;
 
     return (
-    <Card 
-        className={`w-100 pricing-card ${isPopular ? 'popular' : ''} ${!enabled ? 'disabled' : ''} ${blurred ? 'blurred' : ''}`}
-        style={{ 
-            minHeight: isPopular ? '700px' : 'auto',
-            borderWidth: isPopular ? '8px' : 'auto'
-        }}
-    >
+    <div className="position-relative">
+        {underConstruction && (
+            <div className="construction-banner">
+                <div className="construction-tape">
+                    <div className="construction-text">
+                        <FontAwesomeIcon icon={faPersonDigging} className="me-2" />
+                        UNDER CONSTRUCTION
+                        <FontAwesomeIcon icon={faPersonDigging} className="ms-2" />
+                    </div>
+                </div>
+            </div>
+        )}
+        <Card 
+            className={`w-100 pricing-card ${isPopular ? 'popular' : ''} ${!enabled ? 'disabled' : ''} ${blurred ? 'blurred' : ''} ${underConstruction ? 'under-construction' : ''}`}
+            style={{ 
+                minHeight: isPopular ? '700px' : 'auto',
+                borderWidth: isPopular ? '8px' : 'auto'
+            }}
+        >
         {isPopular && (
             <div className="position-absolute top-0 start-50 translate-middle">
                 <Badge bg="warning" className="py-2 px-3 rounded-pill">
@@ -104,6 +119,7 @@ const PricingTier = ({
             </Button>
         </Card.Body>
     </Card>
+    </div>
     );
 };
 
@@ -126,7 +142,8 @@ const Pricing: React.FC<PageProps> = () => {
             buttonVariant: "outline-primary",
             enabled: true,
             blurred: false,
-            visible: true
+            visible: true,
+            underConstruction: false
         },
         {
             title: "Plus",
@@ -144,7 +161,8 @@ const Pricing: React.FC<PageProps> = () => {
             ],
             enabled: false,
             blurred: true,
-            visible: true
+            visible: true,
+            underConstruction: false
         },
         {
             title: "Family",
@@ -161,7 +179,8 @@ const Pricing: React.FC<PageProps> = () => {
             ],
             enabled: false,
             blurred: true,
-            visible: true
+            visible: true,
+            underConstruction: false
         }
     ];
 
