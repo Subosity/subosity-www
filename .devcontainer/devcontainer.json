@@ -15,11 +15,11 @@
     },
 
 	"mounts": [
-		"source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached",
+		"source=${localEnv:HOME}/.ssh,target=/home/node/.ssh,type=bind,consistency=cached",
 		"source=${localEnv:HOME}/.gitconfig,target=/tmp/host-gitconfig,type=bind,consistency=cached,readonly"
 	],
 
 	"postCreateCommand": "chmod +x .devcontainer/setup-git.sh && .devcontainer/setup-git.sh && echo 'alias ll=\"ls -la\"' >> \"$HOME/.bashrc\"",
 
-	//"remoteUser": "vscode"
+	"remoteUser": "node"
 }
