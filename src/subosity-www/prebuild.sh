@@ -32,9 +32,7 @@ Contact: mailto:security@subosity.com
 Expires: ${EXPIRES_DATE}
 Preferred-Languages: en
 Canonical: https://subosity.com/.well-known/security.txt
-Policy: https://www.subosity.com/security-policy/
 CSAF: https://subosity.com/.well-known/provider-metadata.json
-Acknowledgments: https://www.subosity.com/security-acknowledgments/
 EOF
 
 # Update provider-metadata.json with current version and date
