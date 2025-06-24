@@ -20,8 +20,8 @@ cat >> "$HOME/.bashrc" << 'EOF'
 # === Development Aliases ===
 alias ll="ls -la"
 alias gatsby-dev="npx gatsby develop --host 0.0.0.0"
-alias gatsby-build="npx gatsby build"
-alias gatsby-serve="npx gatsby serve --host 0.0.0.0"
+alias gatsby-build="npm run build"
+alias gatsby-serve="npm run serve"
 
 show_gatsby_help() {
     echo -e "\033[36m╔══════════════════════════════════════════════════════════════════════════════╗\033[0m"

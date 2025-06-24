@@ -10,11 +10,10 @@
   "scripts": {
     "develop": "gatsby develop",
     "start": "gatsby develop",
-    "build": "npm run prebuild && gatsby build",
-    "serve": "gatsby serve",
+    "build": "chmod +x ./prebuild.sh && ./prebuild.sh && gatsby build",
+    "serve": "gatsby serve --host 0.0.0.0",
     "clean": "gatsby clean",
-    "typecheck": "tsc --noEmit",
-    "prebuild": "TIMESTAMP=$(date '+%Y.%m%d.%H%M') && SHORT_SHA=$(git rev-parse --short HEAD) && VERSION=\"v${TIMESTAMP}-${SHORT_SHA}\" && echo ${VERSION} > ./static/version.txt"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
