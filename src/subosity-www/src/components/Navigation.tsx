@@ -53,14 +53,14 @@ const Navigation: React.FC = () => {
                         </Nav.Link>
 
                         <>
-                            <Nav.Link as={Link} to="/pricing">
+                            {/* <Nav.Link as={Link} to="/pricing">
                                 <FontAwesomeIcon icon={faTags} className="me-2" />
                                 Pricing
                             </Nav.Link>
                             <Nav.Link as={Link} to="/self-hosting">
                                 <FontAwesomeIcon icon={faServer} className="me-2" />
                                 Self-Hosting
-                            </Nav.Link>
+                            </Nav.Link> */}
                             <Nav.Link as={Link} to="/about">
                                 <FontAwesomeIcon icon={faInfoCircle} className="me-2" />
                                 About
