@@ -33,6 +33,7 @@ Expires: ${EXPIRES_DATE}
 Preferred-Languages: en
 Canonical: https://subosity.com/.well-known/security.txt
 CSAF: https://subosity.com/.well-known/provider-metadata.json
+Policy: https://subosity.com/.well-known/security-policy.txt
 EOF
 
 # Update provider-metadata.json with current version and date
