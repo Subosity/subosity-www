@@ -1,6 +1,6 @@
 Contact: mailto:security@subosity.com
-Expires: 2026-09-01T13:54:14.000Z
+Expires: 2026-09-01T23:59:59.000Z
 Preferred-Languages: en
 Canonical: https://subosity.com/.well-known/security.txt
-CSAF: https://subosity.com/.well-known/provider-metadata.json
 Policy: https://subosity.com/.well-known/security-policy.txt
+CSAF: https://subosity.com/.well-known/provider-metadata.json
