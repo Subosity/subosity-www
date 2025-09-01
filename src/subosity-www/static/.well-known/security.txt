@@ -3,3 +3,4 @@ Expires: 2026-06-23T23:54:14.000Z
 Preferred-Languages: en
 Canonical: https://subosity.com/.well-known/security.txt
 CSAF: https://subosity.com/.well-known/provider-metadata.json
+Policy: https://subosity.com/.well-known/security-policy.txt

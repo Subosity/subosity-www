@@ -1,0 +1,3 @@
+We welcome reports of security vulnerabilities. Please send them to security@subosity.com.  
+We do not operate a bug bounty program and do not offer financial rewards.  
+Testing that could impact service availability (e.g., denial-of-service) or that targets third-party systems is prohibited.  
