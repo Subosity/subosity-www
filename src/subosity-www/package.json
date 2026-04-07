@@ -37,5 +37,13 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "typescript": "^6.0.2"
+  },
+  "overrides": {
+    "serialize-javascript": ">=7.0.5",
+    "tmp": ">=0.2.4",
+    "webpack": ">=5.105.0",
+    "cookie": ">=0.7.0",
+    "path-to-regexp": "~0.1.13",
+    "immutable": "^3.8.3"
   }
 }
