@@ -16,26 +16,26 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^6.7.2",
-    "@fortawesome/free-solid-svg-icons": "^6.7.2",
-    "@fortawesome/react-fontawesome": "^0.2.2",
-    "@tailwindcss/postcss": "^4.1.8",
-    "autoprefixer": "^10.4.21",
-    "bootstrap": "^5.3.6",
-    "gatsby": "^5.14.1",
-    "gatsby-plugin-manifest": "^5.14.0",
-    "gatsby-plugin-postcss": "^6.14.0",
-    "gatsby-plugin-styled-components": "^6.14.0",
-    "postcss": "^8.5.4",
-    "react": "^18.2.0",
+    "@fortawesome/fontawesome-svg-core": "^7.2.0",
+    "@fortawesome/free-solid-svg-icons": "^7.2.0",
+    "@fortawesome/react-fontawesome": "^3.3.0",
+    "@tailwindcss/postcss": "^4.2.2",
+    "autoprefixer": "^10.4.27",
+    "bootstrap": "^5.3.8",
+    "gatsby": "^5.16.1",
+    "gatsby-plugin-manifest": "^5.16.0",
+    "gatsby-plugin-postcss": "^6.16.0",
+    "gatsby-plugin-styled-components": "^6.16.0",
+    "postcss": "^8.5.8",
+    "react": "^19.2.4",
     "react-bootstrap": "^2.10.10",
-    "react-dom": "^18.2.0",
-    "tailwindcss": "^4.1.8"
+    "react-dom": "^19.2.4",
+    "tailwindcss": "^4.2.2"
   },
   "devDependencies": {
-    "@types/node": "^20.11.19",
-    "@types/react": "^18.2.55",
-    "@types/react-dom": "^18.2.19",
-    "typescript": "^5.3.3"
+    "@types/node": "^25.5.2",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "^6.0.2"
   }
 }
