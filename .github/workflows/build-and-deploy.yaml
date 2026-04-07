@@ -22,15 +22,15 @@ jobs:
         uses: actions/checkout@v4
         
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
-          cache-dependency-path: './src/subosity-app/package.json'
+          cache-dependency-path: './src/subosity-www.disabled/package.json'
           
       - name: Create .env file
         run: |
-          echo "VITE_APP_URL=${{ secrets.VITE_APP_URL }}" >> ./src/subosity-app/.env
+          echo "VITE_APP_URL=${{ secrets.VITE_APP_URL }}" >> ./src/subosity-www.disabled/.env
 
       - name: Generate Version
         id: version
@@ -39,23 +39,23 @@ jobs:
           SHORT_SHA=$(git rev-parse --short HEAD)
           VERSION="v${TIMESTAMP}-${SHORT_SHA}"
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
-          echo ${VERSION} > ./src/subosity-app/public/version.txt
+          echo ${VERSION} > ./src/subosity-www.disabled/public/version.txt
 
       - name: Install Dependencies
-        working-directory: ./src/subosity-app
+        working-directory: ./src/subosity-www.disabled
         run: npm ci
         
       - name: Build
-        working-directory: ./src/subosity-app
+        working-directory: ./src/subosity-www.disabled
         run: npm run build
         
       - name: Setup Pages
-        uses: actions/configure-pages@v4
+        uses: actions/configure-pages@v6
         
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
-          path: './src/subosity-app/dist'
+          path: './src/subosity-www.disabled/dist'
 
   deploy:
     environment:
@@ -66,4 +66,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
