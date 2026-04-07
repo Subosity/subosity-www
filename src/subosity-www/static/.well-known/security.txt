@@ -1,5 +1,5 @@
 Contact: mailto:security@subosity.com
-Expires: 2027-04-07T15:20:44.000Z
+Expires: 2027-04-07T15:41:37.000Z
 Preferred-Languages: en
 Canonical: https://subosity.com/.well-known/security.txt
 CSAF: https://subosity.com/.well-known/provider-metadata.json
