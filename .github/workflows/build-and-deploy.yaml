@@ -26,27 +26,14 @@ jobs:
         with:
           node-version: '22'
           cache: 'npm'
-          cache-dependency-path: './src/subosity-www.disabled/package.json'
-          
-      - name: Create .env file
-        run: |
-          echo "VITE_APP_URL=${{ secrets.VITE_APP_URL }}" >> ./src/subosity-www.disabled/.env
-
-      - name: Generate Version
-        id: version
-        run: |
-          TIMESTAMP=$(date '+%Y.%m%d.%H%M')
-          SHORT_SHA=$(git rev-parse --short HEAD)
-          VERSION="v${TIMESTAMP}-${SHORT_SHA}"
-          echo "version=${VERSION}" >> $GITHUB_OUTPUT
-          echo ${VERSION} > ./src/subosity-www.disabled/public/version.txt
+          cache-dependency-path: './src/subosity-www/package-lock.json'
 
       - name: Install Dependencies
-        working-directory: ./src/subosity-www.disabled
+        working-directory: ./src/subosity-www
         run: npm ci
         
       - name: Build
-        working-directory: ./src/subosity-www.disabled
+        working-directory: ./src/subosity-www
         run: npm run build
         
       - name: Setup Pages
@@ -55,7 +42,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v4
         with:
-          path: './src/subosity-www.disabled/dist'
+          path: './src/subosity-www/public'
 
   deploy:
     environment:
