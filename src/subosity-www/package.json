@@ -44,6 +44,8 @@
     "webpack": ">=5.105.0",
     "cookie": ">=0.7.0",
     "path-to-regexp": "^0.1.13",
-    "immutable": "^3.8.3"
+    "immutable": "^3.8.3",
+    "lodash": ">=4.18.1",
+    "@parcel/reporter-dev-server": "^2.16.4"
   }
 }
